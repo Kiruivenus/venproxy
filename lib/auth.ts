@@ -79,8 +79,10 @@ export async function getSession(): Promise<{ user: User; session: Session } | n
   if (!session) return null
 
   const user = await db.collection<User>("users").findOne({ _id: session.userId })
-
-  if (!user) return null
+  if (!user) {
+    await destroySession()
+    return null
+  }
 
   return { user, session }
 }
