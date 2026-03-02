@@ -16,15 +16,6 @@ export function middleware(request: NextRequest) {
         loginUrl.searchParams.set("redirect", pathname)
         return NextResponse.redirect(loginUrl)
     }
-
-    // Redirect logged-in users away from guest-only pages
-    const guestRoutes = ["/login", "/register", "/forgot-password"]
-    const isGuestRoute = guestRoutes.includes(pathname)
-
-    if (isGuestRoute && sessionToken) {
-        return NextResponse.redirect(new URL("/dashboard", request.url))
-    }
-
     return NextResponse.next()
 }
 
