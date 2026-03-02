@@ -76,7 +76,10 @@ export async function getSession(): Promise<{ user: User; session: Session } | n
     expiresAt: { $gt: new Date() },
   })
 
-  if (!session) return null
+  if (!session) {
+    await destroySession()
+    return null
+  }
 
   const user = await db.collection<User>("users").findOne({ _id: session.userId })
   if (!user) {
