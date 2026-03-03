@@ -3,8 +3,9 @@ import { getSession } from "@/lib/auth"
 import { ObjectId } from "mongodb"
 import { NextRequest, NextResponse } from "next/server"
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const session = await getSession()
 
     if (!session?.user || session.user.role !== "admin") {
@@ -19,7 +20,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     const db = await getDb()
     await db.collection("emailPricing").updateOne(
-      { _id: new ObjectId(params.id) },
+      { _id: new ObjectId(id) },
       {
         $set: {
           pricePerEmail,
@@ -34,8 +35,9 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const session = await getSession()
 
     if (!session?.user || session.user.role !== "admin") {
@@ -44,7 +46,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
     const db = await getDb()
     const result = await db.collection("emailPricing").deleteOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
     })
 
     if (result.deletedCount === 0) {

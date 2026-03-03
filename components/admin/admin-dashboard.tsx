@@ -7,37 +7,46 @@ import { OrderManagement } from "@/components/admin/order-management"
 import { UserManagement } from "@/components/admin/user-management"
 import { EmailManagement } from "@/components/admin/email-management"
 import { SupportSettings } from "@/components/admin/support-settings"
-import { Server, DollarSign, Receipt, Users, Mail, MessageCircle } from "lucide-react"
+import { Analytics } from "@/components/admin/analytics"
+import { Server, DollarSign, Receipt, Users, Mail, MessageCircle, BarChart3 } from "lucide-react"
 
 export function AdminDashboard() {
   return (
-    <Tabs defaultValue="proxies" className="w-full">
-      <TabsList className="grid w-full max-w-full grid-cols-6">
-        <TabsTrigger value="proxies" className="gap-2">
+    <Tabs defaultValue="analytics" className="w-full">
+      <TabsList className="flex flex-wrap h-auto w-full justify-start gap-1 bg-muted/50 p-1">
+        <TabsTrigger value="analytics" className="flex-1 min-w-[100px] gap-2">
+          <BarChart3 className="h-4 w-4" />
+          <span>Analytics</span>
+        </TabsTrigger>
+        <TabsTrigger value="proxies" className="flex-1 min-w-[100px] gap-2">
           <Server className="h-4 w-4" />
-          <span className="hidden sm:inline">Proxies</span>
+          <span>Proxies</span>
         </TabsTrigger>
-        <TabsTrigger value="emails" className="gap-2">
+        <TabsTrigger value="emails" className="flex-1 min-w-[100px] gap-2">
           <Mail className="h-4 w-4" />
-          <span className="hidden sm:inline">Emails</span>
+          <span>Emails</span>
         </TabsTrigger>
-        <TabsTrigger value="pricing" className="gap-2">
+        <TabsTrigger value="pricing" className="flex-1 min-w-[100px] gap-2">
           <DollarSign className="h-4 w-4" />
-          <span className="hidden sm:inline">Pricing</span>
+          <span>Pricing</span>
         </TabsTrigger>
-        <TabsTrigger value="orders" className="gap-2">
+        <TabsTrigger value="orders" className="flex-1 min-w-[100px] gap-2">
           <Receipt className="h-4 w-4" />
-          <span className="hidden sm:inline">Orders</span>
+          <span>Orders</span>
         </TabsTrigger>
-        <TabsTrigger value="users" className="gap-2">
+        <TabsTrigger value="users" className="flex-1 min-w-[100px] gap-2">
           <Users className="h-4 w-4" />
-          <span className="hidden sm:inline">Users</span>
+          <span>Users</span>
         </TabsTrigger>
-        <TabsTrigger value="support" className="gap-2">
+        <TabsTrigger value="support" className="flex-1 min-w-[100px] gap-2">
           <MessageCircle className="h-4 w-4" />
-          <span className="hidden sm:inline">Support</span>
+          <span>Support</span>
         </TabsTrigger>
       </TabsList>
+
+      <TabsContent value="analytics" className="mt-6">
+        <Analytics />
+      </TabsContent>
 
       <TabsContent value="proxies" className="mt-6">
         <ProxyManagement />

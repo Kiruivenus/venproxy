@@ -5,10 +5,14 @@ import { ObjectId } from "mongodb"
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, name } = await request.json()
+    const { email, password, confirmPassword, name } = await request.json()
 
     if (!email || !password || !name) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    if (password !== confirmPassword) {
+      return NextResponse.json({ error: "Passwords do not match." }, { status: 400 })
     }
 
     const db = await getDb()

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     const user = await db.collection<User>("users").findOne({ email: email.toLowerCase() })
     if (!user) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+      return NextResponse.json({ error: "User not found. Please register." }, { status: 404 })
     }
 
     if (user.isBanned) {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     const isValid = await verifyPassword(password, user.password)
     if (!isValid) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+      return NextResponse.json({ error: "Incorrect password. Please try again." }, { status: 401 })
     }
 
     await createSession(user._id)

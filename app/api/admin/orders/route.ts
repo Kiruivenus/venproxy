@@ -19,6 +19,7 @@ export async function GET() {
         price: o.price,
         phoneNumber: o.phoneNumber,
         status: o.status,
+        failureReason: o.failureReason,
         createdAt: o.createdAt,
         paidAt: o.paidAt,
       })),

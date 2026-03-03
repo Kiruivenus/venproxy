@@ -16,6 +16,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -30,11 +31,17 @@ export default function RegisterPage() {
       return
     }
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      setLoading(false)
+      return
+    }
+
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, confirmPassword }),
       })
 
       const data = await res.json()
@@ -118,6 +125,20 @@ export default function RegisterPage() {
                   className="h-11 bg-background/50"
                 />
                 <p className="text-xs text-muted-foreground">Must be at least 6 characters long</p>
+              </div>
+              <div className="space-y-3">
+                <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                  Confirm Password
+                </Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="h-11 bg-background/50"
+                />
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4 border-t border-border/50 pt-8">

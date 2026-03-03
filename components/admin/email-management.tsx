@@ -57,7 +57,7 @@ export function EmailManagement() {
     title: string
     description: string
     onConfirm: () => void
-  }>({ open: false, title: "", description: "", onConfirm: () => {} })
+  }>({ open: false, title: "", description: "", onConfirm: () => { } })
 
   const [newDomain, setNewDomain] = useState({
     domain: "",
@@ -213,7 +213,7 @@ export function EmailManagement() {
       const res = await fetch(`/api/admin/emails/${editingEmail.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newEmail),
+        body: JSON.stringify({ password: newEmail.password }),
       })
 
       if (res.ok) {
@@ -263,310 +263,309 @@ export function EmailManagement() {
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="domains">Email Domains</TabsTrigger>
-        <TabsTrigger value="emails">Email Accounts</TabsTrigger>
-      </TabsList>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="domains">Email Domains</TabsTrigger>
+          <TabsTrigger value="emails">Email Accounts</TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="domains" className="mt-6 space-y-6">
-        <Dialog open={addDomainOpen} onOpenChange={setAddDomainOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Email Domain
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Email Domain</DialogTitle>
-              <DialogDescription>Add a new email domain for users to purchase from</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label>Domain Name</Label>
-                <Input
-                  value={newDomain.domain}
-                  onChange={(e) => setNewDomain({ ...newDomain, domain: e.target.value })}
-                  placeholder="gmail.com or custom-domain.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Type</Label>
-                <Select value={newDomain.type} onValueChange={(v) => setNewDomain({ ...newDomain, type: v as "gmail" | "rayproxy" })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="gmail">Gmail</SelectItem>
-                    <SelectItem value="rayproxy">RayProxy SMTP</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {newDomain.type === "rayproxy" && (
+        <TabsContent value="domains" className="mt-6 space-y-6">
+          <Dialog open={addDomainOpen} onOpenChange={setAddDomainOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Email Domain
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Email Domain</DialogTitle>
+                <DialogDescription>Add a new email domain for users to purchase from</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
                 <div className="space-y-2">
-                  <Label>SMTP Server</Label>
+                  <Label>Domain Name</Label>
                   <Input
-                    value={newDomain.server}
-                    onChange={(e) => setNewDomain({ ...newDomain, server: e.target.value })}
-                    placeholder="smtp.example.com"
+                    value={newDomain.domain}
+                    onChange={(e) => setNewDomain({ ...newDomain, domain: e.target.value })}
+                    placeholder="gmail.com or custom-domain.com"
                   />
                 </div>
-              )}
-            </div>
-            <DialogFooter>
-              <Button onClick={handleAddDomain} disabled={submitting}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Add Domain
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={editDomainOpen} onOpenChange={setEditDomainOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Email Domain</DialogTitle>
-              <DialogDescription>Update email domain details</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label>Domain Name</Label>
-                <Input
-                  value={newDomain.domain}
-                  onChange={(e) => setNewDomain({ ...newDomain, domain: e.target.value })}
-                  placeholder="gmail.com or custom-domain.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Type</Label>
-                <Select value={newDomain.type} onValueChange={(v) => setNewDomain({ ...newDomain, type: v as "gmail" | "rayproxy" })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="gmail">Gmail</SelectItem>
-                    <SelectItem value="rayproxy">RayProxy SMTP</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {newDomain.type === "rayproxy" && (
                 <div className="space-y-2">
-                  <Label>SMTP Server</Label>
+                  <Label>Type</Label>
+                  <Select value={newDomain.type} onValueChange={(v) => setNewDomain({ ...newDomain, type: v as "gmail" | "rayproxy" })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gmail">Gmail</SelectItem>
+                      <SelectItem value="rayproxy">RayProxy SMTP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {newDomain.type === "rayproxy" && (
+                  <div className="space-y-2">
+                    <Label>SMTP Server</Label>
+                    <Input
+                      value={newDomain.server}
+                      onChange={(e) => setNewDomain({ ...newDomain, server: e.target.value })}
+                      placeholder="smtp.example.com"
+                    />
+                  </div>
+                )}
+              </div>
+              <DialogFooter>
+                <Button onClick={handleAddDomain} disabled={submitting}>
+                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Add Domain
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={editDomainOpen} onOpenChange={setEditDomainOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Email Domain</DialogTitle>
+                <DialogDescription>Update email domain details</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <Label>Domain Name</Label>
                   <Input
-                    value={newDomain.server}
-                    onChange={(e) => setNewDomain({ ...newDomain, server: e.target.value })}
-                    placeholder="smtp.example.com"
+                    value={newDomain.domain}
+                    onChange={(e) => setNewDomain({ ...newDomain, domain: e.target.value })}
+                    placeholder="gmail.com or custom-domain.com"
                   />
                 </div>
-              )}
-            </div>
-            <DialogFooter>
-              <Button onClick={handleSaveEditDomain} disabled={submitting}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Changes
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                <div className="space-y-2">
+                  <Label>Type</Label>
+                  <Select value={newDomain.type} onValueChange={(v) => setNewDomain({ ...newDomain, type: v as "gmail" | "rayproxy" })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gmail">Gmail</SelectItem>
+                      <SelectItem value="rayproxy">RayProxy SMTP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {newDomain.type === "rayproxy" && (
+                  <div className="space-y-2">
+                    <Label>SMTP Server</Label>
+                    <Input
+                      value={newDomain.server}
+                      onChange={(e) => setNewDomain({ ...newDomain, server: e.target.value })}
+                      placeholder="smtp.example.com"
+                    />
+                  </div>
+                )}
+              </div>
+              <DialogFooter>
+                <Button onClick={handleSaveEditDomain} disabled={submitting}>
+                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Save Changes
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Available Email Domains</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {domains.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">No domains configured yet</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Domain</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Server</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {domains.map((domain) => (
-                    <TableRow key={domain._id}>
-                      <TableCell className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-accent" />
-                        {domain.domain}
-                      </TableCell>
-                      <TableCell>
-                        <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
-                          {domain.type === "gmail" ? "Gmail" : "RayProxy SMTP"}
-                        </span>
-                      </TableCell>
-                      <TableCell>{domain.server || "-"}</TableCell>
-                      <TableCell className="flex gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEditDomain(domain)}>
-                          <Edit2 className="h-4 w-4 text-blue-500" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteDomain(domain._id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </TableCell>
+          <Card>
+            <CardHeader>
+              <CardTitle>Available Email Domains</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {domains.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">No domains configured yet</p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Domain</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Server</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-      </TabsContent>
-
-      <TabsContent value="emails" className="mt-6 space-y-6">
-        <Dialog open={addEmailOpen} onOpenChange={setAddEmailOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Email Account
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Email Account</DialogTitle>
-              <DialogDescription>Add a new email account to sell to users</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label>Email Address</Label>
-                <Input
-                  value={newEmail.emailAddress}
-                  onChange={(e) => setNewEmail({ ...newEmail, emailAddress: e.target.value })}
-                  placeholder="user@example.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Password</Label>
-                <Input
-                  type="password"
-                  value={newEmail.password}
-                  onChange={(e) => setNewEmail({ ...newEmail, password: e.target.value })}
-                  placeholder="••••••••"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Domain</Label>
-                <Select value={newEmail.domainId} onValueChange={(v) => setNewEmail({ ...newEmail, domainId: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select domain..." />
-                  </SelectTrigger>
-                  <SelectContent>
+                  </TableHeader>
+                  <TableBody>
                     {domains.map((domain) => (
-                      <SelectItem key={domain._id} value={domain._id}>
-                        {domain.domain}
-                      </SelectItem>
+                      <TableRow key={domain._id}>
+                        <TableCell className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-accent" />
+                          {domain.domain}
+                        </TableCell>
+                        <TableCell>
+                          <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
+                            {domain.type === "gmail" ? "Gmail" : "RayProxy SMTP"}
+                          </span>
+                        </TableCell>
+                        <TableCell>{domain.server || "-"}</TableCell>
+                        <TableCell className="flex gap-2">
+                          <Button variant="ghost" size="icon" onClick={() => handleEditDomain(domain)}>
+                            <Edit2 className="h-4 w-4 text-blue-500" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteDomain(domain._id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={handleAddEmail} disabled={submitting}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Add Email
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        <Dialog open={editEmailOpen} onOpenChange={setEditEmailOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Email Account</DialogTitle>
-              <DialogDescription>Update email account details</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label>Email Address</Label>
-                <Input
-                  value={newEmail.emailAddress}
-                  onChange={(e) => setNewEmail({ ...newEmail, emailAddress: e.target.value })}
-                  placeholder="user@example.com"
-                  disabled
-                />
-                <p className="text-xs text-muted-foreground">Email address cannot be changed</p>
-              </div>
-              <div className="space-y-2">
-                <Label>Password (leave empty to keep current)</Label>
-                <Input
-                  type="password"
-                  value={newEmail.password}
-                  onChange={(e) => setNewEmail({ ...newEmail, password: e.target.value })}
-                  placeholder="••••••••"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={handleSaveEditEmail} disabled={submitting}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Changes
+        <TabsContent value="emails" className="mt-6 space-y-6">
+          <Dialog open={addEmailOpen} onOpenChange={setAddEmailOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Email Account
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Email Account</DialogTitle>
+                <DialogDescription>Add a new email account to sell to users</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <Label>Email Address</Label>
+                  <Input
+                    value={newEmail.emailAddress}
+                    onChange={(e) => setNewEmail({ ...newEmail, emailAddress: e.target.value })}
+                    placeholder="user@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Password</Label>
+                  <Input
+                    type="password"
+                    value={newEmail.password}
+                    onChange={(e) => setNewEmail({ ...newEmail, password: e.target.value })}
+                    placeholder="••••••••"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Domain</Label>
+                  <Select value={newEmail.domainId} onValueChange={(v) => setNewEmail({ ...newEmail, domainId: v })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select domain..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {domains.map((domain) => (
+                        <SelectItem key={domain._id} value={domain._id}>
+                          {domain.domain}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleAddEmail} disabled={submitting}>
+                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Add Email
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Email Accounts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {emails.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">No emails added yet</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Domain</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {emails.map((email) => (
-                    <TableRow key={email.id}>
-                      <TableCell className="font-mono text-sm">{email.emailAddress}</TableCell>
-                      <TableCell>{email.domain}</TableCell>
-                      <TableCell>
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-medium ${
-                            email.status === "available"
-                              ? "bg-green-100 text-green-700"
-                              : email.status === "sold"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-yellow-100 text-yellow-700"
-                          }`}
-                        >
-                          {email.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditEmail(email)}
-                        >
-                          <Edit2 className="h-4 w-4 text-blue-500" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteEmail(email.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </TableCell>
+          <Dialog open={editEmailOpen} onOpenChange={setEditEmailOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Email Account</DialogTitle>
+                <DialogDescription>Update email account details</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <Label>Email Address</Label>
+                  <Input
+                    value={newEmail.emailAddress}
+                    onChange={(e) => setNewEmail({ ...newEmail, emailAddress: e.target.value })}
+                    placeholder="user@example.com"
+                    disabled
+                  />
+                  <p className="text-xs text-muted-foreground">Email address cannot be changed</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Password (leave empty to keep current)</Label>
+                  <Input
+                    type="password"
+                    value={newEmail.password}
+                    onChange={(e) => setNewEmail({ ...newEmail, password: e.target.value })}
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleSaveEditEmail} disabled={submitting}>
+                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Save Changes
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Email Accounts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {emails.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">No emails added yet</p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Domain</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-      </TabsContent>
+                  </TableHeader>
+                  <TableBody>
+                    {emails.map((email) => (
+                      <TableRow key={email.id}>
+                        <TableCell className="font-mono text-sm">{email.emailAddress}</TableCell>
+                        <TableCell>{email.domain}</TableCell>
+                        <TableCell>
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-medium ${email.status === "available"
+                                ? "bg-green-100 text-green-700"
+                                : email.status === "sold"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : "bg-yellow-100 text-yellow-700"
+                              }`}
+                          >
+                            {email.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditEmail(email)}
+                          >
+                            <Edit2 className="h-4 w-4 text-blue-500" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteEmail(email.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       <ConfirmDialog

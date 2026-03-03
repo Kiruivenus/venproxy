@@ -7,41 +7,25 @@ function generateResetCode(): string {
   return Math.random().toString().substring(2, 8)
 }
 
-async function sendResetEmail(email: string, code: string): Promise<boolean> {
-  // Using Resend email service (free tier available)
-  // You can replace this with your preferred email service
-  try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: "noreply@raypoxyhub.com",
-        to: email,
-        subject: "RayProxy Hub - Password Reset Code",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #333;">Password Reset Request</h2>
-            <p>We received a request to reset your password. Use the code below to proceed:</p>
-            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-              <p style="font-size: 32px; font-weight: bold; color: #007bff; margin: 0; letter-spacing: 5px;">${code}</p>
-            </div>
-            <p style="color: #666; font-size: 14px;">This code expires in 30 minutes.</p>
-            <p style="color: #666; font-size: 14px;">If you didn't request this, you can safely ignore this email.</p>
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-            <p style="color: #999; font-size: 12px;">© ${new Date().getFullYear()} RayProxy Hub. All rights reserved.</p>
-          </div>
-        `,
-      }),
-    })
+import { sendEmail, getStyledEmailTemplate } from "@/lib/mail"
 
-    return response.ok
-  } catch (error) {
-    console.error("Email send error:", error)
-    return false
-  }
+async function sendResetEmail(email: string, code: string): Promise<boolean> {
+  const content = `
+    <h2>Password Reset Request</h2>
+    <p>We received a request to reset your password for your RayProxy Hub account. Use the verification code below to proceed with the reset:</p>
+    <div class="code-box">
+      <div class="code">${code}</div>
+    </div>
+    <p>This code is valid for <strong>30 minutes</strong>. If you did not make this request, please ignore this email or contact support if you have concerns.</p>
+  `
+  const footerText = "Premium Proxies, Instant Access."
+  const html = getStyledEmailTemplate("Password Reset", content, footerText)
+
+  return await sendEmail({
+    to: email,
+    subject: "RayProxy Hub - Password Reset Code",
+    html,
+  })
 }
 
 export async function POST(req: NextRequest) {

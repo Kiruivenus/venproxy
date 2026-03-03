@@ -44,6 +44,7 @@ export interface Order {
   mpesaCheckoutRequestId?: string
   mpesaReceiptNumber?: string
   status: "pending" | "paid" | "failed" | "cancelled" | "expired"
+  failureReason?: string
   createdAt: Date
   paidAt?: Date
   targetProxyId?: ObjectId // Store target proxy for M-Pesa orders
@@ -57,6 +58,7 @@ export interface TopUp {
   mpesaCheckoutRequestId?: string
   mpesaReceiptNumber?: string
   status: "pending" | "completed" | "failed"
+  failureReason?: string
   createdAt: Date
   completedAt?: Date
 }
@@ -126,6 +128,7 @@ export interface EmailOrder {
   mpesaCheckoutRequestId?: string
   mpesaReceiptNumber?: string
   status: "pending" | "paid" | "failed" | "cancelled"
+  failureReason?: string
   createdAt: Date
   paidAt?: Date
 }

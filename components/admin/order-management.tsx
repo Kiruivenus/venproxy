@@ -15,6 +15,7 @@ interface Order {
   price: number
   phoneNumber: string
   status: string
+  failureReason?: string
   createdAt: string
   paidAt?: string
 }
@@ -95,6 +96,7 @@ export function OrderManagement() {
                 <TableHead>Duration</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Reason</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -107,6 +109,9 @@ export function OrderManagement() {
                   <TableCell className="capitalize">{order.duration}</TableCell>
                   <TableCell>KES {order.price}</TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground italic max-w-[200px] truncate" title={order.failureReason}>
+                    {(order.status === "failed" || order.status === "cancelled") ? (order.failureReason || "-") : "-"}
+                  </TableCell>
                   <TableCell>
                     <Select value={order.status} onValueChange={(value) => handleStatusChange(order.id, value)}>
                       <SelectTrigger className="w-32">

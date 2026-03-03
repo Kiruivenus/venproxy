@@ -66,7 +66,7 @@ export function PricingManagement() {
     title: string
     description: string
     onConfirm: () => void
-  }>({ open: false, title: "", description: "", onConfirm: () => {} })
+  }>({ open: false, title: "", description: "", onConfirm: () => { } })
 
   const [newPricing, setNewPricing] = useState({
     country: "",
@@ -289,6 +289,19 @@ export function PricingManagement() {
     })
   }
 
+  const handleToggleEmailPricingEnabled = async (id: string, isEnabled: boolean) => {
+    try {
+      await fetch(`/api/admin/emails/pricing/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isEnabled }),
+      })
+      fetchData()
+    } catch (error) {
+      console.error("Failed to update email pricing:", error)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -300,43 +313,213 @@ export function PricingManagement() {
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="proxy">Proxy Pricing</TabsTrigger>
-        <TabsTrigger value="email">Email Pricing</TabsTrigger>
-      </TabsList>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="proxy">Proxy Pricing</TabsTrigger>
+          <TabsTrigger value="email">Email Pricing</TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="proxy" className="space-y-6">
-        <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Country Pricing
-            </Button>
-          </DialogTrigger>
+        <TabsContent value="proxy" className="space-y-6">
+          <Dialog open={addOpen} onOpenChange={setAddOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Country Pricing
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Country Pricing</DialogTitle>
+                <DialogDescription>Set daily proxy price for a country</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Country</Label>
+                    <Input
+                      value={newPricing.country}
+                      onChange={(e) => setNewPricing({ ...newPricing, country: e.target.value })}
+                      placeholder="Kenya"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Country Code</Label>
+                    <Input
+                      value={newPricing.countryCode}
+                      onChange={(e) => setNewPricing({ ...newPricing, countryCode: e.target.value })}
+                      placeholder="KE"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Daily Price (KES)</Label>
+                  <Input
+                    type="number"
+                    value={newPricing.daily}
+                    onChange={(e) => setNewPricing({ ...newPricing, daily: e.target.value })}
+                    placeholder="50"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleAddPricing} disabled={submitting}>
+                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Add Pricing
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Country Pricing</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {pricing.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">No pricing configured yet</p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Country</TableHead>
+                      <TableHead>Daily Price</TableHead>
+                      <TableHead>Enabled</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pricing.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell>
+                          {item.country} ({item.countryCode})
+                        </TableCell>
+                        <TableCell>KES {item.daily}</TableCell>
+                        <TableCell>
+                          <Switch
+                            checked={item.isEnabled}
+                            onCheckedChange={(checked) => handleToggleEnabled(item.id, checked)}
+                          />
+                        </TableCell>
+                        <TableCell className="flex gap-2">
+                          <Button variant="ghost" size="icon" onClick={() => handleEditProxyPricing(item)}>
+                            <Edit2 className="h-4 w-4 text-blue-500" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="email" className="space-y-6">
+          <Dialog open={addEmailPricingOpen} onOpenChange={setAddEmailPricingOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Email Domain Pricing
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Email Domain Pricing</DialogTitle>
+                <DialogDescription>Set price per email for a domain</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <Label>Email Domain</Label>
+                  <Select value={newEmailPricing.domainId} onValueChange={(v) => setNewEmailPricing({ ...newEmailPricing, domainId: v })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select domain..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {emailDomains.map((domain) => (
+                        <SelectItem key={domain._id} value={domain._id}>
+                          {domain.domain}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Price per Email (KES)</Label>
+                  <Input
+                    type="number"
+                    value={newEmailPricing.pricePerEmail}
+                    onChange={(e) => setNewEmailPricing({ ...newEmailPricing, pricePerEmail: e.target.value })}
+                    placeholder="100"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleAddEmailPricing} disabled={submitting}>
+                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Add Pricing
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Email Domain Pricing</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {emailPricing.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">No email pricing configured yet</p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Domain</TableHead>
+                      <TableHead>Price per Email</TableHead>
+                      <TableHead>Enabled</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {emailPricing.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-accent" />
+                          {item.domain}
+                        </TableCell>
+                        <TableCell>KES {item.pricePerEmail}</TableCell>
+                        <TableCell>
+                          <Switch
+                            checked={item.isEnabled}
+                            onCheckedChange={(checked) => handleToggleEmailPricingEnabled(item.id, checked)}
+                          />
+                        </TableCell>
+                        <TableCell className="flex gap-2">
+                          <Button variant="ghost" size="icon" onClick={() => handleEditEmailPricing(item)}>
+                            <Edit2 className="h-4 w-4 text-blue-500" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteEmailPricing(item.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <Dialog open={editProxyPricingOpen} onOpenChange={setEditProxyPricingOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Country Pricing</DialogTitle>
-            <DialogDescription>Set daily proxy price for a country</DialogDescription>
+            <DialogTitle>Edit Country Pricing</DialogTitle>
+            <DialogDescription>Update daily proxy price for {editingProxyPricing?.country}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Country</Label>
-                <Input
-                  value={newPricing.country}
-                  onChange={(e) => setNewPricing({ ...newPricing, country: e.target.value })}
-                  placeholder="Kenya"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Country Code</Label>
-                <Input
-                  value={newPricing.countryCode}
-                  onChange={(e) => setNewPricing({ ...newPricing, countryCode: e.target.value })}
-                  placeholder="KE"
-                />
-              </div>
-            </div>
             <div className="space-y-2">
               <Label>Daily Price (KES)</Label>
               <Input
@@ -348,206 +531,39 @@ export function PricingManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleAddPricing} disabled={submitting}>
+            <Button onClick={handleSaveEditProxyPricing} disabled={submitting}>
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Pricing
+              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Country Pricing</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {pricing.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">No pricing configured yet</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Country</TableHead>
-                  <TableHead>Daily Price</TableHead>
-                  <TableHead>Enabled</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pricing.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      {item.country} ({item.countryCode})
-                    </TableCell>
-                    <TableCell>KES {item.daily}</TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={item.isEnabled}
-                        onCheckedChange={(checked) => handleToggleEnabled(item.id, checked)}
-                      />
-                    </TableCell>
-                    <TableCell className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEditProxyPricing(item)}>
-                        <Edit2 className="h-4 w-4 text-blue-500" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-      </TabsContent>
-
-      <TabsContent value="email" className="space-y-6">
-        <Dialog open={addEmailPricingOpen} onOpenChange={setAddEmailPricingOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Email Domain Pricing
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Email Domain Pricing</DialogTitle>
-              <DialogDescription>Set price per email for a domain</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label>Email Domain</Label>
-                <Select value={newEmailPricing.domainId} onValueChange={(v) => setNewEmailPricing({ ...newEmailPricing, domainId: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select domain..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {emailDomains.map((domain) => (
-                      <SelectItem key={domain._id} value={domain._id}>
-                        {domain.domain}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Price per Email (KES)</Label>
-                <Input
-                  type="number"
-                  value={newEmailPricing.pricePerEmail}
-                  onChange={(e) => setNewEmailPricing({ ...newEmailPricing, pricePerEmail: e.target.value })}
-                  placeholder="100"
-                />
-              </div>
+      <Dialog open={editEmailPricingOpen} onOpenChange={setEditEmailPricingOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Email Pricing</DialogTitle>
+            <DialogDescription>Update price for {editingEmailPricing?.domain}</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>Price Per Email (KES)</Label>
+              <Input
+                type="number"
+                value={newEmailPricing.pricePerEmail}
+                onChange={(e) => setNewEmailPricing({ ...newEmailPricing, pricePerEmail: e.target.value })}
+                placeholder="10"
+              />
             </div>
-            <DialogFooter>
-              <Button onClick={handleAddEmailPricing} disabled={submitting}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Add Pricing
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Email Domain Pricing</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {emailPricing.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">No email pricing configured yet</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Domain</TableHead>
-                    <TableHead>Price per Email</TableHead>
-                    <TableHead>Enabled</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {emailPricing.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-accent" />
-                        {item.domain}
-                      </TableCell>
-                      <TableCell>KES {item.pricePerEmail}</TableCell>
-                      <TableCell>
-                        <Switch checked={item.isEnabled} />
-                      </TableCell>
-                      <TableCell className="flex gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEditEmailPricing(item)}>
-                          <Edit2 className="h-4 w-4 text-blue-500" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteEmailPricing(item.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
-
-    <Dialog open={editProxyPricingOpen} onOpenChange={setEditProxyPricingOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit Country Pricing</DialogTitle>
-          <DialogDescription>Update daily proxy price for {editingProxyPricing?.country}</DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="space-y-2">
-            <Label>Daily Price (KES)</Label>
-            <Input
-              type="number"
-              value={newPricing.daily}
-              onChange={(e) => setNewPricing({ ...newPricing, daily: e.target.value })}
-              placeholder="50"
-            />
           </div>
-        </div>
-        <DialogFooter>
-          <Button onClick={handleSaveEditProxyPricing} disabled={submitting}>
-            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Changes
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-
-    <Dialog open={editEmailPricingOpen} onOpenChange={setEditEmailPricingOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit Email Pricing</DialogTitle>
-          <DialogDescription>Update price for {editingEmailPricing?.domain}</DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="space-y-2">
-            <Label>Price Per Email (KES)</Label>
-            <Input
-              type="number"
-              value={newEmailPricing.pricePerEmail}
-              onChange={(e) => setNewEmailPricing({ ...newEmailPricing, pricePerEmail: e.target.value })}
-              placeholder="10"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button onClick={handleSaveEditEmailPricing} disabled={submitting}>
-            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Changes
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <Button onClick={handleSaveEditEmailPricing} disabled={submitting}>
+              {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDialog
         open={confirmDialog.open}

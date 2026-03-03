@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getDb } from "@/lib/mongodb"
+import { type Db, ObjectId } from "mongodb"
 import type { Order, Proxy, ProxyPurchase, TopUp } from "@/lib/types"
-import { ObjectId } from "mongodb"
 
-async function findAvailableProxyForCallback(db: any, country: string, userId: ObjectId) {
+async function findAvailableProxyForCallback(db: Db, country: string, userId: ObjectId) {
   const userPurchases = await db
     .collection<ProxyPurchase>("purchases")
     .find({
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ResultCode: 0, ResultDesc: "Accepted" })
     }
 
-    const { CheckoutRequestID, ResultCode, CallbackMetadata } = Body.stkCallback
+    const { CheckoutRequestID, ResultCode, ResultDesc, CallbackMetadata } = Body.stkCallback
 
     const db = await getDb()
 
@@ -123,13 +123,22 @@ export async function POST(request: NextRequest) {
           {
             $set: {
               status: proxy ? "paid" : "failed",
+              failureReason: proxy ? undefined : "No proxies available in this country",
               mpesaReceiptNumber: receiptNumber,
               paidAt: new Date(),
             },
           },
         )
       } else {
-        await db.collection<Order>("orders").updateOne({ _id: order._id }, { $set: { status: "failed" } })
+        await db.collection<Order>("orders").updateOne(
+          { _id: order._id },
+          {
+            $set: {
+              status: "failed",
+              failureReason: ResultDesc,
+            },
+          },
+        )
       }
     } else if (topUp) {
       // Handle top-up payment
@@ -148,7 +157,15 @@ export async function POST(request: NextRequest) {
           },
         )
       } else {
-        await db.collection<TopUp>("topups").updateOne({ _id: topUp._id }, { $set: { status: "failed" } })
+        await db.collection<TopUp>("topups").updateOne(
+          { _id: topUp._id },
+          {
+            $set: {
+              status: "failed",
+              failureReason: ResultDesc,
+            },
+          },
+        )
       }
     } else {
       // Handle email order payment
@@ -207,11 +224,24 @@ export async function POST(request: NextRequest) {
             // Not enough emails available
             await db.collection("emailOrders").updateOne(
               { _id: emailOrder._id },
-              { $set: { status: "failed" } }
+              {
+                $set: {
+                  status: "failed",
+                  failureReason: "Insufficient emails available for this domain",
+                },
+              }
             )
           }
         } else {
-          await db.collection("emailOrders").updateOne({ _id: emailOrder._id }, { $set: { status: "failed" } })
+          await db.collection("emailOrders").updateOne(
+            { _id: emailOrder._id },
+            {
+              $set: {
+                status: "failed",
+                failureReason: ResultDesc,
+              },
+            }
+          )
         }
       }
     }
