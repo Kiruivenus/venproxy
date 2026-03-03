@@ -16,7 +16,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Loader2, Search, UserX, UserCheck, Shield, Users } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Loader2, Search, UserX, UserCheck, Shield, Users, ArrowUpRight, ArrowDownLeft, Wallet } from "lucide-react"
 
 interface User {
   id: string
@@ -38,6 +45,12 @@ export function UserManagement() {
     user: null,
     action: "ban",
   })
+  const [historyModal, setHistoryModal] = useState<{ open: boolean; user: User | null }>({
+    open: false,
+    user: null,
+  })
+  const [transactions, setTransactions] = useState<any[]>([])
+  const [loadingTransactions, setLoadingTransactions] = useState(false)
 
   useEffect(() => {
     fetchUsers()
@@ -54,6 +67,27 @@ export function UserManagement() {
       setLoading(false)
     }
   }
+
+  const fetchTransactions = async (userId: string) => {
+    setLoadingTransactions(true)
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/transactions`)
+      const data = await res.json()
+      setTransactions(data.transactions || [])
+    } catch (error) {
+      console.error("Failed to fetch transactions:", error)
+    } finally {
+      setLoadingTransactions(false)
+    }
+  }
+
+  useEffect(() => {
+    if (historyModal.user) {
+      fetchTransactions(historyModal.user.id)
+    } else {
+      setTransactions([])
+    }
+  }, [historyModal.user])
 
   const handleBanAction = async () => {
     if (!confirmDialog.user) return
@@ -179,7 +213,11 @@ export function UserManagement() {
                   </TableRow>
                 ) : (
                   filteredUsers.map((user) => (
-                    <TableRow key={user.id}>
+                    <TableRow
+                      key={user.id}
+                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setHistoryModal({ open: true, user })}
+                    >
                       <TableCell>
                         <div>
                           <p className="font-medium">{user.name}</p>
@@ -206,13 +244,14 @@ export function UserManagement() {
                             variant={user.isBanned ? "outline" : "destructive"}
                             size="sm"
                             disabled={actionLoading === user.id}
-                            onClick={() =>
+                            onClick={(e) => {
+                              e.stopPropagation()
                               setConfirmDialog({
                                 open: true,
                                 user,
                                 action: user.isBanned ? "unban" : "ban",
                               })
-                            }
+                            }}
                           >
                             {actionLoading === user.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
@@ -265,6 +304,74 @@ export function UserManagement() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Transaction History Modal */}
+      <Dialog open={historyModal.open} onOpenChange={(open) => setHistoryModal({ ...historyModal, open })}>
+        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0 overflow-hidden">
+          <DialogHeader className="p-6 pb-2">
+            <DialogTitle className="flex items-center gap-2">
+              <Wallet className="h-5 w-5 text-primary" />
+              Transaction History
+            </DialogTitle>
+            <DialogDescription>
+              Showing full financial history for {historyModal.user?.name} ({historyModal.user?.email})
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-y-auto p-6 pt-2">
+            {loadingTransactions ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <p className="text-sm text-muted-foreground animate-pulse">Loading financial records...</p>
+              </div>
+            ) : transactions.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-2 text-center">
+                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-2">
+                  <ArrowUpRight className="h-6 w-6 text-muted-foreground opacity-20" />
+                </div>
+                <p className="font-medium">No transactions found</p>
+                <p className="text-sm text-muted-foreground">This user has not made any purchases or top-ups yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {transactions.map((t) => (
+                  <div key={t.id} className="flex items-center justify-between p-4 rounded-xl border bg-card hover:shadow-sm transition-all duration-200">
+                    <div className="flex items-center gap-4">
+                      <div className={`h-10 w-10 rounded-full flex items-center justify-center ${t.isNegative ? 'bg-destructive/10 text-destructive' : 'bg-green-500/10 text-green-500'}`}>
+                        {t.isNegative ? <ArrowDownLeft className="h-5 w-5" /> : <ArrowUpRight className="h-5 w-5" />}
+                      </div>
+                      <div>
+                        <p className="font-semibold">{t.description}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(t.date).toLocaleDateString()} at {new Date(t.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                          {t.mpesaCode && (
+                            <>
+                              <span className="text-xs text-muted-foreground">•</span>
+                              <Badge variant="outline" className="text-[10px] font-mono py-0 h-4 border-primary/20 bg-primary/5">
+                                {t.mpesaCode}
+                              </Badge>
+                            </>
+                          )}
+                          <Badge variant="secondary" className="text-[10px] py-0 h-4 uppercase">
+                            {t.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-lg font-bold tracking-tight ${t.isNegative ? 'text-destructive' : 'text-green-500'}`}>
+                        {t.isNegative ? '-' : '+'} KES {t.amount.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -5,11 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Loader2 } from "lucide-react"
+import { Loader2, Copy, Check } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface Order {
   id: string
   userId: string
+  userEmail: string
   country: string
   duration: string
   price: number
@@ -23,6 +25,7 @@ interface Order {
 export function OrderManagement() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchOrders()
@@ -51,6 +54,12 @@ export function OrderManagement() {
     } catch (error) {
       console.error("Failed to update order:", error)
     }
+  }
+
+  const handleCopyEmail = (email: string, id: string) => {
+    navigator.clipboard.writeText(email)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
   }
 
   const getStatusBadge = (status: string) => {
@@ -92,6 +101,7 @@ export function OrderManagement() {
               <TableRow>
                 <TableHead>Date</TableHead>
                 <TableHead>Phone</TableHead>
+                <TableHead>User</TableHead>
                 <TableHead>Country</TableHead>
                 <TableHead>Duration</TableHead>
                 <TableHead>Price</TableHead>
@@ -105,6 +115,23 @@ export function OrderManagement() {
                 <TableRow key={order.id}>
                   <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>{order.phoneNumber}</TableCell>
+                  <TableCell className="max-w-[200px]" title={order.userEmail}>
+                    <div className="flex items-center gap-2 group">
+                      <span className="truncate flex-1">{order.userEmail}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleCopyEmail(order.userEmail, order.id)}
+                      >
+                        {copiedId === order.id ? (
+                          <Check className="h-3 w-3 text-green-500" />
+                        ) : (
+                          <Copy className="h-3 w-3 text-muted-foreground" />
+                        )}
+                      </Button>
+                    </div>
+                  </TableCell>
                   <TableCell>{order.country}</TableCell>
                   <TableCell className="capitalize">{order.duration}</TableCell>
                   <TableCell>KES {order.price}</TableCell>

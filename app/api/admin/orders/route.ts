@@ -8,12 +8,31 @@ export async function GET() {
     await requireAdmin()
 
     const db = await getDb()
-    const orders = await db.collection<Order>("orders").find().sort({ createdAt: -1 }).toArray()
+    const orders = await db.collection("orders").aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$userDetails",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $sort: { createdAt: -1 }
+      }
+    ]).toArray()
 
     return NextResponse.json({
       orders: orders.map((o) => ({
         id: o._id.toString(),
         userId: o.userId.toString(),
+        userEmail: o.userDetails?.email || "Unknown User",
         country: o.country,
         duration: o.duration,
         price: o.price,
