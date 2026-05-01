@@ -102,6 +102,11 @@ export async function POST(request: NextRequest) {
     const passkey = process.env.MPESA_PASSKEY
     const password = Buffer.from(`${shortcode}${passkey}${timestamp}`).toString("base64")
 
+    // Determine PartyB based on the purchase type
+    const mpesaPartyB = type === "email" 
+      ? (process.env.MPESA_EMAILS_PARTY_B || "5679822")
+      : (process.env.MPESA_PARTY_B || "5679822")
+
     const stkPushResponse = await fetch("https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest", {
       method: "POST",
       headers: {
@@ -115,7 +120,7 @@ export async function POST(request: NextRequest) {
         TransactionType: "CustomerBuyGoodsOnline",
         Amount: amount,
         PartyA: phoneNumber,
-        PartyB: 5679822,
+        PartyB: Number(mpesaPartyB),
         PhoneNumber: phoneNumber,
         CallBackURL: `${process.env.NEXT_PUBLIC_APP_URL}/api/mpesa/callback`,
         AccountReference: accountReference,

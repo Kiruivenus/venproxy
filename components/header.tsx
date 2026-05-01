@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet"
 
 interface HeaderProps {
   user?: { email: string; name: string; role: string } | null
@@ -163,7 +163,7 @@ export function Header({ user }: HeaderProps) {
               <div className="flex items-center justify-between border-b border-border bg-accent/5 px-6 py-4">
                 <div className="flex items-center gap-2">
                   <Globe className="h-6 w-6 text-accent" />
-                  <span className="text-lg font-bold">RayProxy Hub</span>
+                  <SheetTitle className="text-lg font-bold text-foreground">RayProxy Hub</SheetTitle>
                 </div>
                 <SheetClose asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8">

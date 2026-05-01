@@ -238,7 +238,7 @@ export default async function FAQPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Header user={session?.user} />
+      <Header user={session?.user ? { email: session.user.email, name: session.user.name, role: session.user.role } : null} />
 
       <div className="border-b border-border">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">

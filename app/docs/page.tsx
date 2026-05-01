@@ -42,7 +42,7 @@ export default async function DocsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header user={session?.user} />
+      <Header user={session?.user ? { email: session.user.email, name: session.user.name, role: session.user.role } : null} />
 
       <main className="container mx-auto px-4 py-12">
         {/* Hero */}

@@ -80,16 +80,16 @@ export function DashboardTabs() {
 
   return (
     <Tabs defaultValue="active" className="w-full">
-      <TabsList className="grid w-full max-w-2xl grid-cols-3">
-        <TabsTrigger value="active" className="gap-2">
+      <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-zinc-950/40 backdrop-blur-md border border-border/40 h-auto p-1 rounded-xl">
+        <TabsTrigger value="active" className="gap-2 py-2.5 rounded-lg data-[state=active]:bg-accent data-[state=active]:text-background data-[state=active]:shadow-md transition-all">
           <Package className="h-4 w-4" />
           Active ({activeProxies.length})
         </TabsTrigger>
-        <TabsTrigger value="expired" className="gap-2">
+        <TabsTrigger value="expired" className="gap-2 py-2.5 rounded-lg data-[state=active]:bg-accent data-[state=active]:text-background data-[state=active]:shadow-md transition-all">
           <Clock className="h-4 w-4" />
           Expired ({expiredProxies.length})
         </TabsTrigger>
-        <TabsTrigger value="emails" className="gap-2">
+        <TabsTrigger value="emails" className="gap-2 py-2.5 rounded-lg data-[state=active]:bg-accent data-[state=active]:text-background data-[state=active]:shadow-md transition-all">
           <Mail className="h-4 w-4" />
           Emails ({purchasedEmails.length})
         </TabsTrigger>
@@ -97,7 +97,7 @@ export function DashboardTabs() {
 
       <TabsContent value="active" className="mt-6">
         {activeProxies.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-border py-12 text-center">
+          <div className="rounded-xl border border-dashed border-border/50 bg-zinc-950/40 backdrop-blur-md py-16 text-center shadow-lg transition-all duration-300 hover:border-accent/30 hover:bg-zinc-950/60">
             <Package className="mx-auto h-12 w-12 text-muted-foreground" />
             <h3 className="mt-4 text-lg font-medium">No active proxies</h3>
             <p className="mt-2 text-sm text-muted-foreground">Purchase a proxy to get started</p>
@@ -113,7 +113,7 @@ export function DashboardTabs() {
 
       <TabsContent value="expired" className="mt-6">
         {expiredProxies.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-border py-12 text-center">
+          <div className="rounded-xl border border-dashed border-border/50 bg-zinc-950/40 backdrop-blur-md py-16 text-center shadow-lg transition-all duration-300 hover:border-accent/30 hover:bg-zinc-950/60">
             <Clock className="mx-auto h-12 w-12 text-muted-foreground" />
             <h3 className="mt-4 text-lg font-medium">No expired proxies</h3>
             <p className="mt-2 text-sm text-muted-foreground">Your expired proxies will appear here</p>
@@ -129,7 +129,7 @@ export function DashboardTabs() {
 
       <TabsContent value="emails" className="mt-6">
         {purchasedEmails.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-border py-12 text-center">
+          <div className="rounded-xl border border-dashed border-border/50 bg-zinc-950/40 backdrop-blur-md py-16 text-center shadow-lg transition-all duration-300 hover:border-accent/30 hover:bg-zinc-950/60">
             <Mail className="mx-auto h-12 w-12 text-muted-foreground" />
             <h3 className="mt-4 text-lg font-medium">No purchased emails</h3>
             <p className="mt-2 text-sm text-muted-foreground">Your purchased emails will appear here</p>
@@ -159,11 +159,11 @@ export function DashboardTabs() {
               }
 
               return (
-                <Card key={email.id} className="overflow-hidden border-l-4 border-l-accent">
+                <Card key={email.id} className="overflow-hidden border-l-4 border-l-accent bg-zinc-950/40 backdrop-blur-md border-y border-r border-border/40 shadow-xl transition-all duration-300 hover:shadow-accent/5">
                   <CardContent className="p-5">
                     <div className="space-y-4">
                       {/* Email Address */}
-                      <div className="flex items-center justify-between gap-3 rounded-md bg-muted/50 p-3">
+                      <div className="flex items-center justify-between gap-3 rounded-lg bg-background/50 border border-border/30 p-3">
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-muted-foreground mb-1">Email Address</p>
                           <p className="font-semibold text-sm break-all">{email.emailAddress}</p>
@@ -180,7 +180,7 @@ export function DashboardTabs() {
                       </div>
 
                       {/* Password */}
-                      <div className="flex items-center justify-between gap-3 rounded-md bg-muted/50 p-3">
+                      <div className="flex items-center justify-between gap-3 rounded-lg bg-background/50 border border-border/30 p-3">
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-muted-foreground mb-1">Password</p>
                           <p className="font-semibold text-sm font-mono">
@@ -213,12 +213,12 @@ export function DashboardTabs() {
 
                       {/* Server Info */}
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-md bg-muted/50 p-3">
+                        <div className="rounded-lg bg-background/50 border border-border/30 p-3">
                           <p className="text-xs text-muted-foreground mb-1">Domain</p>
                           <p className="font-medium text-sm">{email.domain}</p>
                         </div>
                         {email.server && (
-                          <div className="flex items-center justify-between gap-2 rounded-md bg-muted/50 p-3">
+                          <div className="flex items-center justify-between gap-2 rounded-lg bg-background/50 border border-border/30 p-3">
                             <div className="flex-1 min-w-0">
                               <p className="text-xs text-muted-foreground mb-1">Server</p>
                               <p className="font-mono text-xs break-all">{email.server}</p>

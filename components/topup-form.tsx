@@ -128,7 +128,7 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
   }
 
   return (
-    <Card>
+    <Card className="bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -173,6 +173,7 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
                   onChange={(e) => setAmount(e.target.value)}
                   min={10}
                   required
+                  className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
                 />
                 <div className="flex flex-wrap gap-2">
                   {quickAmounts.map((amt) => (
@@ -182,7 +183,7 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
                       variant="outline"
                       size="sm"
                       onClick={() => handleQuickAmount(amt)}
-                      className={amount === amt.toString() ? "border-accent bg-accent/10" : ""}
+                      className={amount === amt.toString() ? "border-accent bg-accent/10 transition-colors" : "bg-zinc-950/40 backdrop-blur-md border-border/50 hover:bg-accent/5 transition-colors"}
                     >
                       KES {amt}
                     </Button>
@@ -199,6 +200,7 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   required
+                  className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
                 />
                 <p className="text-xs text-muted-foreground">You will receive an STK push on this number</p>
               </div>
@@ -206,8 +208,8 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
           )}
         </CardContent>
         {paymentStatus !== "success" && (
-          <CardFooter>
-            <Button type="submit" className="w-full" disabled={loading || !amount || !phoneNumber}>
+          <CardFooter className="pt-6 border-t border-border/10 mt-2">
+            <Button type="submit" className="w-full h-12 bg-accent hover:bg-accent/90 text-background font-semibold text-base transition-all duration-300 shadow-[0_0_15px_rgba(var(--color-accent),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-accent),0.5)] rounded-xl" disabled={loading || !amount || !phoneNumber}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

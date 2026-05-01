@@ -212,9 +212,9 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
 
   if (pricing.length === 0) {
     return (
-      <Card>
+      <Card className="bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl">
         <CardContent className="py-12 text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground" />
+          <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-muted-foreground">No proxies available at the moment. Please check back later.</p>
         </CardContent>
       </Card>
@@ -222,7 +222,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
   }
 
   return (
-    <Card>
+    <Card className="bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl">
       <CardHeader>
         <CardTitle>Select Your Proxy</CardTitle>
         <CardDescription>Choose a country for your daily proxy access</CardDescription>
@@ -274,7 +274,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
               <div className="space-y-2">
                 <Label>Country</Label>
                 <Select value={country} onValueChange={setCountry}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300">
                     <SelectValue placeholder="Select a country" />
                   </SelectTrigger>
                   <SelectContent>
@@ -343,7 +343,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
                         />
                         <Label
                           htmlFor="balance"
-                          className={`flex cursor-pointer flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent ${
+                          className={`flex cursor-pointer flex-col items-center justify-between rounded-xl border-2 border-border/50 bg-zinc-950/40 backdrop-blur-md p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent peer-data-[state=checked]:bg-accent/5 transition-all duration-300 ${
                             !hasEnoughBalance && price > 0 ? "cursor-not-allowed opacity-50" : ""
                           }`}
                         >
@@ -358,7 +358,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
                         <RadioGroupItem value="mpesa" id="mpesa" className="peer sr-only" />
                         <Label
                           htmlFor="mpesa"
-                          className="flex cursor-pointer flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent"
+                          className="flex cursor-pointer flex-col items-center justify-between rounded-xl border-2 border-border/50 bg-zinc-950/40 backdrop-blur-md p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent peer-data-[state=checked]:bg-accent/5 transition-all duration-300"
                         >
                           <Smartphone className="mb-2 h-6 w-6" />
                           <span className="text-sm font-medium">M-Pesa</span>
@@ -377,6 +377,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         required
+                        className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
                       />
                       <p className="text-xs text-muted-foreground">You will receive an STK push on this number</p>
                     </div>
@@ -387,10 +388,10 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
           )}
         </CardContent>
         {paymentStatus !== "success" && (
-          <CardFooter>
+          <CardFooter className="pt-6 border-t border-border/10 mt-2">
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-12 bg-accent hover:bg-accent/90 text-background font-semibold text-base transition-all duration-300 shadow-[0_0_15px_rgba(var(--color-accent),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-accent),0.5)] rounded-xl"
               disabled={
                 loading ||
                 !country ||

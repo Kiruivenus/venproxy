@@ -14,7 +14,11 @@ interface SupportConfig {
   telegramGroup: string
 }
 
-export function SupportContent() {
+interface SupportContentProps {
+  user?: { email: string; name: string; role: string } | null
+}
+
+export function SupportContent({ user }: SupportContentProps) {
   const [supportConfig, setSupportConfig] = useState<SupportConfig>({
     whatsappNumber: "",
     whatsappGroup: "",
@@ -53,7 +57,7 @@ export function SupportContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header user={null} />
+      <Header user={user} />
 
       <main className="container mx-auto px-4 py-12">
         <div className="mb-12 text-center">

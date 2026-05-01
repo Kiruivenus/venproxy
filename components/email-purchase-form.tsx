@@ -268,9 +268,9 @@ export function EmailPurchaseForm() {
 
   if (loading) {
     return (
-      <Card>
+      <Card className="bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl">
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </CardContent>
       </Card>
     )
@@ -278,9 +278,9 @@ export function EmailPurchaseForm() {
 
   if (domains.length === 0) {
     return (
-      <Card>
+      <Card className="bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl">
         <CardContent className="py-12 text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground" />
+          <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground/50" />
           <p className="mt-4 text-muted-foreground">No email domains available at the moment. Please check back later.</p>
         </CardContent>
       </Card>
@@ -288,7 +288,7 @@ export function EmailPurchaseForm() {
   }
 
   return (
-    <Card>
+    <Card className="bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl">
       <CardHeader>
         <CardTitle>Select Email Domain</CardTitle>
       </CardHeader>
@@ -384,7 +384,7 @@ export function EmailPurchaseForm() {
                         value={quantity}
                         onChange={(e) => handleQuantityChange(e.target.value)}
                         placeholder="Enter quantity"
-                        className="h-11"
+                        className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
                       />
                       <div className="whitespace-nowrap text-sm text-muted-foreground">
                         KES {selectedPricing.pricePerEmail}/email
@@ -434,7 +434,7 @@ export function EmailPurchaseForm() {
                         />
                         <Label
                           htmlFor="balance"
-                          className={`flex cursor-pointer flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent ${
+                          className={`flex cursor-pointer flex-col items-center justify-between rounded-xl border-2 border-border/50 bg-zinc-950/40 backdrop-blur-md p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent peer-data-[state=checked]:bg-accent/5 transition-all duration-300 ${
                             !hasEnoughBalance && totalPrice > 0 ? "cursor-not-allowed opacity-50" : ""
                           }`}
                         >
@@ -449,7 +449,7 @@ export function EmailPurchaseForm() {
                         <RadioGroupItem value="mpesa" id="mpesa" className="peer sr-only" />
                         <Label
                           htmlFor="mpesa"
-                          className="flex cursor-pointer flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent"
+                          className="flex cursor-pointer flex-col items-center justify-between rounded-xl border-2 border-border/50 bg-zinc-950/40 backdrop-blur-md p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent peer-data-[state=checked]:bg-accent/5 transition-all duration-300"
                         >
                           <Smartphone className="mb-2 h-6 w-6" />
                           <span className="text-sm font-medium">M-Pesa</span>
@@ -468,6 +468,7 @@ export function EmailPurchaseForm() {
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         required
+                        className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
                       />
                       <p className="text-xs text-muted-foreground">You will receive an STK push on this number</p>
                     </div>
@@ -478,10 +479,10 @@ export function EmailPurchaseForm() {
           )}
         </CardContent>
         {paymentStatus !== "success" && (
-          <CardFooter>
+          <CardFooter className="pt-6 border-t border-border/10 mt-2">
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-12 bg-accent hover:bg-accent/90 text-background font-semibold text-base transition-all duration-300 shadow-[0_0_15px_rgba(var(--color-accent),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-accent),0.5)] rounded-xl"
               disabled={
                 submitting ||
                 !selectedDomain ||

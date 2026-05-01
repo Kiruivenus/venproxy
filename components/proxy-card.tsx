@@ -46,7 +46,7 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
   const statusLabel = proxy.status === "dead" ? "Dead" : isExpired ? "Expired" : "Active"
 
   return (
-    <Card className={isExpired || proxy.status === "dead" ? "opacity-60" : ""}>
+    <Card className={`overflow-hidden bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl transition-all duration-300 hover:shadow-accent/5 hover:border-accent/20 ${isExpired || proxy.status === "dead" ? "opacity-60" : ""}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Globe className="h-4 w-4 text-accent" />
@@ -60,7 +60,7 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">IP:Port</span>
-            <code className="rounded bg-muted px-2 py-1 text-sm">
+            <code className="rounded-lg bg-background/50 border border-border/30 px-2 py-1 text-sm">
               {proxy.ip}:{proxy.port}
             </code>
           </div>
@@ -69,13 +69,13 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
             <>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Username</span>
-                <code className="rounded bg-muted px-2 py-1 text-sm">
+                <code className="rounded-lg bg-background/50 border border-border/30 px-2 py-1 text-sm">
                   {showCredentials ? proxy.username : "••••••"}
                 </code>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Password</span>
-                <code className="rounded bg-muted px-2 py-1 text-sm">
+                <code className="rounded-lg bg-background/50 border border-border/30 px-2 py-1 text-sm">
                   {showCredentials ? proxy.password : "••••••"}
                 </code>
               </div>
