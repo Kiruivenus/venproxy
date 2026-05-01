@@ -12,22 +12,46 @@ export async function GET() {
 
     const db = await getDb()
 
-    const orders = await db
+    const proxyOrders = await db
       .collection<Order>("orders")
       .find({ userId: session.user._id })
       .sort({ createdAt: -1 })
       .toArray()
 
+    const emailOrders = await db
+      .collection("emailOrders")
+      .find({ userId: session.user._id })
+      .sort({ createdAt: -1 })
+      .toArray()
+
+    const formattedProxyOrders = proxyOrders.map((o) => ({
+      id: o._id.toString(),
+      type: "proxy",
+      country: o.country,
+      duration: o.duration,
+      price: o.price,
+      status: o.status,
+      createdAt: o.createdAt,
+      paidAt: o.paidAt,
+    }))
+
+    const formattedEmailOrders = emailOrders.map((o) => ({
+      id: o._id.toString(),
+      type: "email",
+      domain: o.domain,
+      quantity: o.quantity,
+      price: o.totalPrice,
+      status: o.status,
+      createdAt: o.createdAt,
+      paidAt: o.paidAt,
+    }))
+
+    const allOrders = [...formattedProxyOrders, ...formattedEmailOrders].sort((a, b) => {
+      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+    })
+
     return NextResponse.json({
-      orders: orders.map((o) => ({
-        id: o._id.toString(),
-        country: o.country,
-        duration: o.duration,
-        price: o.price,
-        status: o.status,
-        createdAt: o.createdAt,
-        paidAt: o.paidAt,
-      })),
+      orders: allOrders,
     })
   } catch (error) {
     console.error("Orders fetch error:", error)
