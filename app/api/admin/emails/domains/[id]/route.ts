@@ -1,16 +1,15 @@
 import { getDb } from "@/lib/mongodb"
-import { getSession } from "@/lib/auth"
+import { requireAdmin } from "@/lib/auth"
 import { ObjectId } from "mongodb"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const session = await getSession()
-
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
-    }
+    const user = await requireAdmin()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const { domain, type, server } = await request.json()
 
@@ -31,7 +30,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     )
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message.includes("vercel resources exceeded") || error.message === "Forbidden" || error.message === "Unauthorized") {
+      return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
+    }
     console.error("[v0] Error updating email domain:", error)
     return NextResponse.json({ error: "Failed to update email domain" }, { status: 500 })
   }
@@ -40,11 +42,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const session = await getSession()
-
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
-    }
+    const user = await requireAdmin()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const db = await getDb()
     const result = await db.collection("emailDomains").deleteOne({
@@ -56,7 +57,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message.includes("vercel resources exceeded") || error.message === "Forbidden" || error.message === "Unauthorized") {
+      return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
+    }
     console.error("[v0] Error deleting email domain:", error)
     return NextResponse.json({ error: "Failed to delete email domain" }, { status: 500 })
   }
