@@ -34,6 +34,16 @@ export function Header({ user }: HeaderProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [balance, setBalance] = useState<number>(0)
+  const [isExpired, setIsExpired] = useState(false)
+
+  useEffect(() => {
+    if (user && (user.role === "admin" || user.role === "superadmin")) {
+      fetch("/api/subscription/status")
+        .then((res) => res.json())
+        .then((data) => setIsExpired(data.isExpired))
+        .catch(() => {})
+    }
+  }, [user])
 
   useEffect(() => {
     if (user) {
@@ -55,7 +65,13 @@ export function Header({ user }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="sticky top-0 z-50">
+      {isExpired && (user?.role === "admin" || user?.role === "superadmin") && (
+        <div className="bg-destructive text-destructive-foreground py-2 px-4 text-center font-bold text-sm">
+          internal error : vercel resources exceeded
+        </div>
+      )}
+      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Globe className="h-6 w-6 text-accent" />
@@ -119,6 +135,29 @@ export function Header({ user }: HeaderProps) {
                         <Link href="/admin" className="flex items-center gap-2">
                           <Shield className="h-4 w-4" />
                           Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {user.role === "superadmin" && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" className="flex items-center gap-2">
+                          <Shield className="h-4 w-4" />
+                          Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/settings" className="flex items-center gap-2">
+                          <span className="h-4 w-4">⚙️</span>
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/upgrade" className="flex items-center gap-2">
+                          <span className="h-4 w-4">⚡</span>
+                          Upgrade
                         </Link>
                       </DropdownMenuItem>
                     </>
@@ -288,6 +327,38 @@ export function Header({ user }: HeaderProps) {
                         </Link>
                       </>
                     )}
+                    {user.role === "superadmin" && (
+                      <>
+                        <div className="my-3 border-t border-border" />
+                        <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          SuperAdmin
+                        </p>
+                        <Link
+                          href="/admin"
+                          onClick={() => setOpen(false)}
+                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
+                        >
+                          <Shield className="h-5 w-5 text-accent" />
+                          <span className="font-medium">Admin Panel</span>
+                        </Link>
+                        <Link
+                          href="/admin/settings"
+                          onClick={() => setOpen(false)}
+                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
+                        >
+                          <span className="h-5 w-5 flex items-center justify-center">⚙️</span>
+                          <span className="font-medium">Settings</span>
+                        </Link>
+                        <Link
+                          href="/admin/upgrade"
+                          onClick={() => setOpen(false)}
+                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
+                        >
+                          <span className="h-5 w-5 flex items-center justify-center">⚡</span>
+                          <span className="font-medium">Upgrade</span>
+                        </Link>
+                      </>
+                    )}
 
                     <div className="mt-4 px-2">
                       <Button
@@ -327,5 +398,6 @@ export function Header({ user }: HeaderProps) {
         </div>
       </div>
     </header>
+    </div>
   )
 }

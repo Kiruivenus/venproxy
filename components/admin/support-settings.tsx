@@ -6,17 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Save } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
 
 export function SupportSettings() {
+  const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [settings, setSettings] = useState({
     whatsappNumber: "",
     whatsappGroup: "",
     telegramAgent: "",
     telegramGroup: "",
   })
+
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchSettings()
@@ -25,12 +28,12 @@ export function SupportSettings() {
   const fetchSettings = async () => {
     try {
       const res = await fetch("/api/admin/support/config")
-      if (res.ok) {
-        const data = await res.json()
-        setSettings(data.config || settings)
-      }
-    } catch (error) {
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to fetch support settings")
+      setSettings(data.config || settings)
+    } catch (error: any) {
       console.error("Failed to fetch support settings:", error)
+      setError(error.message)
     } finally {
       setLoading(false)
     }
@@ -46,16 +49,41 @@ export function SupportSettings() {
       })
 
       if (res.ok) {
-        setSuccess(true)
-        setTimeout(() => setSuccess(false), 2000)
+        toast({
+          title: "Success",
+          description: "Support settings updated successfully",
+        })
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to save settings",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to save settings:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
   }
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="rounded-full bg-destructive/10 p-4 mb-4">
+          <Save className="h-12 w-12 text-destructive" />
+        </div>
+        <h2 className="text-xl font-bold text-destructive">Error Loading Settings</h2>
+        <p className="text-muted-foreground mt-2">{error}</p>
+      </div>
+    )
+  }
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -123,7 +151,6 @@ export function SupportSettings() {
               <Save className="h-4 w-4" />
               Save Settings
             </Button>
-            {success && <p className="text-sm text-green-500 flex items-center">Settings saved successfully!</p>}
           </div>
         </CardContent>
       </Card>

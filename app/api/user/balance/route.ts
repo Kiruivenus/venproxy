@@ -12,7 +12,10 @@ export async function GET() {
     return NextResponse.json({
       balance: userData?.balance || 0,
     })
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
+      return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
+    }
     console.error("Fetch balance error:", error)
     return NextResponse.json({ error: "Failed to fetch balance" }, { status: 500 })
   }

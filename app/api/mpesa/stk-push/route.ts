@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getDb } from "@/lib/mongodb"
-import { getSession } from "@/lib/auth"
+import { requireAuth } from "@/lib/auth"
 import type { Order, TopUp } from "@/lib/types"
 import { ObjectId } from "mongodb"
 
@@ -21,10 +21,7 @@ async function getMpesaAccessToken(): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    const user = await requireAuth()
 
     const { orderId, topUpId, type } = await request.json()
 
@@ -43,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (orderId && type === "email") {
       const order = await db.collection("emailOrders").findOne({
         _id: new ObjectId(orderId),
-        userId: session.user._id,
+        userId: user._id,
         status: "pending",
       })
 
@@ -60,7 +57,7 @@ export async function POST(request: NextRequest) {
     } else if (orderId) {
       const order = await db.collection<Order>("orders").findOne({
         _id: new ObjectId(orderId),
-        userId: session.user._id,
+        userId: user._id,
         status: "pending",
       })
 
@@ -77,7 +74,7 @@ export async function POST(request: NextRequest) {
     } else {
       const topUp = await db.collection<TopUp>("topups").findOne({
         _id: new ObjectId(topUpId),
-        userId: session.user._id,
+        userId: user._id,
         status: "pending",
       })
 
@@ -143,7 +140,10 @@ export async function POST(request: NextRequest) {
     } else {
       return NextResponse.json({ error: "Failed to initiate payment" }, { status: 500 })
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message.includes("vercel resources exceeded")) {
+      return NextResponse.json({ error: error.message }, { status: 403 })
+    }
     console.error("STK Push error:", error)
     return NextResponse.json({ error: "Payment initiation failed" }, { status: 500 })
   }

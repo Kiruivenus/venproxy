@@ -1,16 +1,15 @@
 import { getDb } from "@/lib/mongodb"
-import { getSession } from "@/lib/auth"
+import { requireAdmin } from "@/lib/auth"
 import { ObjectId } from "mongodb"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const session = await getSession()
-
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
-    }
+    const user = await requireAdmin()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const { password } = await request.json()
 
@@ -38,11 +37,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const session = await getSession()
-
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
-    }
+    const user = await requireAdmin()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const db = await getDb()
     const result = await db.collection("emails").deleteOne({

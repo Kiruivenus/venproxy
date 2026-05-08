@@ -4,6 +4,10 @@ import { NextRequest, NextResponse } from "next/server"
 
 export async function GET() {
   try {
+    const { restrictIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictIfExpired()
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
+
     const db = await getDb()
     const pricing = await db
       .collection("emailPricing")

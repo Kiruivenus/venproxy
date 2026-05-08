@@ -25,16 +25,24 @@ interface AnalyticsData {
 export function Analytics() {
     const [data, setData] = useState<AnalyticsData | null>(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         fetch("/api/admin/analytics")
-            .then((res) => res.json())
+            .then(async (res) => {
+                const data = await res.json()
+                if (!res.ok) {
+                    throw new Error(data.error || "Failed to fetch analytics")
+                }
+                return data
+            })
             .then((data) => {
                 setData(data)
                 setLoading(false)
             })
             .catch((err) => {
                 console.error("Analytics fetch error:", err)
+                setError(err.message)
                 setLoading(false)
             })
     }, [])
@@ -43,6 +51,20 @@ export function Analytics() {
         return (
             <div className="flex h-[400px] items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-accent" />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex h-[400px] flex-col items-center justify-center gap-4 text-center">
+                <div className="rounded-full bg-destructive/10 p-4">
+                    <Globe className="h-12 w-12 text-destructive" />
+                </div>
+                <div>
+                    <h2 className="text-xl font-bold text-destructive">Error Loading Analytics</h2>
+                    <p className="text-muted-foreground mt-2">{error}</p>
+                </div>
             </div>
         )
     }

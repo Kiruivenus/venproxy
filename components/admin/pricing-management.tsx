@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select"
 import { Loader2, Plus, Trash2, Mail, Edit2 } from "lucide-react"
 import { ConfirmDialog } from "@/components/confirm-dialog"
+import { useToast } from "@/components/ui/use-toast"
 
 interface PricingItem {
   id: string
@@ -49,10 +50,12 @@ interface EmailPricingItem {
 }
 
 export function PricingManagement() {
+  const { toast } = useToast()
   const [pricing, setPricing] = useState<PricingItem[]>([])
   const [emailDomains, setEmailDomains] = useState<EmailDomain[]>([])
   const [emailPricing, setEmailPricing] = useState<EmailPricingItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [addOpen, setAddOpen] = useState(false)
   const [editProxyPricingOpen, setEditProxyPricingOpen] = useState(false)
   const [addEmailPricingOpen, setAddEmailPricingOpen] = useState(false)
@@ -91,29 +94,25 @@ export function PricingManagement() {
         fetch("/api/admin/emails/pricing"),
       ])
 
-      if (pricingRes.ok) {
-        const data = await pricingRes.json()
-        setPricing(data.pricing || [])
-      }
+      const [pricingData, domainsData, emailPricingData] = await Promise.all([
+        pricingRes.json(),
+        domainsRes.json(),
+        emailPricingRes.json()
+      ])
 
-      if (domainsRes.ok) {
-        const data = await domainsRes.json()
-        setEmailDomains(data.domains || [])
-      }
+      if (!pricingRes.ok) throw new Error(pricingData.error || "Failed to fetch pricing")
+      if (!domainsRes.ok) throw new Error(domainsData.error || "Failed to fetch domains")
+      if (!emailPricingRes.ok) throw new Error(emailPricingData.error || "Failed to fetch email pricing")
 
-      if (emailPricingRes.ok) {
-        const data = await emailPricingRes.json()
-        setEmailPricing(data.pricing || [])
-      }
-    } catch (error) {
+      setPricing(pricingData.pricing || [])
+      setEmailDomains(domainsData.domains || [])
+      setEmailPricing(emailPricingData.pricing || [])
+    } catch (error: any) {
       console.error("Failed to fetch data:", error)
+      setError(error.message)
     } finally {
       setLoading(false)
     }
-  }
-
-  const fetchPricing = async () => {
-    fetchData()
   }
 
   const handleAddPricing = async () => {
@@ -135,10 +134,22 @@ export function PricingManagement() {
           countryCode: "",
           daily: "",
         })
-        fetchPricing()
+        fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to add pricing",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to add pricing:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -146,12 +157,21 @@ export function PricingManagement() {
 
   const handleToggleEnabled = async (id: string, isEnabled: boolean) => {
     try {
-      await fetch(`/api/admin/pricing/${id}`, {
+      const res = await fetch(`/api/admin/pricing/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isEnabled }),
       })
-      fetchPricing()
+      if (res.ok) {
+        fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update pricing",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       console.error("Failed to update pricing:", error)
     }
@@ -184,10 +204,22 @@ export function PricingManagement() {
         setEditProxyPricingOpen(false)
         setEditingProxyPricing(null)
         setNewPricing({ country: "", countryCode: "", daily: "" })
-        fetchPricing()
+        fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update pricing",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to update pricing:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -201,10 +233,24 @@ export function PricingManagement() {
       onConfirm: async () => {
         setSubmitting(true)
         try {
-          await fetch(`/api/admin/pricing/${id}`, { method: "DELETE" })
-          fetchPricing()
+          const res = await fetch(`/api/admin/pricing/${id}`, { method: "DELETE" })
+          if (res.ok) {
+            fetchData()
+          } else {
+            const data = await res.json()
+            toast({
+              title: "Error",
+              description: data.error || "Failed to delete pricing",
+              variant: "destructive",
+            })
+          }
         } catch (error) {
           console.error("Failed to delete pricing:", error)
+          toast({
+            title: "Error",
+            description: "An unexpected error occurred",
+            variant: "destructive",
+          })
         } finally {
           setSubmitting(false)
         }
@@ -228,9 +274,21 @@ export function PricingManagement() {
         setAddEmailPricingOpen(false)
         setNewEmailPricing({ domainId: "", pricePerEmail: "" })
         fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to add email pricing",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to add email pricing:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -262,9 +320,21 @@ export function PricingManagement() {
         setEditingEmailPricing(null)
         setNewEmailPricing({ domainId: "", pricePerEmail: "" })
         fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update email pricing",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to update email pricing:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -278,10 +348,24 @@ export function PricingManagement() {
       onConfirm: async () => {
         setSubmitting(true)
         try {
-          await fetch(`/api/admin/emails/pricing/${id}`, { method: "DELETE" })
-          fetchData()
+          const res = await fetch(`/api/admin/emails/pricing/${id}`, { method: "DELETE" })
+          if (res.ok) {
+            fetchData()
+          } else {
+            const data = await res.json()
+            toast({
+              title: "Error",
+              description: data.error || "Failed to delete email pricing",
+              variant: "destructive",
+            })
+          }
         } catch (error) {
           console.error("Failed to delete email pricing:", error)
+          toast({
+            title: "Error",
+            description: "An unexpected error occurred",
+            variant: "destructive",
+          })
         } finally {
           setSubmitting(false)
         }
@@ -291,12 +375,21 @@ export function PricingManagement() {
 
   const handleToggleEmailPricingEnabled = async (id: string, isEnabled: boolean) => {
     try {
-      await fetch(`/api/admin/emails/pricing/${id}`, {
+      const res = await fetch(`/api/admin/emails/pricing/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isEnabled }),
       })
-      fetchData()
+      if (res.ok) {
+        fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update email pricing",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       console.error("Failed to update email pricing:", error)
     }
@@ -306,6 +399,18 @@ export function PricingManagement() {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="rounded-full bg-destructive/10 p-4 mb-4">
+          <Mail className="h-12 w-12 text-destructive" />
+        </div>
+        <h2 className="text-xl font-bold text-destructive">Error Loading Data</h2>
+        <p className="text-muted-foreground mt-2">{error}</p>
       </div>
     )
   }

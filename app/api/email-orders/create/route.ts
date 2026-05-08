@@ -1,15 +1,14 @@
 import { getDb } from "@/lib/mongodb"
-import { getSession } from "@/lib/auth"
+import { requireAuth } from "@/lib/auth"
 import { ObjectId } from "mongodb"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    const user = await requireAuth()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const { domainId, quantity, paymentMethod, phoneNumber } = await request.json()
 
@@ -47,11 +46,11 @@ export async function POST(request: NextRequest) {
 
     if (paymentMethod === "balance") {
       // Get user
-      const user = await db.collection("users").findOne({
-        email: session.user.email,
+      const userFull = await db.collection("users").findOne({
+        _id: user._id,
       })
 
-      if (!user || user.balance < totalPrice) {
+      if (!userFull || userFull.balance < totalPrice) {
         return NextResponse.json(
           { error: "Insufficient balance" },
           { status: 400 }
@@ -141,11 +140,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Get user ID
-      const user = await db.collection("users").findOne({
-        email: session.user.email,
-      })
-
+      // Use already authenticated user
       if (!user) {
         return NextResponse.json({ error: "User not found" }, { status: 404 })
       }
@@ -168,7 +163,10 @@ export async function POST(request: NextRequest) {
         orderId: order.insertedId.toString(),
       })
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message.includes("vercel resources exceeded")) {
+      return NextResponse.json({ error: error.message }, { status: 403 })
+    }
     console.error("[v0] Error creating email order:", error)
     return NextResponse.json({ error: "Failed to create order" }, { status: 500 })
   }

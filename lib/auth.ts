@@ -2,13 +2,14 @@ import { cookies } from "next/headers"
 import { getDb } from "./mongodb"
 import bcrypt from "bcryptjs"
 import { ObjectId } from "mongodb"
+import { checkSubscription, SUBSCRIPTION_ERROR } from "./subscription"
 
 export interface User {
   _id: ObjectId
   email: string
   password: string
   name: string
-  role: "user" | "admin"
+  role: "user" | "admin" | "superadmin"
   balance: number
   isBanned: boolean
   createdAt: Date
@@ -96,17 +97,36 @@ export async function destroySession(): Promise<void> {
   cookieStore.delete("session_token")
 }
 
+
+
 export async function requireAuth(): Promise<User> {
   const session = await getSession()
   if (!session) {
     throw new Error("Unauthorized")
   }
+
+  // Subscription check (Superadmin and Admin are exempt from the total lockout)
+  if (session.user.role !== "superadmin" && session.user.role !== "admin") {
+    const isActive = await checkSubscription()
+    if (!isActive) {
+      throw new Error(SUBSCRIPTION_ERROR)
+    }
+  }
+
   return session.user
 }
 
 export async function requireAdmin(): Promise<User> {
   const user = await requireAuth()
-  if (user.role !== "admin") {
+  if (user.role !== "admin" && user.role !== "superadmin") {
+    throw new Error("Forbidden")
+  }
+  return user
+}
+
+export async function requireSuperAdmin(): Promise<User> {
+  const user = await requireAuth()
+  if (user.role !== "superadmin") {
     throw new Error("Forbidden")
   }
   return user

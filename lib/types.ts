@@ -141,3 +141,12 @@ export interface SupportConfig {
   telegramGroup: string
   updatedAt: Date
 }
+
+export interface WebsiteSettings {
+  _id: ObjectId
+  subscriptionActive: boolean
+  subscriptionDuration: "1min" | "1day" | "1week" | "2weeks" | "1month"
+  subscriptionExpiresAt: Date
+  lastPaymentAt?: Date
+  updatedAt: Date
+}

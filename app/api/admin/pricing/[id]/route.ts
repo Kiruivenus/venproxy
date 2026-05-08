@@ -16,7 +16,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     return NextResponse.json({ success: true })
   } catch (error: any) {
-    if (error.message === "Unauthorized" || error.message === "Forbidden") {
+    if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
       return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
     }
     console.error("Pricing update error:", error)

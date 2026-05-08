@@ -44,7 +44,7 @@ export async function GET() {
       })),
     })
   } catch (error: any) {
-    if (error.message === "Unauthorized" || error.message === "Forbidden") {
+    if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
       return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
     }
     console.error("Admin orders fetch error:", error)

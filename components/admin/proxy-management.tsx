@@ -21,6 +21,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Loader2, Plus, Trash2, Upload, AlertCircle, Edit2 } from "lucide-react"
 import { ConfirmDialog } from "@/components/confirm-dialog"
+import { useToast } from "@/components/ui/use-toast"
 
 interface Proxy {
   id: string
@@ -47,9 +48,11 @@ interface PricingItem {
 }
 
 export function ProxyManagement() {
+  const { toast } = useToast()
   const [proxies, setProxies] = useState<Proxy[]>([])
   const [pricing, setPricing] = useState<PricingItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [addOpen, setAddOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [bulkOpen, setBulkOpen] = useState(false)
@@ -85,9 +88,11 @@ export function ProxyManagement() {
     try {
       const res = await fetch("/api/admin/proxies")
       const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to fetch proxies")
       setProxies(data.proxies || [])
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to fetch proxies:", error)
+      setError(error.message)
     } finally {
       setLoading(false)
     }
@@ -140,9 +145,21 @@ export function ProxyManagement() {
           expiresAt: "",
         })
         fetchProxies()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to add proxy",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to add proxy:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -184,9 +201,21 @@ export function ProxyManagement() {
         setBulkData("")
         setBulkCountry("")
         fetchProxies()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to bulk upload",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to bulk upload:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -194,12 +223,21 @@ export function ProxyManagement() {
 
   const handleToggleActive = async (id: string, isActive: boolean) => {
     try {
-      await fetch(`/api/admin/proxies/${id}`, {
+      const res = await fetch(`/api/admin/proxies/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive }),
       })
-      fetchProxies()
+      if (res.ok) {
+        fetchProxies()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update proxy",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       console.error("Failed to update proxy:", error)
     }
@@ -207,12 +245,21 @@ export function ProxyManagement() {
 
   const handleStatusChange = async (id: string, status: "available" | "expired" | "dead") => {
     try {
-      await fetch(`/api/admin/proxies/${id}`, {
+      const res = await fetch(`/api/admin/proxies/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       })
-      fetchProxies()
+      if (res.ok) {
+        fetchProxies()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update status",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       console.error("Failed to update proxy status:", error)
     }
@@ -264,9 +311,21 @@ export function ProxyManagement() {
           expiresAt: "",
         })
         fetchProxies()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update proxy",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to update proxy:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -280,10 +339,24 @@ export function ProxyManagement() {
       onConfirm: async () => {
         setSubmitting(true)
         try {
-          await fetch(`/api/admin/proxies/${id}`, { method: "DELETE" })
-          fetchProxies()
+          const res = await fetch(`/api/admin/proxies/${id}`, { method: "DELETE" })
+          if (res.ok) {
+            fetchProxies()
+          } else {
+            const data = await res.json()
+            toast({
+              title: "Error",
+              description: data.error || "Failed to delete proxy",
+              variant: "destructive",
+            })
+          }
         } catch (error) {
           console.error("Failed to delete proxy:", error)
+          toast({
+            title: "Error",
+            description: "An unexpected error occurred",
+            variant: "destructive",
+          })
         } finally {
           setSubmitting(false)
         }
@@ -295,6 +368,18 @@ export function ProxyManagement() {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="rounded-full bg-destructive/10 p-4 mb-4">
+          <AlertCircle className="h-12 w-12 text-destructive" />
+        </div>
+        <h2 className="text-xl font-bold text-destructive">Error Loading Data</h2>
+        <p className="text-muted-foreground mt-2">{error}</p>
       </div>
     )
   }

@@ -21,7 +21,7 @@ export async function GET() {
       })),
     })
   } catch (error: any) {
-    if (error.message === "Unauthorized" || error.message === "Forbidden") {
+    if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
       return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
     }
     console.error("Pricing fetch error:", error)
@@ -31,7 +31,10 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAdmin()
+    const user = await requireAdmin()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const { country, countryCode, daily } = await request.json()
 
@@ -57,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error: any) {
-    if (error.message === "Unauthorized" || error.message === "Forbidden") {
+    if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
       return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
     }
     console.error("Pricing creation error:", error)

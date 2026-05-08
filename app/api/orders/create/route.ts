@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getDb } from "@/lib/mongodb"
-import { getSession, type User } from "@/lib/auth"
+import { requireAuth, type User } from "@/lib/auth"
 import type { Order, Pricing, Proxy, ProxyPurchase } from "@/lib/types"
 import { ObjectId } from "mongodb"
 
@@ -56,10 +56,10 @@ async function findAvailableProxy(db: any, country: string, userId: ObjectId) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    const user = await requireAuth()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const { country, duration, phoneNumber, paymentMethod } = await request.json()
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Country not available" }, { status: 400 })
     }
 
-    const availableProxy = await findAvailableProxy(db, country, session.user._id)
+    const availableProxy = await findAvailableProxy(db, country, user._id)
 
     if (!availableProxy) {
       return NextResponse.json(
@@ -92,14 +92,14 @@ export async function POST(request: NextRequest) {
 
     // Handle balance payment
     if (paymentMethod === "balance") {
-      const user = await db.collection<User>("users").findOne({ _id: session.user._id })
+      const userFull = await db.collection<User>("users").findOne({ _id: user._id })
 
-      if (!user || (user.balance || 0) < price) {
+      if (!userFull || (userFull.balance || 0) < price) {
         return NextResponse.json({ error: "Insufficient balance" }, { status: 400 })
       }
 
       // Deduct balance
-      await db.collection<User>("users").updateOne({ _id: session.user._id }, { $inc: { balance: -price } })
+      await db.collection<User>("users").updateOne({ _id: user._id }, { $inc: { balance: -price } })
 
       const proxy = await db.collection<Proxy>("proxies").findOneAndUpdate(
         {
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
 
       if (!proxy) {
         // Refund if no proxy available
-        await db.collection<User>("users").updateOne({ _id: session.user._id }, { $inc: { balance: price } })
+        await db.collection<User>("users").updateOne({ _id: user._id }, { $inc: { balance: price } })
         return NextResponse.json({ error: "No proxies available" }, { status: 400 })
       }
 
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
 
       const order: Order = {
         _id: new ObjectId(),
-        userId: session.user._id,
+        userId: user._id,
         country,
         duration: "daily",
         price,
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
 
       const purchase: ProxyPurchase = {
         _id: new ObjectId(),
-        userId: session.user._id,
+        userId: user._id,
         proxyId: proxy._id,
         orderId: order._id,
         proxy: {
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
 
     const order: Order = {
       _id: new ObjectId(),
-      userId: session.user._id,
+      userId: user._id,
       country,
       duration: "daily",
       price,
@@ -198,7 +198,10 @@ export async function POST(request: NextRequest) {
         expiresAt: availableProxy.expiresAt.toISOString(),
       },
     })
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
+      return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
+    }
     console.error("Order creation error:", error)
     return NextResponse.json({ error: "Failed to create order" }, { status: 500 })
   }

@@ -25,6 +25,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Loader2, Plus, Trash2, Mail, Edit2 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ConfirmDialog } from "@/components/confirm-dialog"
+import { useToast } from "@/components/ui/use-toast"
 
 interface EmailDomain {
   _id: string
@@ -41,9 +42,11 @@ interface EmailItem {
 }
 
 export function EmailManagement() {
+  const { toast } = useToast()
   const [domains, setDomains] = useState<EmailDomain[]>([])
   const [emails, setEmails] = useState<EmailItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [addDomainOpen, setAddDomainOpen] = useState(false)
   const [editDomainOpen, setEditDomainOpen] = useState(false)
   const [addEmailOpen, setAddEmailOpen] = useState(false)
@@ -82,17 +85,17 @@ export function EmailManagement() {
         fetch("/api/admin/emails"),
       ])
 
-      if (domainsRes.ok) {
-        const data = await domainsRes.json()
-        setDomains(data.domains || [])
-      }
+      const domainsData = await domainsRes.json()
+      const emailsData = await emailsRes.json()
 
-      if (emailsRes.ok) {
-        const data = await emailsRes.json()
-        setEmails(data.emails || [])
-      }
-    } catch (error) {
+      if (!domainsRes.ok) throw new Error(domainsData.error || "Failed to fetch domains")
+      if (!emailsRes.ok) throw new Error(emailsData.error || "Failed to fetch emails")
+
+      setDomains(domainsData.domains || [])
+      setEmails(emailsData.emails || [])
+    } catch (error: any) {
       console.error("Failed to fetch data:", error)
+      setError(error.message)
     } finally {
       setLoading(false)
     }
@@ -111,9 +114,21 @@ export function EmailManagement() {
         setAddDomainOpen(false)
         setNewDomain({ domain: "", type: "gmail", server: "" })
         fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to add domain",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to add domain:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -132,9 +147,21 @@ export function EmailManagement() {
         setAddEmailOpen(false)
         setNewEmail({ emailAddress: "", password: "", domainId: "" })
         fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to add email account",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to add email:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -165,9 +192,21 @@ export function EmailManagement() {
         setEditingDomain(null)
         setNewDomain({ domain: "", type: "gmail", server: "" })
         fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update domain",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to update domain:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -185,10 +224,20 @@ export function EmailManagement() {
           if (res.ok) {
             fetchData()
           } else {
-            console.error("Failed to delete domain")
+            const data = await res.json()
+            toast({
+              title: "Error",
+              description: data.error || "Failed to delete domain",
+              variant: "destructive",
+            })
           }
         } catch (error) {
           console.error("Failed to delete domain:", error)
+          toast({
+            title: "Error",
+            description: "An unexpected error occurred",
+            variant: "destructive",
+          })
         } finally {
           setSubmitting(false)
         }
@@ -221,9 +270,21 @@ export function EmailManagement() {
         setEditingEmail(null)
         setNewEmail({ emailAddress: "", password: "", domainId: "" })
         fetchData()
+      } else {
+        const data = await res.json()
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update email account",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to update email:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -241,10 +302,20 @@ export function EmailManagement() {
           if (res.ok) {
             fetchData()
           } else {
-            console.error("Failed to delete email")
+            const data = await res.json()
+            toast({
+              title: "Error",
+              description: data.error || "Failed to delete email account",
+              variant: "destructive",
+            })
           }
         } catch (error) {
           console.error("Failed to delete email:", error)
+          toast({
+            title: "Error",
+            description: "An unexpected error occurred",
+            variant: "destructive",
+          })
         } finally {
           setSubmitting(false)
         }
@@ -256,6 +327,18 @@ export function EmailManagement() {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="rounded-full bg-destructive/10 p-4 mb-4">
+          <Mail className="h-12 w-12 text-destructive" />
+        </div>
+        <h2 className="text-xl font-bold text-destructive">Error Loading Data</h2>
+        <p className="text-muted-foreground mt-2">{error}</p>
       </div>
     )
   }
@@ -533,10 +616,10 @@ export function EmailManagement() {
                         <TableCell>
                           <span
                             className={`rounded-full px-3 py-1 text-xs font-medium ${email.status === "available"
-                                ? "bg-green-100 text-green-700"
+                                ? "bg-green-500/10 text-green-500"
                                 : email.status === "sold"
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-yellow-100 text-yellow-700"
+                                  ? "bg-blue-500/10 text-blue-500"
+                                  : "bg-yellow-500/10 text-yellow-500"
                               }`}
                           >
                             {email.status}

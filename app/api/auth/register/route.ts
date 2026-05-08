@@ -7,6 +7,13 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password, confirmPassword, name } = await request.json()
 
+    // Subscription check
+    const { checkSubscription, SUBSCRIPTION_ERROR } = await import("@/lib/subscription")
+    const isActive = await checkSubscription()
+    if (!isActive) {
+      return NextResponse.json({ error: SUBSCRIPTION_ERROR }, { status: 403 })
+    }
+
     if (!email || !password || !name) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }

@@ -5,7 +5,10 @@ import { ObjectId } from "mongodb"
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await requireAdmin()
+    const user = await requireAdmin()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const { id } = await params
 
@@ -14,7 +17,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     return NextResponse.json({ success: true })
   } catch (error: any) {
-    if (error.message === "Unauthorized" || error.message === "Forbidden") {
+    if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
       return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
     }
     console.error("Proxy deletion error:", error)
@@ -24,7 +27,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await requireAdmin()
+    const user = await requireAdmin()
+    const { restrictActionsIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictActionsIfExpired(user.role)
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
 
     const { id } = await params
     const updates = await request.json()
@@ -58,7 +64,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     return NextResponse.json({ success: true })
   } catch (error: any) {
-    if (error.message === "Unauthorized" || error.message === "Forbidden") {
+    if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
       return NextResponse.json({ error: error.message }, { status: error.message === "Unauthorized" ? 401 : 403 })
     }
     console.error("Proxy update error:", error)

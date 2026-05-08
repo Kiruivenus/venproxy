@@ -4,6 +4,11 @@ import type { Proxy } from "@/lib/types"
 
 export async function GET(request: NextRequest) {
   try {
+    const { restrictIfExpired } = await import("@/lib/subscription")
+    const restricted = await restrictIfExpired()
+    if (restricted) return NextResponse.json({ error: restricted }, { status: 403 })
+
+    const database = await getDb()
     const { searchParams } = new URL(request.url)
     const country = searchParams.get("country")
     const userIdParam = searchParams.get("userId")
@@ -12,8 +17,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Country is required" }, { status: 400 })
     }
 
-    const db = await getDb()
-
     // If userId is provided, get the actual proxy that would be selected for this user
     let selectedProxy = null
     if (userIdParam) {
@@ -21,7 +24,7 @@ export async function GET(request: NextRequest) {
       const userId = new ObjectId(userIdParam)
 
       // Get all proxy IDs the user has already purchased (active purchases only)
-      const userPurchases = await db
+      const userPurchases = await database
         .collection("purchases")
         .find({
           userId,
@@ -35,7 +38,7 @@ export async function GET(request: NextRequest) {
       const sixHoursFromNow = new Date(now.getTime() + 6 * 60 * 60 * 1000)
 
       // First try to find a proxy with more than 6 hours until expiry (sorted by expiry desc - freshest first)
-      const freshProxy = await db
+      const freshProxy = await database
         .collection<Proxy>("proxies")
         .find({
           country,
@@ -53,7 +56,7 @@ export async function GET(request: NextRequest) {
         selectedProxy = freshProxy[0]
       } else {
         // Fallback: If no fresh proxies, get any available proxy
-        const anyProxy = await db
+        const anyProxy = await database
           .collection<Proxy>("proxies")
           .find({
             country,
@@ -81,7 +84,7 @@ export async function GET(request: NextRequest) {
         $expr: { $lt: ["$currentUsage", "$maxUsage"] },
       }
 
-      selectedProxy = await db.collection<Proxy>("proxies").findOne(baseQuery)
+      selectedProxy = await database.collection<Proxy>("proxies").findOne(baseQuery)
     }
 
     const query: any = {
@@ -92,7 +95,7 @@ export async function GET(request: NextRequest) {
       country,
     }
 
-    const availableCount = await db.collection<Proxy>("proxies").countDocuments(query)
+    const availableCount = await database.collection<Proxy>("proxies").countDocuments(query)
 
     let proxy = null
     if (selectedProxy) {

@@ -26,6 +26,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Incorrect password. Please try again." }, { status: 401 })
     }
 
+    // Subscription check (Only Superadmin is exempt from the login block)
+    const { checkSubscription, SUBSCRIPTION_ERROR } = await import("@/lib/subscription")
+    const isActive = await checkSubscription()
+    if (!isActive && user.role !== "superadmin") {
+      return NextResponse.json({ error: SUBSCRIPTION_ERROR }, { status: 403 })
+    }
+
     await createSession(user._id)
 
     return NextResponse.json({
