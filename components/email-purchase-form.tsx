@@ -42,7 +42,7 @@ export function EmailPurchaseForm() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("")
-  const [paymentMethod, setPaymentMethod] = useState<"balance" | "mpesa">("mpesa")
+  const [paymentMethod] = useState<"mpesa">("mpesa")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [availabilityError, setAvailabilityError] = useState("")
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "pending" | "success" | "failed">("idle")
@@ -101,7 +101,7 @@ export function EmailPurchaseForm() {
   const totalPrice = selectedPricing
     ? selectedPricing.pricePerEmail * parseInt(quantity || "1")
     : 0
-  const hasEnoughBalance = balance >= totalPrice
+
 
   const handleQuantityChange = (value: string) => {
     setQuantity(value)
@@ -166,13 +166,7 @@ export function EmailPurchaseForm() {
           : `254${cleanPhone}`
     }
 
-    if (paymentMethod === "balance" && balance < totalPrice) {
-      setError(
-        `Insufficient balance. You need KES ${totalPrice - balance} more`
-      )
-      setSubmitting(false)
-      return
-    }
+
 
     try {
       const res = await fetch("/api/email-orders/create", {
@@ -194,15 +188,7 @@ export function EmailPurchaseForm() {
         return
       }
 
-      // If paid with balance, redirect immediately
-      if (data.success) {
-        setPaymentStatus("success")
-        setTimeout(() => {
-          router.push("/dashboard")
-          router.refresh()
-        }, 1500)
-        return
-      }
+
 
       // Initiate STK Push for M-Pesa
       setPaymentStatus("pending")
@@ -417,62 +403,20 @@ export function EmailPurchaseForm() {
                     </div>
                   </div>
 
-                  {/* Payment Method Selection */}
-                  <div className="space-y-3">
-                    <Label>Payment Method</Label>
-                    <RadioGroup
-                      value={paymentMethod}
-                      onValueChange={(v) => setPaymentMethod(v as "mpesa" | "balance")}
-                      className="grid grid-cols-2 gap-4"
-                    >
-                      <div>
-                        <RadioGroupItem
-                          value="balance"
-                          id="balance"
-                          className="peer sr-only"
-                          disabled={!hasEnoughBalance && totalPrice > 0}
-                        />
-                        <Label
-                          htmlFor="balance"
-                          className={`flex cursor-pointer flex-col items-center justify-between rounded-xl border-2 border-border/50 bg-zinc-950/40 backdrop-blur-md p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent peer-data-[state=checked]:bg-accent/5 transition-all duration-300 ${
-                            !hasEnoughBalance && totalPrice > 0 ? "cursor-not-allowed opacity-50" : ""
-                          }`}
-                        >
-                          <Wallet className="mb-2 h-6 w-6" />
-                          <span className="text-sm font-medium">Balance</span>
-                          {!hasEnoughBalance && totalPrice > 0 && (
-                            <span className="mt-1 text-xs text-destructive">Insufficient</span>
-                          )}
-                        </Label>
-                      </div>
-                      <div>
-                        <RadioGroupItem value="mpesa" id="mpesa" className="peer sr-only" />
-                        <Label
-                          htmlFor="mpesa"
-                          className="flex cursor-pointer flex-col items-center justify-between rounded-xl border-2 border-border/50 bg-zinc-950/40 backdrop-blur-md p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent peer-data-[state=checked]:bg-accent/5 transition-all duration-300"
-                        >
-                          <Smartphone className="mb-2 h-6 w-6" />
-                          <span className="text-sm font-medium">M-Pesa</span>
-                        </Label>
-                      </div>
-                    </RadioGroup>
+                  {/* Payment Method - M-Pesa Only */}
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">M-Pesa Phone Number</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="0712345678 or 254712345678"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      required
+                      className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
+                    />
+                    <p className="text-xs text-muted-foreground">You will receive an STK push on this number</p>
                   </div>
-
-                  {paymentMethod === "mpesa" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">M-Pesa Phone Number</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="0712345678 or 254712345678"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        required
-                        className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
-                      />
-                      <p className="text-xs text-muted-foreground">You will receive an STK push on this number</p>
-                    </div>
-                  )}
                 </>
               )}
             </>
@@ -488,8 +432,8 @@ export function EmailPurchaseForm() {
                 !selectedDomain ||
                 !quantity ||
                 !!availabilityError ||
-                (paymentMethod === "mpesa" && !phoneNumber) ||
-                (paymentMethod === "balance" && !hasEnoughBalance)
+                (paymentMethod === "mpesa" && !phoneNumber)
+
               }
             >
               {submitting ? (
@@ -497,8 +441,6 @@ export function EmailPurchaseForm() {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Processing...
                 </>
-              ) : paymentMethod === "balance" ? (
-                `Pay KES ${totalPrice.toLocaleString()} from Balance`
               ) : (
                 `Pay KES ${totalPrice.toLocaleString()} via M-Pesa`
               )}
