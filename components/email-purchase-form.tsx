@@ -223,22 +223,20 @@ export function EmailPurchaseForm() {
         }
 
         try {
-          const statusRes = await fetch(`/api/user/orders`)
+          const statusRes = await fetch(`/api/mpesa/query-status?checkoutRequestId=${stkData.checkoutRequestId}&type=email`, { cache: "no-store" })
           const statusData = await statusRes.json()
 
-          const order = statusData.orders?.find((o: any) => o.id === data.orderId)
-
-          if (order?.status === "paid") {
+          if (statusData.status === "paid") {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {
               router.push("/dashboard")
               router.refresh()
             }, 2000)
-          } else if (order?.status === "failed") {
+          } else if (statusData.status === "failed") {
             clearInterval(pollInterval)
             setPaymentStatus("failed")
-            setError("Payment failed. Please try again.")
+            setError(statusData.error || "Payment failed. Please try again.")
             setSubmitting(false)
           }
         } catch {

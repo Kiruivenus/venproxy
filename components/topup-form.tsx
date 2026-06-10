@@ -88,10 +88,9 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
         return
       }
 
-      // Poll for balance update
+      // Poll for payment status
       let attempts = 0
       const maxAttempts = 30
-      const initialBalance = currentBalance
 
       const pollInterval = setInterval(async () => {
         attempts++
@@ -105,16 +104,21 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
         }
 
         try {
-          const balanceRes = await fetch("/api/user/balance")
-          const balanceData = await balanceRes.json()
+          const statusRes = await fetch(`/api/mpesa/query-status?checkoutRequestId=${stkData.checkoutRequestId}&type=topup`, { cache: "no-store" })
+          const statusData = await statusRes.json()
 
-          if (balanceData.balance > initialBalance) {
+          if (statusData.status === "completed") {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {
               router.push("/buy")
               router.refresh()
             }, 2000)
+          } else if (statusData.status === "failed") {
+            clearInterval(pollInterval)
+            setPaymentStatus("failed")
+            setError(statusData.error || "Payment failed. Please try again.")
+            setLoading(false)
           }
         } catch {
           // Continue polling
