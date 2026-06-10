@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
 
       amount = order.totalPrice
       phoneNumber = order.phoneNumber
-      accountReference = order._id.toString()
-      transactionDesc = `Email Purchase - ${order.quantity} x ${order.domain}`
+      accountReference = order._id.toString().slice(-12)
+      transactionDesc = "EmailBuy"
       updateCollection = "emailOrders"
       documentId = order._id
     } else if (orderId) {
@@ -67,8 +67,8 @@ export async function POST(request: NextRequest) {
 
       amount = order.price
       phoneNumber = order.phoneNumber || ""
-      accountReference = order._id.toString()
-      transactionDesc = `Proxy Purchase - ${order.country} ${order.duration}`
+      accountReference = order._id.toString().slice(-12)
+      transactionDesc = "ProxyBuy"
       updateCollection = "orders"
       documentId = order._id
     } else {
@@ -84,8 +84,8 @@ export async function POST(request: NextRequest) {
 
       amount = topUp.amount
       phoneNumber = topUp.phoneNumber
-      accountReference = `TOPUP-${topUp._id.toString()}`
-      transactionDesc = `Balance Top-up - KES ${topUp.amount}`
+      accountReference = topUp._id.toString().slice(-12)
+      transactionDesc = "TopUp"
       updateCollection = "topups"
       documentId = topUp._id
     }
