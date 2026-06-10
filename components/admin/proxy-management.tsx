@@ -1,27 +1,19 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Plus, Trash2, Upload, AlertCircle, Edit2 } from "lucide-react"
+import { Loader2, Trash2, AlertCircle, Edit2, ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { useToast } from "@/components/ui/use-toast"
+import { AddProxyModal } from "./add-proxy-modal"
+import { EditProxyModal } from "./edit-proxy-modal"
+import { BulkUploadModal } from "./bulk-upload-modal"
 
 interface Proxy {
   id: string
@@ -49,15 +41,29 @@ interface PricingItem {
 
 export function ProxyManagement() {
   const { toast } = useToast()
+  
+  // Table state
   const [proxies, setProxies] = useState<Proxy[]>([])
   const [pricing, setPricing] = useState<PricingItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [addOpen, setAddOpen] = useState(false)
+  
+  // Pagination & Filtering state
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(50)
+  const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
+  
+  const [search, setSearch] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState("")
+  const [activeFilter, setActiveFilter] = useState("")
+
+  // Modal control states (edit is managed externally because it loads specific proxy)
   const [editOpen, setEditOpen] = useState(false)
-  const [bulkOpen, setBulkOpen] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
   const [editingProxy, setEditingProxy] = useState<Proxy | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean
     title: string
@@ -65,38 +71,47 @@ export function ProxyManagement() {
     onConfirm: () => void
   }>({ open: false, title: "", description: "", onConfirm: () => {} })
 
-  const [newProxy, setNewProxy] = useState({
-    ip: "",
-    port: "",
-    username: "",
-    password: "",
-    country: "",
-    countryCode: "",
-    maxUsage: "10",
-    expiresAt: "",
-  })
-
-  const [bulkData, setBulkData] = useState("")
-  const [bulkCountry, setBulkCountry] = useState("")
-
+  // Search input debouncer
   useEffect(() => {
-    fetchProxies()
-    fetchPricing()
-  }, [])
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search)
+      setPage(1)
+    }, 300)
 
-  const fetchProxies = async () => {
+    return () => clearTimeout(handler)
+  }, [search])
+
+  // Fetch paginated proxies from server
+  const fetchProxies = useCallback(async (
+    currentPage: number, 
+    currentLimit: number, 
+    currentSearch: string,
+    currentStatus: string,
+    currentActive: string
+  ) => {
+    setLoading(true)
     try {
-      const res = await fetch("/api/admin/proxies")
+      const url = new URL("/api/admin/proxies", window.location.origin)
+      url.searchParams.set("page", currentPage.toString())
+      url.searchParams.set("limit", currentLimit.toString())
+      if (currentSearch) url.searchParams.set("search", currentSearch)
+      if (currentStatus) url.searchParams.set("status", currentStatus)
+      if (currentActive) url.searchParams.set("isActive", currentActive)
+
+      const res = await fetch(url.toString())
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to fetch proxies")
+
       setProxies(data.proxies || [])
+      setTotalPages(data.pagination?.totalPages || 1)
+      setTotal(data.pagination?.total || 0)
     } catch (error: any) {
       console.error("Failed to fetch proxies:", error)
       setError(error.message)
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   const fetchPricing = async () => {
     try {
@@ -108,43 +123,34 @@ export function ProxyManagement() {
     }
   }
 
-  const handleCountrySelect = (country: string) => {
-    const selectedPricing = pricing.find((p) => p.country === country)
-    if (selectedPricing) {
-      setNewProxy({
-        ...newProxy,
-        country: selectedPricing.country,
-        countryCode: selectedPricing.countryCode,
-      })
-    }
-  }
+  // Load initial settings
+  useEffect(() => {
+    fetchPricing()
+  }, [])
 
-  const handleAddProxy = async () => {
-    setSubmitting(true)
+  // Auto reload when page/filters change
+  useEffect(() => {
+    fetchProxies(page, limit, debouncedSearch, statusFilter, activeFilter)
+  }, [page, limit, debouncedSearch, statusFilter, activeFilter, fetchProxies])
+
+  // CRUD Operations
+
+  const handleAddProxy = async (proxyData: any) => {
     try {
       const res = await fetch("/api/admin/proxies", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...newProxy,
-          port: Number.parseInt(newProxy.port),
-          maxUsage: Number.parseInt(newProxy.maxUsage),
-        }),
+        body: JSON.stringify(proxyData),
       })
 
       if (res.ok) {
-        setAddOpen(false)
-        setNewProxy({
-          ip: "",
-          port: "",
-          username: "",
-          password: "",
-          country: "",
-          countryCode: "",
-          maxUsage: "10",
-          expiresAt: "",
+        toast({
+          title: "Success",
+          description: "Proxy added successfully",
         })
-        fetchProxies()
+        setPage(1)
+        fetchProxies(1, limit, debouncedSearch, statusFilter, activeFilter)
+        return true
       } else {
         const data = await res.json()
         toast({
@@ -152,6 +158,7 @@ export function ProxyManagement() {
           description: data.error || "Failed to add proxy",
           variant: "destructive",
         })
+        return false
       }
     } catch (error) {
       console.error("Failed to add proxy:", error)
@@ -160,21 +167,15 @@ export function ProxyManagement() {
         description: "An unexpected error occurred",
         variant: "destructive",
       })
-    } finally {
-      setSubmitting(false)
+      return false
     }
   }
 
-  const handleBulkUpload = async () => {
-    setSubmitting(true)
+  const handleBulkUpload = async (bulkCountry: string, bulkData: string) => {
     try {
       const selectedPricing = pricing.find((p) => p.country === bulkCountry)
-      if (!selectedPricing) {
-        setSubmitting(false)
-        return
-      }
+      if (!selectedPricing) return false
 
-      // Parse bulk data (format: ip:port:username:password:maxUsage:expiresAt)
       const lines = bulkData.split("\n").filter((line) => line.trim())
       const proxiesToAdd = lines.map((line) => {
         const parts = line.split(":")
@@ -197,10 +198,13 @@ export function ProxyManagement() {
       })
 
       if (res.ok) {
-        setBulkOpen(false)
-        setBulkData("")
-        setBulkCountry("")
-        fetchProxies()
+        toast({
+          title: "Success",
+          description: `Successfully uploaded ${proxiesToAdd.length} proxies`,
+        })
+        setPage(1)
+        fetchProxies(1, limit, debouncedSearch, statusFilter, activeFilter)
+        return true
       } else {
         const data = await res.json()
         toast({
@@ -208,6 +212,7 @@ export function ProxyManagement() {
           description: data.error || "Failed to bulk upload",
           variant: "destructive",
         })
+        return false
       }
     } catch (error) {
       console.error("Failed to bulk upload:", error)
@@ -216,44 +221,55 @@ export function ProxyManagement() {
         description: "An unexpected error occurred",
         variant: "destructive",
       })
-    } finally {
-      setSubmitting(false)
+      return false
     }
   }
 
   const handleToggleActive = async (id: string, isActive: boolean) => {
+    // Optimistic Update
+    const originalProxies = [...proxies]
+    setProxies(prev => prev.map(p => p.id === id ? { ...p, isActive } : p))
+
     try {
       const res = await fetch(`/api/admin/proxies/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive }),
       })
-      if (res.ok) {
-        fetchProxies()
-      } else {
+      if (!res.ok) {
         const data = await res.json()
+        setProxies(originalProxies)
         toast({
           title: "Error",
-          description: data.error || "Failed to update proxy",
+          description: data.error || "Failed to toggle active state",
           variant: "destructive",
         })
       }
     } catch (error) {
-      console.error("Failed to update proxy:", error)
+      console.error("Failed to toggle active state:", error)
+      setProxies(originalProxies)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     }
   }
 
   const handleStatusChange = async (id: string, status: "available" | "expired" | "dead") => {
+    // Optimistic Update
+    const originalProxies = [...proxies]
+    setProxies(prev => prev.map(p => p.id === id ? { ...p, status } : p))
+
     try {
       const res = await fetch(`/api/admin/proxies/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       })
-      if (res.ok) {
-        fetchProxies()
-      } else {
+      if (!res.ok) {
         const data = await res.json()
+        setProxies(originalProxies)
         toast({
           title: "Error",
           description: data.error || "Failed to update status",
@@ -261,73 +277,58 @@ export function ProxyManagement() {
         })
       }
     } catch (error) {
-      console.error("Failed to update proxy status:", error)
-    }
-  }
-
-  const handleEdit = (proxy: Proxy) => {
-    setEditingProxy(proxy)
-    setNewProxy({
-      ip: proxy.ip,
-      port: proxy.port.toString(),
-      username: proxy.username || "",
-      password: proxy.password || "",
-      country: proxy.country,
-      countryCode: proxy.countryCode,
-      maxUsage: proxy.maxUsage.toString(),
-      expiresAt: new Date(proxy.expiresAt).toISOString().slice(0, 16),
-    })
-    setEditOpen(true)
-  }
-
-  const handleSaveEdit = async () => {
-    if (!editingProxy) return
-    setSubmitting(true)
-    try {
-      const res = await fetch(`/api/admin/proxies/${editingProxy.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ip: newProxy.ip,
-          port: Number.parseInt(newProxy.port),
-          username: newProxy.username,
-          password: newProxy.password,
-          maxUsage: Number.parseInt(newProxy.maxUsage),
-          expiresAt: newProxy.expiresAt,
-        }),
-      })
-
-      if (res.ok) {
-        setEditOpen(false)
-        setEditingProxy(null)
-        setNewProxy({
-          ip: "",
-          port: "",
-          username: "",
-          password: "",
-          country: "",
-          countryCode: "",
-          maxUsage: "10",
-          expiresAt: "",
-        })
-        fetchProxies()
-      } else {
-        const data = await res.json()
-        toast({
-          title: "Error",
-          description: data.error || "Failed to update proxy",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
-      console.error("Failed to update proxy:", error)
+      console.error("Failed to update status:", error)
+      setProxies(originalProxies)
       toast({
         title: "Error",
         description: "An unexpected error occurred",
         variant: "destructive",
       })
-    } finally {
-      setSubmitting(false)
+    }
+  }
+
+  const handleEditClick = (proxy: Proxy) => {
+    setEditingProxy(proxy)
+    setEditOpen(true)
+  }
+
+  const handleSaveEdit = async (id: string, updatedFields: any) => {
+    // Optimistic Update
+    const originalProxies = [...proxies]
+    setProxies(prev => prev.map(p => p.id === id ? { ...p, ...updatedFields } : p))
+
+    try {
+      const res = await fetch(`/api/admin/proxies/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedFields),
+      })
+
+      if (res.ok) {
+        toast({
+          title: "Success",
+          description: "Proxy updated successfully",
+        })
+        return true
+      } else {
+        const data = await res.json()
+        setProxies(originalProxies)
+        toast({
+          title: "Error",
+          description: data.error || "Failed to update proxy",
+          variant: "destructive",
+        })
+        return false
+      }
+    } catch (error) {
+      console.error("Failed to update proxy:", error)
+      setProxies(originalProxies)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
+      return false
     }
   }
 
@@ -338,12 +339,25 @@ export function ProxyManagement() {
       description: "This proxy will be permanently deleted. This action cannot be undone.",
       onConfirm: async () => {
         setSubmitting(true)
+        // Optimistic Update
+        const originalProxies = [...proxies]
+        setProxies(prev => prev.filter(p => p.id !== id))
+        const prevTotal = total
+        setTotal(prev => Math.max(0, prev - 1))
+
         try {
           const res = await fetch(`/api/admin/proxies/${id}`, { method: "DELETE" })
           if (res.ok) {
-            fetchProxies()
+            setConfirmDialog(prev => ({ ...prev, open: false }))
+            toast({
+              title: "Success",
+              description: "Proxy deleted successfully",
+            })
+            fetchProxies(page, limit, debouncedSearch, statusFilter, activeFilter)
           } else {
             const data = await res.json()
+            setProxies(originalProxies)
+            setTotal(prevTotal)
             toast({
               title: "Error",
               description: data.error || "Failed to delete proxy",
@@ -352,6 +366,8 @@ export function ProxyManagement() {
           }
         } catch (error) {
           console.error("Failed to delete proxy:", error)
+          setProxies(originalProxies)
+          setTotal(prevTotal)
           toast({
             title: "Error",
             description: "An unexpected error occurred",
@@ -362,14 +378,6 @@ export function ProxyManagement() {
         }
       },
     })
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    )
   }
 
   if (error) {
@@ -395,286 +403,191 @@ export function ProxyManagement() {
         </div>
       )}
 
+      {/* Action Header */}
       <div className="flex gap-4">
-        <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button disabled={noPricingConfigured}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Proxy
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Proxy</DialogTitle>
-              <DialogDescription>Enter the proxy details</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>IP Address</Label>
-                  <Input
-                    value={newProxy.ip}
-                    onChange={(e) => setNewProxy({ ...newProxy, ip: e.target.value })}
-                    placeholder="192.168.1.1"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Port</Label>
-                  <Input
-                    value={newProxy.port}
-                    onChange={(e) => setNewProxy({ ...newProxy, port: e.target.value })}
-                    placeholder="8080"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Username (optional)</Label>
-                  <Input
-                    value={newProxy.username}
-                    onChange={(e) => setNewProxy({ ...newProxy, username: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Password (optional)</Label>
-                  <Input
-                    value={newProxy.password}
-                    onChange={(e) => setNewProxy({ ...newProxy, password: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Country</Label>
-                <Select value={newProxy.country} onValueChange={handleCountrySelect}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {pricing.map((p) => (
-                      <SelectItem key={p.id} value={p.country}>
-                        {p.country} ({p.countryCode})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Max Usage</Label>
-                  <Input
-                    type="number"
-                    value={newProxy.maxUsage}
-                    onChange={(e) => setNewProxy({ ...newProxy, maxUsage: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Expires At</Label>
-                  <Input
-                    type="datetime-local"
-                    value={newProxy.expiresAt}
-                    onChange={(e) => setNewProxy({ ...newProxy, expiresAt: e.target.value })}
-                  />
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={handleAddProxy} disabled={submitting || !newProxy.country}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Add Proxy
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <AddProxyModal
+          pricing={pricing}
+          onAdd={handleAddProxy}
+          noPricingConfigured={noPricingConfigured}
+        />
+        <BulkUploadModal
+          pricing={pricing}
+          onUpload={handleBulkUpload}
+          noPricingConfigured={noPricingConfigured}
+        />
+        <EditProxyModal
+          proxy={editingProxy}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          onSave={handleSaveEdit}
+        />
+      </div>
 
-        <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" disabled={noPricingConfigured}>
-              <Upload className="mr-2 h-4 w-4" />
-              Bulk Upload
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Bulk Upload Proxies</DialogTitle>
-              <DialogDescription>
-                Select a country and enter one proxy per line in format: ip:port:username:password:maxUsage:expiresAt
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Country</Label>
-                <Select value={bulkCountry} onValueChange={setBulkCountry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {pricing.map((p) => (
-                      <SelectItem key={p.id} value={p.country}>
-                        {p.country} ({p.countryCode})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Textarea
-                value={bulkData}
-                onChange={(e) => setBulkData(e.target.value)}
-                placeholder="192.168.1.1:8080:user:pass:10:2025-12-31T23:59"
-                rows={10}
-              />
-            </div>
-            <DialogFooter>
-              <Button onClick={handleBulkUpload} disabled={submitting || !bulkCountry}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Upload
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+      {/* Filtering Toolbar */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search IP, country..."
+            className="pl-9 bg-zinc-950/40 border-border/50 h-11"
+          />
+        </div>
 
-        <Dialog open={editOpen} onOpenChange={setEditOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Proxy</DialogTitle>
-              <DialogDescription>Update the proxy details</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>IP Address</Label>
-                  <Input
-                    value={newProxy.ip}
-                    onChange={(e) => setNewProxy({ ...newProxy, ip: e.target.value })}
-                    placeholder="192.168.1.1"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Port</Label>
-                  <Input
-                    value={newProxy.port}
-                    onChange={(e) => setNewProxy({ ...newProxy, port: e.target.value })}
-                    placeholder="8080"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Username (optional)</Label>
-                  <Input
-                    value={newProxy.username}
-                    onChange={(e) => setNewProxy({ ...newProxy, username: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Password (optional)</Label>
-                  <Input
-                    value={newProxy.password}
-                    onChange={(e) => setNewProxy({ ...newProxy, password: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Max Usage</Label>
-                  <Input
-                    type="number"
-                    value={newProxy.maxUsage}
-                    onChange={(e) => setNewProxy({ ...newProxy, maxUsage: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Expires At</Label>
-                  <Input
-                    type="datetime-local"
-                    value={newProxy.expiresAt}
-                    onChange={(e) => setNewProxy({ ...newProxy, expiresAt: e.target.value })}
-                  />
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={handleSaveEdit} disabled={submitting}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Changes
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {/* Status Filter */}
+        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+          <SelectTrigger className="bg-zinc-950/40 border-border/50 h-11">
+            <SelectValue placeholder="All Statuses" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all_statuses">All Statuses</SelectItem>
+            <SelectItem value="available">Available Only</SelectItem>
+            <SelectItem value="expired">Expired Only</SelectItem>
+            <SelectItem value="dead">Dead Only</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Active/Visibility Filter */}
+        <Select value={activeFilter} onValueChange={(v) => { setActiveFilter(v); setPage(1); }}>
+          <SelectTrigger className="bg-zinc-950/40 border-border/50 h-11">
+            <SelectValue placeholder="All Visibility" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all_visibility">All Visibility</SelectItem>
+            <SelectItem value="true">Active Only</SelectItem>
+            <SelectItem value="false">Inactive Only</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Page Limit */}
+        <Select value={limit.toString()} onValueChange={(v) => { setLimit(Number(v)); setPage(1); }}>
+          <SelectTrigger className="bg-zinc-950/40 border-border/50 h-11">
+            <SelectValue placeholder="50 rows per page" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="25">25 rows per page</SelectItem>
+            <SelectItem value="50">50 rows per page</SelectItem>
+            <SelectItem value="100">100 rows per page</SelectItem>
+            <SelectItem value="250">250 rows per page</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Proxies ({proxies.length})</CardTitle>
+          <CardTitle>All Proxies ({total})</CardTitle>
         </CardHeader>
-        <CardContent>
-          {proxies.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">No proxies added yet</p>
+        <CardContent className="p-0 sm:p-6 overflow-hidden">
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-accent" />
+            </div>
+          ) : proxies.length === 0 ? (
+            <p className="text-center text-muted-foreground py-16">No proxies found matching your criteria</p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>IP:Port</TableHead>
-                  <TableHead>Country</TableHead>
-                  <TableHead>Usage</TableHead>
-                  <TableHead>Expires</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Proxy Status</TableHead>
-                  <TableHead>Active</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {proxies.map((proxy) => (
-                  <TableRow key={proxy.id}>
-                    <TableCell className="font-mono text-sm">
-                      {proxy.ip}:{proxy.port}
-                    </TableCell>
-                    <TableCell>{proxy.country}</TableCell>
-                    <TableCell>
-                      {proxy.currentUsage}/{proxy.maxUsage}
-                    </TableCell>
-                    <TableCell>{new Date(proxy.expiresAt).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      {proxy.status === "dead" ? (
-                        <Badge className="bg-red-500/20 text-red-500">Dead</Badge>
-                      ) : new Date(proxy.expiresAt) < new Date() ? (
-                        <Badge variant="destructive">Expired</Badge>
-                      ) : proxy.currentUsage >= proxy.maxUsage ? (
-                        <Badge variant="secondary">Full</Badge>
-                      ) : (
-                        <Badge className="bg-green-500/20 text-green-500">Available</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Select value={proxy.status} onValueChange={(v) => handleStatusChange(proxy.id, v as any)}>
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="available">Available</SelectItem>
-                          <SelectItem value="expired">Expired</SelectItem>
-                          <SelectItem value="dead">Dead</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={proxy.isActive}
-                        onCheckedChange={(checked) => handleToggleActive(proxy.id, checked)}
-                      />
-                    </TableCell>
-                    <TableCell className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(proxy)}>
-                        <Edit2 className="h-4 w-4 text-blue-500" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(proxy.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>IP:Port</TableHead>
+                    <TableHead>Country</TableHead>
+                    <TableHead>Usage</TableHead>
+                    <TableHead>Expires</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Proxy Status</TableHead>
+                    <TableHead>Active</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {proxies.map((proxy) => (
+                    <TableRow key={proxy.id} className="transition-colors hover:bg-muted/30">
+                      <TableCell className="font-mono text-sm whitespace-nowrap">
+                        {proxy.ip}:{proxy.port}
+                      </TableCell>
+                      <TableCell>{proxy.country}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {proxy.currentUsage}/{proxy.maxUsage}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {new Date(proxy.expiresAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {proxy.status === "dead" ? (
+                          <Badge className="bg-red-500/20 text-red-500 hover:bg-red-500/30">Dead</Badge>
+                        ) : new Date(proxy.expiresAt) < new Date() ? (
+                          <Badge variant="destructive">Expired</Badge>
+                        ) : proxy.currentUsage >= proxy.maxUsage ? (
+                          <Badge variant="secondary">Full</Badge>
+                        ) : (
+                          <Badge className="bg-green-500/20 text-green-500 hover:bg-green-500/30">Available</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Select value={proxy.status} onValueChange={(v) => handleStatusChange(proxy.id, v as any)}>
+                          <SelectTrigger className="w-32 bg-zinc-950/40 border-border/50">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="available">Available</SelectItem>
+                            <SelectItem value="expired">Expired</SelectItem>
+                            <SelectItem value="dead">Dead</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Switch
+                          checked={proxy.isActive}
+                          onCheckedChange={(checked) => handleToggleActive(proxy.id, checked)}
+                        />
+                      </TableCell>
+                      <TableCell className="flex gap-1.5">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditClick(proxy)}>
+                          <Edit2 className="h-4 w-4 text-blue-500" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(proxy.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {!loading && totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between border-t border-border/10 pt-4 mt-6 gap-4 px-4 sm:px-0">
+              <div className="text-sm text-muted-foreground text-center sm:text-left">
+                Showing Page <span className="font-semibold text-foreground">{page}</span> of{" "}
+                <span className="font-semibold text-foreground">{totalPages}</span> ({total} total proxies)
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="bg-zinc-950/40 border-border/50 hover:bg-accent/5"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="bg-zinc-950/40 border-border/50 hover:bg-accent/5"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

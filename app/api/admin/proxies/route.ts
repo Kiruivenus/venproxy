@@ -4,12 +4,44 @@ import { requireAdmin } from "@/lib/auth"
 import type { Proxy } from "@/lib/types"
 import { ObjectId } from "mongodb"
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await requireAdmin()
 
+    const { searchParams } = new URL(request.url)
+    const page = Math.max(1, Number(searchParams.get("page")) || 1)
+    const limit = Math.max(1, Math.min(250, Number(searchParams.get("limit")) || 50))
+    const search = searchParams.get("search") || ""
+    const status = searchParams.get("status") || ""
+    const isActiveParam = searchParams.get("isActive")
+
     const db = await getDb()
-    const proxies = await db.collection<Proxy>("proxies").find().sort({ createdAt: -1 }).toArray()
+    const query: Record<string, any> = {}
+
+    if (search) {
+      query.$or = [
+        { ip: { $regex: search, $options: "i" } },
+        { country: { $regex: search, $options: "i" } },
+        { username: { $regex: search, $options: "i" } },
+      ]
+    }
+
+    if (status) {
+      query.status = status
+    }
+
+    if (isActiveParam === "true" || isActiveParam === "false") {
+      query.isActive = isActiveParam === "true"
+    }
+
+    const total = await db.collection<Proxy>("proxies").countDocuments(query)
+    const proxies = await db
+      .collection<Proxy>("proxies")
+      .find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .toArray()
 
     return NextResponse.json({
       proxies: proxies.map((p) => ({
@@ -27,6 +59,12 @@ export async function GET() {
         status: p.status || "available",
         createdAt: p.createdAt,
       })),
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }
     })
   } catch (error: any) {
     if (error.message === "Unauthorized" || error.message === "Forbidden" || error.message.includes("vercel resources exceeded")) {
