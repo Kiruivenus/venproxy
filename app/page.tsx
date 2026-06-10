@@ -259,8 +259,8 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 md:col-span-2">
               <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-background shadow-[0_0_10px_rgba(var(--color-accent),0.4)]">
-                  <Globe className="h-4 w-4" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 border border-border/40 p-0.5 overflow-hidden">
+                  <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
                 </div>
                 <span className="text-xl font-bold tracking-tight">RayProxy Hub</span>
               </Link>

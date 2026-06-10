@@ -74,7 +74,9 @@ export function Header({ user }: HeaderProps) {
       <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <Globe className="h-6 w-6 text-accent" />
+          <div className="h-7 w-7 overflow-hidden rounded-lg flex items-center justify-center bg-zinc-900 border border-border/40 p-0.5">
+            <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
+          </div>
           <span className="text-xl font-bold">RayProxy Hub</span>
         </Link>
 
@@ -201,7 +203,9 @@ export function Header({ user }: HeaderProps) {
             <SheetContent side="right" className="w-[300px] p-0">
               <div className="flex items-center justify-between border-b border-border bg-accent/5 px-6 py-4">
                 <div className="flex items-center gap-2">
-                  <Globe className="h-6 w-6 text-accent" />
+                  <div className="h-7 w-7 overflow-hidden rounded-lg flex items-center justify-center bg-zinc-900 border border-border/40 p-0.5">
+                    <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
+                  </div>
                   <SheetTitle className="text-lg font-bold text-foreground">RayProxy Hub</SheetTitle>
                 </div>
                 <SheetClose asChild>

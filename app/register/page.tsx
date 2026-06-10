@@ -83,8 +83,8 @@ export default function RegisterPage() {
         {/* Branding */}
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2.5 transition-transform hover:scale-105 duration-300">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent/80 text-background shadow-[0_0_20px_rgba(var(--color-accent),0.4)]">
-              <Globe className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 border border-border/40 p-1.5 overflow-hidden">
+              <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
             </div>
             <span className="text-2xl font-bold tracking-tight text-foreground">RayProxy Hub</span>
           </Link>
@@ -135,8 +135,8 @@ export default function RegisterPage() {
         
         <div className="w-full max-w-[420px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out py-8">
           <div className="lg:hidden flex items-center justify-center gap-2.5 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent/80 text-background shadow-[0_0_20px_rgba(var(--color-accent),0.4)]">
-              <Globe className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 border border-border/40 p-1.5 overflow-hidden">
+              <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
             </div>
             <span className="text-2xl font-bold tracking-tight">RayProxy</span>
           </div>
