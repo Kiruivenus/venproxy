@@ -10,20 +10,33 @@ function generateResetCode(): string {
 import { sendEmail, getStyledEmailTemplate } from "@/lib/mail"
 
 async function sendResetEmail(email: string, code: string): Promise<boolean> {
+  let companyName = "RayProxy Hub"
+  let companyLogoUrl = ""
+  try {
+    const db = await getDb()
+    const settings = await db.collection("website_settings").findOne({})
+    if (settings) {
+      companyName = settings.companyName || "RayProxy Hub"
+      companyLogoUrl = settings.companyLogoUrl || ""
+    }
+  } catch (e) {
+    console.error("Failed to query settings for reset email:", e)
+  }
+
   const content = `
     <h2>Password Reset Request</h2>
-    <p>We received a request to reset your password for your RayProxy Hub account. Use the verification code below to proceed with the reset:</p>
+    <p>We received a request to reset your password for your ${companyName} account. Use the verification code below to proceed with the reset:</p>
     <div class="code-box">
       <div class="code">${code}</div>
     </div>
     <p>This code is valid for <strong>30 minutes</strong>. If you did not make this request, please ignore this email or contact support if you have concerns.</p>
   `
   const footerText = "Premium Proxies, Instant Access."
-  const html = getStyledEmailTemplate("Password Reset", content, footerText)
+  const html = getStyledEmailTemplate("Password Reset", content, footerText, companyName, companyLogoUrl)
 
   return await sendEmail({
     to: email,
-    subject: "RayProxy Hub - Password Reset Code",
+    subject: `${companyName} - Password Reset Code`,
     html,
   })
 }

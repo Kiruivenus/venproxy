@@ -11,6 +11,11 @@ export interface PlatformSettings {
   maintenanceMode: boolean
   companyName: string
   companyLogoUrl: string
+  smtpHost?: string
+  smtpPort?: number
+  smtpUser?: string
+  smtpPass?: string
+  smtpSender?: string
 }
 
 const DEFAULT_SETTINGS: PlatformSettings = {
@@ -21,6 +26,11 @@ const DEFAULT_SETTINGS: PlatformSettings = {
   maintenanceMode: false,
   companyName: "RayProxy Hub",
   companyLogoUrl: "",
+  smtpHost: "",
+  smtpPort: 587,
+  smtpUser: "",
+  smtpPass: "",
+  smtpSender: "",
 }
 
 export async function getPlatformSettings(): Promise<PlatformSettings> {
@@ -36,6 +46,11 @@ export async function getPlatformSettings(): Promise<PlatformSettings> {
       maintenanceMode: doc.maintenanceMode ?? false,
       companyName: doc.companyName ?? "RayProxy Hub",
       companyLogoUrl: doc.companyLogoUrl ?? "",
+      smtpHost: doc.smtpHost ?? "",
+      smtpPort: doc.smtpPort ?? 587,
+      smtpUser: doc.smtpUser ?? "",
+      smtpPass: doc.smtpPass ?? "",
+      smtpSender: doc.smtpSender ?? "",
     }
   } catch {
     return DEFAULT_SETTINGS
