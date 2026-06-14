@@ -77,7 +77,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen bg-background font-sans">
       <PublicNavBar mode="register" />
       {/* Left Visual Section */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden bg-zinc-950 border-r border-border/40">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between pt-28 pb-12 px-12 relative overflow-hidden bg-zinc-950 border-r border-border/40">
         {/* Abstract Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-background to-background" />
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-accent/20 blur-[120px]" />

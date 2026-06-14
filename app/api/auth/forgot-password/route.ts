@@ -50,12 +50,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email and action are required" }, { status: 400 })
     }
 
+    const lowercaseEmail = email.toLowerCase()
+
     const db = await getDb()
     const usersCollection = db.collection("users")
 
     // Step 1: Send reset code
     if (action === "send-code") {
-      const user = await usersCollection.findOne({ email })
+      const user = await usersCollection.findOne({ email: lowercaseEmail })
 
       if (!user) {
         return NextResponse.json({ error: "User not found. Please check your email address." }, { status: 404 })
@@ -74,7 +76,7 @@ export async function POST(req: NextRequest) {
         }
       )
 
-      const emailSent = await sendResetEmail(email, resetCode)
+      const emailSent = await sendResetEmail(lowercaseEmail, resetCode)
 
       if (!emailSent) {
         return NextResponse.json(
@@ -88,7 +90,7 @@ export async function POST(req: NextRequest) {
 
     // Step 2: Verify reset code
     if (action === "verify-code") {
-      const user = await usersCollection.findOne({ email })
+      const user = await usersCollection.findOne({ email: lowercaseEmail })
 
       if (!user || !user.resetCode) {
         return NextResponse.json({ error: "Invalid reset code" }, { status: 400 })
@@ -111,7 +113,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid request" }, { status: 400 })
       }
 
-      const user = await usersCollection.findOne({ email })
+      const user = await usersCollection.findOne({ email: lowercaseEmail })
 
       if (!user || user.resetCode !== code) {
         return NextResponse.json({ error: "Invalid reset request" }, { status: 400 })
