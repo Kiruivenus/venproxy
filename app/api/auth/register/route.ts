@@ -14,6 +14,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: SUBSCRIPTION_ERROR }, { status: 403 })
     }
 
+    // Platform settings: check if registration is disabled
+    const { getPlatformSettings } = await import("@/app/admin/platform-actions")
+    const platformSettings = await getPlatformSettings()
+    if (platformSettings.disableUserRegistration) {
+      return NextResponse.json({ error: "Registration is currently closed." }, { status: 403 })
+    }
+
     if (!email || !password || !name) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }

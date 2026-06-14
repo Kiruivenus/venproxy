@@ -427,18 +427,18 @@ export function ProxyManagement() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-3.5 h-4 w-4 text-slate-400 dark:text-zinc-500" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search IP, country..."
-            className="pl-9 bg-zinc-950/40 border-border/50 h-11"
+            className="pl-9 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-border h-11 rounded-xl focus:border-blue-600 dark:focus:border-blue-600 focus:ring-1 focus:ring-blue-650"
           />
         </div>
 
         {/* Status Filter */}
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-          <SelectTrigger className="bg-zinc-950/40 border-border/50 h-11">
+          <SelectTrigger className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-border h-11 rounded-xl focus:border-blue-600 dark:focus:border-blue-600">
             <SelectValue placeholder="All Statuses" />
           </SelectTrigger>
           <SelectContent>
@@ -451,7 +451,7 @@ export function ProxyManagement() {
 
         {/* Active/Visibility Filter */}
         <Select value={activeFilter} onValueChange={(v) => { setActiveFilter(v); setPage(1); }}>
-          <SelectTrigger className="bg-zinc-950/40 border-border/50 h-11">
+          <SelectTrigger className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-border h-11 rounded-xl focus:border-blue-600 dark:focus:border-blue-600">
             <SelectValue placeholder="All Visibility" />
           </SelectTrigger>
           <SelectContent>
@@ -463,7 +463,7 @@ export function ProxyManagement() {
 
         {/* Page Limit */}
         <Select value={limit.toString()} onValueChange={(v) => { setLimit(Number(v)); setPage(1); }}>
-          <SelectTrigger className="bg-zinc-950/40 border-border/50 h-11">
+          <SelectTrigger className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-border h-11 rounded-xl focus:border-blue-600 dark:focus:border-blue-600">
             <SelectValue placeholder="50 rows per page" />
           </SelectTrigger>
           <SelectContent>

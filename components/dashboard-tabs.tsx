@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ProxyCard } from "@/components/proxy-card"
-import { Loader2, Package, Clock, Mail, Copy, Eye, EyeOff, Server } from "lucide-react"
+import { Loader2, Package, Clock, Mail, Copy, Eye, EyeOff, AlertCircle, Globe } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
@@ -29,36 +30,91 @@ interface PurchasedEmail {
   purchasedAt: string
 }
 
+const ActiveProxyIllustration = () => (
+  <div className="relative h-36 w-36 mb-6 flex items-center justify-center">
+    <svg viewBox="0 0 100 100" className="h-full w-full text-blue-600 animate-pulse-slow" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Server Box 1 */}
+      <rect x="15" y="12" width="70" height="20" rx="6" className="fill-blue-600/5 stroke-blue-600" strokeWidth="2" />
+      <circle cx="28" cy="22" r="2.5" className="fill-emerald-500 animate-pulse" />
+      <line x1="38" y1="22" x2="60" y2="22" stroke="currentColor" strokeWidth="2" strokeDasharray="3 2" className="text-muted-foreground/30" />
+      
+      {/* Server Box 2 */}
+      <rect x="15" y="40" width="70" height="20" rx="6" className="fill-blue-600/5 stroke-blue-600" strokeWidth="2" />
+      <circle cx="28" cy="50" r="2.5" className="fill-emerald-500 animate-pulse" />
+      <line x1="38" y1="50" x2="60" y2="50" stroke="currentColor" strokeWidth="2" strokeDasharray="3 2" className="text-muted-foreground/30" />
+      
+      {/* Server Box 3 */}
+      <rect x="15" y="68" width="70" height="20" rx="6" className="fill-blue-600/5 stroke-blue-600" strokeWidth="2" />
+      <circle cx="28" cy="78" r="2.5" className="fill-emerald-500 animate-pulse" />
+      <line x1="38" y1="78" x2="60" y2="78" stroke="currentColor" strokeWidth="2" strokeDasharray="3 2" className="text-muted-foreground/30" />
+
+      {/* Connection Linkages */}
+      <path d="M85 22C90 22 90 50 85 50" stroke="currentColor" strokeWidth="1.5" className="text-blue-600/30" />
+      <circle cx="85" cy="50" r="2" fill="currentColor" className="text-blue-600" />
+    </svg>
+  </div>
+)
+
+const ExpiredProxyIllustration = () => (
+  <div className="relative h-36 w-36 mb-6 flex items-center justify-center opacity-65">
+    <svg viewBox="0 0 100 100" className="h-full w-full text-zinc-400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="15" y="12" width="70" height="20" rx="6" className="fill-zinc-500/5 stroke-zinc-400" strokeWidth="2" />
+      <circle cx="28" cy="22" r="2.5" className="fill-zinc-400" />
+      
+      <rect x="15" y="40" width="70" height="20" rx="6" className="fill-zinc-500/5 stroke-zinc-400" strokeWidth="2" />
+      <circle cx="28" cy="50" r="2.5" className="fill-zinc-400" />
+
+      <circle cx="50" cy="50" r="16" className="fill-background stroke-zinc-400" strokeWidth="2" />
+      <path d="M50 40 V50 H58" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  </div>
+)
+
+const EmailIllustration = () => (
+  <div className="relative h-36 w-36 mb-6 flex items-center justify-center">
+    <svg viewBox="0 0 100 100" className="h-full w-full text-blue-600" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="15" y="25" width="70" height="50" rx="8" className="fill-blue-600/5 stroke-blue-600" strokeWidth="2.5" />
+      <path d="M15 32L50 55L85 32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="78" cy="25" r="4.5" className="fill-blue-600 animate-pulse" />
+    </svg>
+  </div>
+)
+
 export function DashboardTabs() {
   const [activeProxies, setActiveProxies] = useState<Proxy[]>([])
   const [expiredProxies, setExpiredProxies] = useState<Proxy[]>([])
   const [purchasedEmails, setPurchasedEmails] = useState<PurchasedEmail[]>([])
+  const [balance, setBalance] = useState<number>(0)
   const [loading, setLoading] = useState(true)
   const [visiblePasswords, setVisiblePasswords] = useState<Set<string>>(new Set())
   const [copiedItem, setCopiedItem] = useState<string | null>(null)
 
   useEffect(() => {
     fetchData()
-    // Auto-refresh every 30 seconds to catch expired proxies
     const interval = setInterval(fetchData, 30000)
     return () => clearInterval(interval)
   }, [])
 
   const fetchData = async () => {
     try {
-      const [activeRes, expiredRes, emailsRes] = await Promise.all([
+      const [activeRes, expiredRes, emailsRes, balanceRes] = await Promise.all([
         fetch("/api/user/proxies?type=active"),
         fetch("/api/user/proxies?type=expired"),
         fetch("/api/user/emails"),
+        fetch("/api/user/balance"),
       ])
 
       const activeData = await activeRes.json()
       const expiredData = await expiredRes.json()
       const emailsData = await emailsRes.json()
+      const balanceData = await balanceRes.json()
 
       setActiveProxies(activeData.proxies || [])
       setExpiredProxies(expiredData.proxies || [])
       setPurchasedEmails(emailsData.emails || [])
+      if (balanceData.balance !== undefined) {
+        setBalance(balanceData.balance)
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error)
     } finally {
@@ -66,41 +122,109 @@ export function DashboardTabs() {
     }
   }
 
-  const fetchProxies = async () => {
-    fetchData()
-  }
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="flex items-center justify-center py-20 bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl shadow-xs">
+        <Loader2 className="h-6 w-6 animate-spin text-blue-600 dark:text-blue-400" />
       </div>
     )
   }
 
   return (
-    <Tabs defaultValue="active" className="w-full">
-      <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-zinc-950/40 backdrop-blur-md border border-border/40 h-auto p-1 rounded-xl">
-        <TabsTrigger value="active" className="gap-2 py-2.5 rounded-lg data-[state=active]:bg-accent data-[state=active]:text-background data-[state=active]:shadow-md transition-all">
-          <Package className="h-4 w-4" />
-          Active ({activeProxies.length})
+    <div className="space-y-8">
+      {/* Metric Cards Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Active Proxies Card */}
+        <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 hover:border-blue-500/20 dark:hover:border-blue-500/30 flex items-center justify-between group">
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Active Proxies</p>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{activeProxies.length}</h3>
+          </div>
+          <div className="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-450 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <Globe className="h-6 w-6" />
+          </div>
+        </div>
+
+        {/* Expired Proxies Card */}
+        <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 hover:border-amber-500/20 dark:hover:border-amber-500/30 flex items-center justify-between group">
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Expired Proxies</p>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{expiredProxies.length}</h3>
+          </div>
+          <div className="h-12 w-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-450 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <Clock className="h-6 w-6" />
+          </div>
+        </div>
+
+        {/* Purchased Emails Card */}
+        <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 hover:border-purple-500/20 dark:hover:border-purple-500/30 flex items-center justify-between group">
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Emails</p>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{purchasedEmails.length}</h3>
+          </div>
+          <div className="h-12 w-12 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-450 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <Mail className="h-6 w-6" />
+          </div>
+        </div>
+
+        {/* Wallet Balance Card */}
+        <Link href="/topup" className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 hover:border-emerald-500/20 dark:hover:border-emerald-500/30 flex items-center justify-between group cursor-pointer">
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Balance</p>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">KES {balance.toLocaleString()}</h3>
+          </div>
+          <div className="h-12 w-12 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-450 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span className="font-extrabold text-xs">KES</span>
+          </div>
+        </Link>
+      </div>
+
+      <Tabs defaultValue="active" className="w-full">
+        {/* Pill-shaped container Segmented tabs */}
+        <TabsList className="flex w-full max-w-md bg-white/60 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800/80 p-1 rounded-full h-auto mb-8 shadow-2xs">
+          <TabsTrigger 
+            value="active" 
+            className="flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+          >
+            <Package className="h-3.5 w-3.5" />
+          <span>Active</span>
+          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800">
+            {activeProxies.length}
+          </span>
         </TabsTrigger>
-        <TabsTrigger value="expired" className="gap-2 py-2.5 rounded-lg data-[state=active]:bg-accent data-[state=active]:text-background data-[state=active]:shadow-md transition-all">
-          <Clock className="h-4 w-4" />
-          Expired ({expiredProxies.length})
+        <TabsTrigger 
+          value="expired" 
+          className="flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+        >
+          <Clock className="h-3.5 w-3.5" />
+          <span>Expired</span>
+          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800">
+            {expiredProxies.length}
+          </span>
         </TabsTrigger>
-        <TabsTrigger value="emails" className="gap-2 py-2.5 rounded-lg data-[state=active]:bg-accent data-[state=active]:text-background data-[state=active]:shadow-md transition-all">
-          <Mail className="h-4 w-4" />
-          Emails ({purchasedEmails.length})
+        <TabsTrigger 
+          value="emails" 
+          className="flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+        >
+          <Mail className="h-3.5 w-3.5" />
+          <span>Emails</span>
+          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800">
+            {purchasedEmails.length}
+          </span>
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="active" className="mt-6">
+      <TabsContent value="active" className="mt-2 outline-none">
         {activeProxies.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border/50 bg-zinc-950/40 backdrop-blur-md py-16 text-center shadow-lg transition-all duration-300 hover:border-accent/30 hover:bg-zinc-950/60">
-            <Package className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No active proxies</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Purchase a proxy to get started</p>
+          <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800/80 rounded-2xl p-12 text-center shadow-sm max-w-2xl mx-auto flex flex-col items-center justify-center">
+            <ActiveProxyIllustration />
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No active proxies yet.</h3>
+            <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium max-w-sm mb-6 leading-relaxed">
+              Deploy your first high-performance proxy instantly using M-Pesa.
+            </p>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-xs transition-colors" asChild>
+              <Link href="/buy">Purchase New Proxy</Link>
+            </Button>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -111,12 +235,14 @@ export function DashboardTabs() {
         )}
       </TabsContent>
 
-      <TabsContent value="expired" className="mt-6">
+      <TabsContent value="expired" className="mt-2 outline-none">
         {expiredProxies.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border/50 bg-zinc-950/40 backdrop-blur-md py-16 text-center shadow-lg transition-all duration-300 hover:border-accent/30 hover:bg-zinc-950/60">
-            <Clock className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No expired proxies</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Your expired proxies will appear here</p>
+          <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800/80 rounded-2xl p-12 text-center shadow-sm max-w-2xl mx-auto flex flex-col items-center justify-center">
+            <ExpiredProxyIllustration />
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No expired proxies.</h3>
+            <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium max-w-sm mb-6 leading-relaxed">
+              Your historical proxy configurations will appear here once they expire.
+            </p>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -127,12 +253,17 @@ export function DashboardTabs() {
         )}
       </TabsContent>
 
-      <TabsContent value="emails" className="mt-6">
+      <TabsContent value="emails" className="mt-2 outline-none">
         {purchasedEmails.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border/50 bg-zinc-950/40 backdrop-blur-md py-16 text-center shadow-lg transition-all duration-300 hover:border-accent/30 hover:bg-zinc-950/60">
-            <Mail className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No purchased emails</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Your purchased emails will appear here</p>
+          <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800/80 rounded-2xl p-12 text-center shadow-sm max-w-2xl mx-auto flex flex-col items-center justify-center">
+            <EmailIllustration />
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No purchased emails yet.</h3>
+            <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium max-w-sm mb-6 leading-relaxed">
+              Deploy your secure messaging profiles instantly using M-Pesa.
+            </p>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-xs transition-colors" asChild>
+              <Link href="/buy-emails">Purchase New Emails</Link>
+            </Button>
           </div>
         ) : (
           <div className="space-y-4">
@@ -159,31 +290,31 @@ export function DashboardTabs() {
               }
 
               return (
-                <Card key={email.id} className="overflow-hidden border-l-4 border-l-accent bg-zinc-950/40 backdrop-blur-md border-y border-r border-border/40 shadow-xl transition-all duration-300 hover:shadow-accent/5">
+                <Card key={email.id} className="overflow-hidden border-l-4 border-l-blue-600 bg-white dark:bg-zinc-900 border-y border-r border-slate-100 dark:border-zinc-800/60 shadow-xs transition-all duration-300">
                   <CardContent className="p-5">
                     <div className="space-y-4">
                       {/* Email Address */}
-                      <div className="flex items-center justify-between gap-3 rounded-lg bg-background/50 border border-border/30 p-3">
+                      <div className="flex items-center justify-between gap-3 rounded-lg bg-slate-50/50 dark:bg-zinc-950/40 border border-slate-100 dark:border-zinc-800/60 p-3">
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground mb-1">Email Address</p>
-                          <p className="font-semibold text-sm break-all">{email.emailAddress}</p>
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-550 mb-1">Email Address</p>
+                          <p className="font-semibold text-sm break-all text-slate-800 dark:text-zinc-200">{email.emailAddress}</p>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleCopy(email.emailAddress, "email")}
-                          className="flex-shrink-0"
+                          className="flex-shrink-0 hover:bg-slate-100 dark:hover:bg-zinc-800"
                           title="Copy email address"
                         >
-                          <Copy className={`h-4 w-4 ${copiedItem === `${email.id}-email` ? "text-accent" : ""}`} />
+                          <Copy className={`h-4 w-4 ${copiedItem === `${email.id}-email` ? "text-blue-600" : "text-slate-400"}`} />
                         </Button>
                       </div>
 
                       {/* Password */}
-                      <div className="flex items-center justify-between gap-3 rounded-lg bg-background/50 border border-border/30 p-3">
+                      <div className="flex items-center justify-between gap-3 rounded-lg bg-slate-50/50 dark:bg-zinc-950/40 border border-slate-100 dark:border-zinc-800/60 p-3">
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground mb-1">Password</p>
-                          <p className="font-semibold text-sm font-mono">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-550 mb-1">Password</p>
+                          <p className="font-semibold text-sm font-mono text-slate-850 dark:text-zinc-250">
                             {passwordVisible ? email.password : "•".repeat(email.password.length)}
                           </p>
                         </div>
@@ -192,52 +323,54 @@ export function DashboardTabs() {
                             variant="ghost"
                             size="sm"
                             onClick={togglePasswordVisibility}
+                            className="hover:bg-slate-100 dark:hover:bg-zinc-800"
                             title="Toggle password visibility"
                           >
                             {passwordVisible ? (
-                              <EyeOff className="h-4 w-4" />
+                              <EyeOff className="h-4 w-4 text-slate-450" />
                             ) : (
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-4 w-4 text-slate-450" />
                             )}
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleCopy(email.password, "password")}
+                            className="hover:bg-slate-100 dark:hover:bg-zinc-800"
                             title="Copy password"
                           >
-                            <Copy className={`h-4 w-4 ${copiedItem === `${email.id}-password` ? "text-accent" : ""}`} />
+                            <Copy className={`h-4 w-4 ${copiedItem === `${email.id}-password` ? "text-blue-600" : "text-slate-400"}`} />
                           </Button>
                         </div>
                       </div>
 
                       {/* Server Info */}
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-lg bg-background/50 border border-border/30 p-3">
-                          <p className="text-xs text-muted-foreground mb-1">Domain</p>
-                          <p className="font-medium text-sm">{email.domain}</p>
+                        <div className="rounded-lg bg-slate-50/50 dark:bg-zinc-950/40 border border-slate-100 dark:border-zinc-800/60 p-3">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-550 mb-1">Domain</p>
+                          <p className="font-semibold text-sm text-slate-800 dark:text-zinc-200">{email.domain}</p>
                         </div>
                         {email.server && (
-                          <div className="flex items-center justify-between gap-2 rounded-lg bg-background/50 border border-border/30 p-3">
+                          <div className="flex items-center justify-between gap-2 rounded-lg bg-slate-50/50 dark:bg-zinc-950/40 border border-slate-100 dark:border-zinc-800/60 p-3">
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs text-muted-foreground mb-1">Server</p>
-                              <p className="font-mono text-xs break-all">{email.server}</p>
+                              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-550 mb-1">Server</p>
+                              <p className="font-mono text-xs break-all text-slate-800 dark:text-zinc-250">{email.server}</p>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleCopy(email.server || "", "server")}
-                              className="flex-shrink-0"
+                              className="flex-shrink-0 hover:bg-slate-100 dark:hover:bg-zinc-800"
                               title="Copy server"
                             >
-                              <Copy className={`h-4 w-4 ${copiedItem === `${email.id}-server` ? "text-accent" : ""}`} />
+                              <Copy className={`h-4 w-4 ${copiedItem === `${email.id}-server` ? "text-blue-600" : "text-slate-400"}`} />
                             </Button>
                           </div>
                         )}
                       </div>
 
                       {/* Purchase Date */}
-                      <div className="text-xs text-muted-foreground pt-2 border-t border-border">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wide pt-3 border-t border-slate-100 dark:border-zinc-800/80">
                         Purchased (UTC):{" "}
                         {(() => {
                           const date = new Date(email.purchasedAt)
@@ -258,5 +391,6 @@ export function DashboardTabs() {
         )}
       </TabsContent>
     </Tabs>
+  </div>
   )
 }

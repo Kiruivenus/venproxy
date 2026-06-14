@@ -1,11 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -28,6 +26,14 @@ interface ProxyPurchaseFormProps {
   pricing: PricingItem[]
   userId?: string
 }
+
+const MpesaWhiteIcon = () => (
+  <svg viewBox="0 0 100 100" className="h-5 w-5 flex-shrink-0 animate-pulse-slow" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="22" fill="transparent"/>
+    <path d="M20 70V30L42 54L64 30V70" stroke="white" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="82" cy="50" r="10" fill="white"/>
+  </svg>
+)
 
 export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
   const router = useRouter()
@@ -210,208 +216,230 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
 
   if (pricing.length === 0) {
     return (
-      <Card className="bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl">
-        <CardContent className="py-12 text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground/50" />
-          <p className="mt-4 text-muted-foreground">No proxies available at the moment. Please check back later.</p>
-        </CardContent>
-      </Card>
+      <div className="max-w-xl mx-auto bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-md p-12 text-center animate-in fade-in duration-500">
+        <AlertCircle className="mx-auto h-12 w-12 text-slate-400 dark:text-zinc-550 mb-3" />
+        <p className="text-sm font-semibold text-slate-650 dark:text-zinc-400">
+          No proxies available at the moment. Please check back later.
+        </p>
+      </div>
     )
   }
 
   return (
-    <Card className="bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl">
-      <CardHeader>
-        <CardTitle>Select Your Proxy</CardTitle>
-        <CardDescription>Choose a country for your daily proxy access</CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6">
-          {error && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
+    <div className="max-w-xl mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-md border border-slate-200 dark:border-zinc-800/80 overflow-hidden animate-in fade-in duration-500">
+      {/* Wallet Row (Header of the card) */}
+      <div className="bg-slate-50 dark:bg-zinc-900/60 p-6 rounded-t-2xl border-b border-slate-100 dark:border-zinc-800/85 flex justify-between items-center">
+        <div>
+          <p className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+            WALLET BALANCE
+          </p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+            {balanceLoading ? (
+              <span className="inline-block h-6 w-20 bg-slate-200 dark:bg-zinc-850 animate-pulse rounded-md mt-1" />
+            ) : (
+              `KES ${balance.toLocaleString()}`
+            )}
+          </p>
+        </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          type="button" 
+          onClick={() => router.push("/topup")}
+          className="text-emerald-700 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-450 dark:hover:bg-emerald-900/10 px-4 py-2 rounded-full text-sm font-semibold transition-colors border-0 h-auto"
+        >
+          Top Up
+        </Button>
+      </div>
 
-          {paymentStatus === "pending" && (
-            <div className="rounded-md bg-accent/10 p-4 text-center">
-              <Loader2 className="mx-auto h-8 w-8 animate-spin text-accent" />
-              <p className="mt-2 font-medium">Check your phone for M-Pesa prompt</p>
-              <p className="text-sm text-muted-foreground">Enter your PIN to complete payment</p>
-            </div>
-          )}
+      <form onSubmit={handleSubmit} className="p-6 md:p-8 flex flex-col gap-6 bg-white dark:bg-zinc-900 rounded-b-2xl">
+        {error && (
+          <div className="rounded-xl bg-destructive/10 p-3 text-xs font-semibold text-destructive flex items-center gap-2 border border-destructive/20 animate-in fade-in">
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
-          {paymentStatus === "success" && (
-            <div className="rounded-md bg-green-500/10 p-4 text-center">
-              <CheckCircle className="mx-auto h-8 w-8 text-green-500" />
-              <p className="mt-2 font-medium text-green-500">Payment Successful!</p>
-              <p className="text-sm text-muted-foreground">Redirecting to your dashboard...</p>
-            </div>
-          )}
+        {paymentStatus === "pending" && (
+          <div className="rounded-xl bg-indigo-50/50 dark:bg-zinc-800/40 p-5 text-center border border-indigo-100/40 dark:border-zinc-800 space-y-2 animate-in fade-in">
+            <Loader2 className="mx-auto h-8 w-8 animate-spin text-indigo-600 dark:text-indigo-400" />
+            <p className="font-bold text-sm text-slate-800 dark:text-zinc-200">Check your phone for M-Pesa prompt</p>
+            <p className="text-xs text-slate-500 dark:text-zinc-400">Enter your secure PIN to complete this payment</p>
+          </div>
+        )}
 
-          {paymentStatus !== "success" && (
-            <>
-              {/* Balance Display */}
-              <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10">
-                    <Wallet className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Your Balance</p>
-                    <p className="text-xl font-bold">
-                      {balanceLoading ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : (
-                        `KES ${balance.toLocaleString()}`
-                      )}
-                    </p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" type="button" onClick={() => router.push("/topup")}>
-                  Top Up
-                </Button>
-              </div>
+        {paymentStatus === "success" && (
+          <div className="rounded-xl bg-emerald-50/65 dark:bg-emerald-950/20 p-5 text-center border border-emerald-100/40 dark:border-emerald-900/30 space-y-2 animate-in fade-in">
+            <CheckCircle className="mx-auto h-8 w-8 text-emerald-600 dark:text-emerald-450 animate-bounce" />
+            <p className="font-bold text-sm text-emerald-700 dark:text-emerald-400">Payment Successful!</p>
+            <p className="text-xs text-slate-500 dark:text-zinc-400">Redirecting secure session to your dashboard...</p>
+          </div>
+        )}
 
-              <div className="space-y-2">
-                <Label>Country</Label>
-                <Select value={country} onValueChange={setCountry}>
-                  <SelectTrigger className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300">
-                    <SelectValue placeholder="Select a country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {pricing.map((p) => (
-                      <SelectItem key={p.countryCode} value={p.country}>
-                        {p.country} - KES {p.daily}/day
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {checking && <p className="text-sm text-muted-foreground">Checking availability...</p>}
-                {available === true && !checking && (
-                  <p className="flex items-center gap-1 text-sm text-green-500">
-                    <CheckCircle className="h-4 w-4" /> Available
-                  </p>
-                )}
-                {available === false && !checking && (
-                  <p className="flex items-center gap-1 text-sm text-destructive">
-                    <XCircle className="h-4 w-4" /> Not available
-                  </p>
-                )}
-              </div>
-
-              {selectedPricing && (
-                <>
-                  <div className="rounded-md border bg-muted/50 p-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Daily Access</span>
-                      <span className="text-lg font-bold">KES {selectedPricing.daily}</span>
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground">Get access to a premium proxy</p>
-                    {availableProxy && (
-                      <div className="mt-3 space-y-2 border-t border-border pt-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Proxy Expires (UTC):</span>
-                          <span className="font-semibold text-accent">
-                            {(() => {
-                              const date = new Date(availableProxy.expiresAt)
-                              const year = date.getUTCFullYear()
-                              const month = String(date.getUTCMonth() + 1).padStart(2, "0")
-                              const day = String(date.getUTCDate()).padStart(2, "0")
-                              const hours = String(date.getUTCHours()).padStart(2, "0")
-                              const minutes = String(date.getUTCMinutes()).padStart(2, "0")
-                              return `${month}/${day}/${year} at ${hours}:${minutes}`
-                            })()}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Payment Method Selection */}
-                  <div className="space-y-3">
-                    <Label>Payment Method</Label>
-                    <RadioGroup
-                      value={paymentMethod}
-                      onValueChange={(v) => setPaymentMethod(v as "mpesa" | "balance")}
-                      className="grid grid-cols-2 gap-4"
+        {paymentStatus !== "success" && (
+          <>
+            {/* Region Selector */}
+            <div>
+              <Label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2 block">
+                SELECT REGION
+              </Label>
+              <Select value={country} onValueChange={setCountry}>
+                <SelectTrigger className="w-full h-14 bg-white dark:bg-zinc-900 border border-slate-350 dark:border-zinc-800 rounded-xl px-4 flex items-center justify-between text-slate-700 dark:text-zinc-300 hover:border-slate-400 focus:ring-2 focus:ring-blue-500/20 transition-all outline-none cursor-pointer text-sm font-semibold shadow-2xs">
+                  <SelectValue placeholder="Choose a country..." />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl shadow-md">
+                  {pricing.map((p) => (
+                    <SelectItem 
+                      key={p.countryCode} 
+                      value={p.country}
+                      className="text-xs font-semibold py-2.5 focus:bg-indigo-50 dark:focus:bg-zinc-800/80 focus:text-indigo-600 dark:focus:text-indigo-400 rounded-lg cursor-pointer"
                     >
-                      <div>
-                        <RadioGroupItem
-                          value="balance"
-                          id="balance"
-                          className="peer sr-only"
-                          disabled={!hasEnoughBalance && price > 0}
-                        />
-                        <Label
-                          htmlFor="balance"
-                          className={`flex cursor-pointer flex-col items-center justify-between rounded-xl border-2 border-border/50 bg-zinc-950/40 backdrop-blur-md p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent peer-data-[state=checked]:bg-accent/5 transition-all duration-300 ${
-                            !hasEnoughBalance && price > 0 ? "cursor-not-allowed opacity-50" : ""
-                          }`}
-                        >
-                          <Wallet className="mb-2 h-6 w-6" />
-                          <span className="text-sm font-medium">Balance</span>
-                          {!hasEnoughBalance && price > 0 && (
-                            <span className="mt-1 text-xs text-destructive">Insufficient</span>
-                          )}
-                        </Label>
-                      </div>
-                      <div>
-                        <RadioGroupItem value="mpesa" id="mpesa" className="peer sr-only" />
-                        <Label
-                          htmlFor="mpesa"
-                          className="flex cursor-pointer flex-col items-center justify-between rounded-xl border-2 border-border/50 bg-zinc-950/40 backdrop-blur-md p-4 hover:bg-accent/5 peer-data-[state=checked]:border-accent peer-data-[state=checked]:bg-accent/5 transition-all duration-300"
-                        >
-                          <Smartphone className="mb-2 h-6 w-6" />
-                          <span className="text-sm font-medium">M-Pesa</span>
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
+                      {p.country} — KES {p.daily}/day
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {checking && <p className="text-[11px] font-semibold text-slate-400 dark:text-zinc-550 mt-1.5 animate-pulse">Checking network availability...</p>}
+              {available === true && !checking && (
+                <p className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-450 mt-1.5">
+                  <CheckCircle className="h-4 w-4" /> <span>Region Node Available</span>
+                </p>
+              )}
+              {available === false && !checking && (
+                <p className="flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-450 mt-1.5">
+                  <XCircle className="h-4 w-4" /> <span>Region Node Unavailable</span>
+                </p>
+              )}
+            </div>
 
-                  {paymentMethod === "mpesa" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">M-Pesa Phone Number</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="0712345678 or 254712345678"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        required
-                        className="h-11 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
-                      />
-                      <p className="text-xs text-muted-foreground">You will receive an STK push on this number</p>
+            {selectedPricing && (
+              <>
+                <div className="rounded-xl border border-slate-100 dark:border-zinc-850 bg-slate-50/50 dark:bg-zinc-900/40 p-4 space-y-2 animate-in fade-in">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-550 dark:text-zinc-400 uppercase">
+                    <span>Daily Access</span>
+                    <span className="text-sm font-black text-slate-800 dark:text-white">KES {selectedPricing.daily}</span>
+                  </div>
+                  <p className="text-[11px] font-medium text-slate-400 dark:text-zinc-550">
+                    Provides immediate access to a premium, high-speed proxy.
+                  </p>
+                  {availableProxy && (
+                    <div className="border-t border-slate-100 dark:border-zinc-800/80 pt-2.5 mt-2.5 flex justify-between text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
+                      <span>Proxy Expires (UTC):</span>
+                      <span className="text-indigo-600 dark:text-indigo-400">
+                        {(() => {
+                          const date = new Date(availableProxy.expiresAt)
+                          const year = date.getUTCFullYear()
+                          const month = String(date.getUTCMonth() + 1).padStart(2, "0")
+                          const day = String(date.getUTCDate()).padStart(2, "0")
+                          const hours = String(date.getUTCHours()).padStart(2, "0")
+                          const minutes = String(date.getUTCMinutes()).padStart(2, "0")
+                          return `${month}/${day}/${year} at ${hours}:${minutes}`
+                        })()}
+                      </span>
                     </div>
                   )}
-                </>
-              )}
-            </>
-          )}
-        </CardContent>
+                </div>
+
+                {/* Payment Method Selection */}
+                <div className="space-y-3">
+                  <Label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                    Payment Method
+                  </Label>
+                  <RadioGroup
+                    value={paymentMethod}
+                    onValueChange={(v) => setPaymentMethod(v as "mpesa" | "balance")}
+                    className="grid grid-cols-2 gap-4"
+                  >
+                    <div>
+                      <RadioGroupItem
+                        value="balance"
+                        id="balance"
+                        className="peer sr-only"
+                        disabled={!hasEnoughBalance && price > 0}
+                      />
+                      <Label
+                        htmlFor="balance"
+                        className={`flex cursor-pointer flex-col items-center justify-between rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4 hover:bg-slate-50/50 dark:hover:bg-zinc-800/40 peer-data-[state=checked]:border-indigo-650 peer-data-[state=checked]:bg-indigo-50/10 peer-data-[state=checked]:text-indigo-600 dark:peer-data-[state=checked]:border-indigo-500 dark:peer-data-[state=checked]:bg-indigo-950/20 dark:peer-data-[state=checked]:text-indigo-400 transition-all duration-200 shadow-2xs ${
+                          !hasEnoughBalance && price > 0 ? "cursor-not-allowed opacity-50 bg-slate-50 dark:bg-zinc-900/20" : ""
+                        }`}
+                      >
+                        <Wallet className="mb-2 h-5 w-5 stroke-[1.5]" />
+                        <span className="text-xs font-bold">Wallet Balance</span>
+                        {!hasEnoughBalance && price > 0 && (
+                          <span className="mt-1.5 text-[9px] font-bold text-rose-650 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 px-2 py-0.5 rounded-full">
+                            Insufficient
+                          </span>
+                        )}
+                      </Label>
+                    </div>
+                    <div>
+                      <RadioGroupItem value="mpesa" id="mpesa" className="peer sr-only" />
+                      <Label
+                        htmlFor="mpesa"
+                        className="flex cursor-pointer flex-col items-center justify-between rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4 hover:bg-slate-50/50 dark:hover:bg-zinc-800/40 peer-data-[state=checked]:border-indigo-650 peer-data-[state=checked]:bg-indigo-50/10 peer-data-[state=checked]:text-indigo-600 dark:peer-data-[state=checked]:border-indigo-500 dark:peer-data-[state=checked]:bg-indigo-950/20 dark:peer-data-[state=checked]:text-indigo-400 transition-all duration-200 shadow-2xs"
+                      >
+                        <Smartphone className="mb-2 h-5 w-5 stroke-[1.5]" />
+                        <span className="text-xs font-bold">M-Pesa</span>
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {paymentMethod === "mpesa" && (
+                  <div className="space-y-2 animate-in fade-in">
+                    <Label htmlFor="phone" className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                      M-Pesa Phone Number
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="0712345678 or 254712345678"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      required
+                      className="h-12 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 focus-visible:ring-2 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 hover:border-slate-300 dark:hover:border-zinc-705 text-sm font-semibold rounded-xl transition-all shadow-xs"
+                    />
+                    <p className="text-[10px] font-medium text-slate-400 dark:text-zinc-500">
+                      You will receive an STK push prompt on your mobile phone
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </>
+        )}
+
         {paymentStatus !== "success" && (
-          <CardFooter className="pt-6 border-t border-border/10 mt-2">
-            <Button
-              type="submit"
-              className="w-full h-12 bg-accent hover:bg-accent/90 text-background font-semibold text-base transition-all duration-300 shadow-[0_0_15px_rgba(var(--color-accent),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-accent),0.5)] rounded-xl"
-              disabled={
-                loading ||
-                !country ||
-                available === false ||
-                (paymentMethod === "mpesa" && !phoneNumber) ||
-                (paymentMethod === "balance" && !hasEnoughBalance)
-              }
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : paymentMethod === "balance" ? (
-                `Pay KES ${price} from Balance`
-              ) : (
-                `Pay KES ${price} via M-Pesa`
-              )}
-            </Button>
-          </CardFooter>
+          <Button
+            type="submit"
+            className="w-full h-14 mt-4 bg-[#00A859] hover:bg-[#008f4c] text-white font-bold text-lg rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all focus:ring-2 focus:ring-[#00A859] focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
+            disabled={
+              loading ||
+              !country ||
+              available === false ||
+              (paymentMethod === "mpesa" && !phoneNumber) ||
+              (paymentMethod === "balance" && !hasEnoughBalance)
+            }
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin text-white" />
+                Processing...
+              </>
+            ) : paymentMethod === "balance" ? (
+              <>
+                <Wallet className="h-5 w-5 stroke-[2.5]" />
+                <span>Pay KES {price} from Balance</span>
+              </>
+            ) : (
+              <>
+                <MpesaWhiteIcon />
+                <span>Pay KES {price} via M-Pesa</span>
+              </>
+            )}
+          </Button>
         )}
       </form>
-    </Card>
+    </div>
   )
 }

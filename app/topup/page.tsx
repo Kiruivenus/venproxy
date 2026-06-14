@@ -1,8 +1,15 @@
 import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
-import { Header } from "@/components/header"
+import { DashboardLayoutClient } from "@/components/dashboard-layout-client"
 import { TopUpForm } from "@/components/topup-form"
+import { ServicePaused } from "@/components/service-paused"
+import { getPlatformSettings } from "@/app/admin/platform-actions"
 import { Wallet } from "lucide-react"
+
+export const metadata = {
+  title: "Top Up - RayProxy Hub",
+  description: "Add funds to your account instantly via M-Pesa",
+}
 
 export default async function TopUpPage() {
   const session = await getSession()
@@ -11,36 +18,48 @@ export default async function TopUpPage() {
     redirect("/login")
   }
 
+  const platformSettings = await getPlatformSettings()
+
+  // Maintenance mode redirect for non-admins
+  if (
+    platformSettings.maintenanceMode &&
+    session.user.role !== "admin" &&
+    session.user.role !== "superadmin"
+  ) {
+    redirect("/maintenance")
+  }
+
+  const user = {
+    email: session.user.email,
+    name: session.user.name || "",
+    role: session.user.role,
+  }
+
   return (
-    <div className="min-h-screen bg-background font-sans selection:bg-accent/30">
-      <Header user={{ email: session.user.email, name: session.user.name, role: session.user.role }} />
-
-      <main className="container mx-auto px-4 py-16 md:py-24 relative">
-        {/* Background Effects */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-[0%] right-[20%] w-[30%] h-[30%] bg-accent/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-[20%] left-[20%] w-[20%] h-[20%] bg-accent/5 rounded-full blur-[100px]" />
+    <DashboardLayoutClient user={user}>
+      <div className="space-y-6 max-w-xl mx-auto">
+        {/* Page Header */}
+        <div className="flex flex-col items-center gap-3 mb-8">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100/50 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900/30 shadow-2xs">
+            <Wallet className="h-3.5 w-3.5" strokeWidth={2} />
+            <span>Account Balance</span>
+          </div>
+          <h1 className="font-sans font-extrabold text-3xl md:text-4xl text-slate-900 dark:text-white tracking-tight text-center">
+            Top Up Balance
+          </h1>
+          <p className="text-slate-500 dark:text-zinc-400 text-base max-w-lg text-center">
+            Add funds to your account instantly via M-Pesa.
+          </p>
         </div>
 
-        <div className="mx-auto max-w-lg relative z-10">
-          <div className="mb-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6">
-              <Wallet className="h-4 w-4" />
-              Account Balance
-            </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
-              Top Up Balance
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Add funds to your account instantly via M-Pesa.
-            </p>
-          </div>
-
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-150">
+        <div>
+          {platformSettings.disableMpesaDeposits ? (
+            <ServicePaused serviceName="M-Pesa Deposits" />
+          ) : (
             <TopUpForm currentBalance={session.user.balance || 0} />
-          </div>
+          )}
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayoutClient>
   )
 }

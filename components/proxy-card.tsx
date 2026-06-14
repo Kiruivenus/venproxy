@@ -46,10 +46,10 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
   const statusLabel = proxy.status === "dead" ? "Dead" : isExpired ? "Expired" : "Active"
 
   return (
-    <Card className={`overflow-hidden bg-zinc-950/40 backdrop-blur-md border-border/40 shadow-xl transition-all duration-300 hover:shadow-accent/5 hover:border-accent/20 ${isExpired || proxy.status === "dead" ? "opacity-60" : ""}`}>
+    <Card className={`overflow-hidden bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl shadow-xs transition-all duration-300 hover:shadow-md hover:border-blue-500/20 dark:hover:border-blue-500/35 ${isExpired || proxy.status === "dead" ? "opacity-60" : ""}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Globe className="h-4 w-4 text-accent" />
+        <CardTitle className="flex items-center gap-2 text-base font-extrabold text-slate-800 dark:text-zinc-200">
+          <Globe className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           {proxy.country}
         </CardTitle>
         <Badge variant={statusColor === "destructive" ? "destructive" : "default"} className={statusColor}>

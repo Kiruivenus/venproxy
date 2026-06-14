@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Globe, Loader2, Mail, Lock, ArrowRight, User, ShieldCheck } from "lucide-react"
+import { PublicNavBar } from "@/components/public-navbar"
+import { BrandLogo } from "@/components/brand-logo"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -73,6 +75,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen bg-background font-sans">
+      <PublicNavBar mode="register" />
       {/* Left Visual Section */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden bg-zinc-950 border-r border-border/40">
         {/* Abstract Background Elements */}
@@ -82,12 +85,7 @@ export default function RegisterPage() {
         
         {/* Branding */}
         <div className="relative z-10">
-          <Link href="/" className="inline-flex items-center gap-2.5 transition-transform hover:scale-105 duration-300">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 border border-border/40 p-1.5 overflow-hidden">
-              <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-foreground">RayProxy Hub</span>
-          </Link>
+          <BrandLogo size="lg" className="transition-transform hover:scale-105 duration-300" />
         </div>
 
         {/* Hero Message */}
@@ -134,11 +132,8 @@ export default function RegisterPage() {
         </div>
         
         <div className="w-full max-w-[420px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out py-8">
-          <div className="lg:hidden flex items-center justify-center gap-2.5 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 border border-border/40 p-1.5 overflow-hidden">
-              <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
-            </div>
-            <span className="text-2xl font-bold tracking-tight">RayProxy</span>
+          <div className="lg:hidden flex items-center justify-center mb-8">
+            <BrandLogo size="lg" />
           </div>
 
           <div className="text-center lg:text-left mb-8">

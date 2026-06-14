@@ -2,406 +2,113 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
+import { Sun, Moon, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Globe,
-  LogOut,
-  Menu,
-  User,
-  Shield,
-  X,
-  Home,
-  ShoppingCart,
-  LayoutDashboard,
-  History,
-  Wallet,
-} from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 interface HeaderProps {
-  user?: { email: string; name: string; role: string } | null
+  user?: { email: string; name: string | null; role: string } | null
+  onOpenMobile?: () => void
 }
 
-export function Header({ user }: HeaderProps) {
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
+export function Header({ user, onOpenMobile }: HeaderProps) {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
   const [balance, setBalance] = useState<number>(0)
-  const [isExpired, setIsExpired] = useState(false)
 
   useEffect(() => {
-    if (user && (user.role === "admin" || user.role === "superadmin")) {
-      fetch("/api/subscription/status")
-        .then((res) => res.json())
-        .then((data) => setIsExpired(data.isExpired))
-        .catch(() => {})
-    }
-  }, [user])
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
-    if (user) {
-      fetch("/api/user/balance")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.balance !== undefined) {
-            setBalance(data.balance)
-          }
-        })
-        .catch(() => {})
-    }
+    if (!user) return
+    fetch("/api/user/balance")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.balance !== undefined) {
+          setBalance(data.balance)
+        }
+      })
+      .catch(() => {})
   }, [user])
 
-  const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" })
-    router.push("/")
-    router.refresh()
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return "U"
+    const parts = name.trim().split(/\s+/)
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase()
+    }
+    return name.substring(0, 2).toUpperCase()
   }
 
   return (
-    <div className="sticky top-0 z-50">
-      {isExpired && (user?.role === "admin" || user?.role === "superadmin") && (
-        <div className="bg-destructive text-destructive-foreground py-2 px-4 text-center font-bold text-sm">
-          internal error : vercel resources exceeded
-        </div>
-      )}
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="h-7 w-7 overflow-hidden rounded-lg flex items-center justify-center bg-zinc-900 border border-border/40 p-0.5">
-            <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
-          </div>
-          <span className="text-xl font-bold">RayProxy Hub</span>
-        </Link>
-
-        <nav className="hidden items-center gap-6 md:flex">
-          {!user && (
-            <Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Home
-            </Link>
-          )}
-          <Link href="/buy" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-            Buy Proxies
-          </Link>
-          <Link href="/buy-emails" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-            Buy Emails
-          </Link>
-          <Link href="/support" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-            Support
-          </Link>
-          <Link href="/docs" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-            Docs
-          </Link>
-          {user ? (
-            <>
-              <Link
-                href="/topup"
-                className="flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
-              >
-                <Wallet className="h-4 w-4" />
-                KES {balance.toLocaleString()}
-              </Link>
-              <Link href="/dashboard" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                Dashboard
-              </Link>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <User className="h-4 w-4" />
-                    {user.name}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard">My Proxies</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/orders">Order History</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/topup" className="flex items-center gap-2">
-                      <Wallet className="h-4 w-4" />
-                      Top Up Balance
-                    </Link>
-                  </DropdownMenuItem>
-                  {user.role === "admin" && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center gap-2">
-                          <Shield className="h-4 w-4" />
-                          Admin Panel
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  {user.role === "superadmin" && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center gap-2">
-                          <Shield className="h-4 w-4" />
-                          Admin Panel
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin/settings" className="flex items-center gap-2">
-                          <span className="h-4 w-4">⚙️</span>
-                          Settings
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin/upgrade" className="flex items-center gap-2">
-                          <span className="h-4 w-4">⚡</span>
-                          Upgrade
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button size="sm" asChild>
-                <Link href="/register">Sign Up</Link>
-              </Button>
-            </div>
-          )}
-        </nav>
-
-        <div className="flex items-center gap-2 md:hidden">
-          {user && (
-            <Link
-              href="/topup"
-              className="flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
-            >
-              <Wallet className="h-4 w-4" />
-              <span>KES {balance.toLocaleString()}</span>
-            </Link>
-          )}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] p-0">
-              <div className="flex items-center justify-between border-b border-border bg-accent/5 px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 overflow-hidden rounded-lg flex items-center justify-center bg-zinc-900 border border-border/40 p-0.5">
-                    <img src="/logo.png" alt="RayProxy" className="h-[145%] w-auto max-w-none object-contain -translate-y-[8%]" />
-                  </div>
-                  <SheetTitle className="text-lg font-bold text-foreground">RayProxy Hub</SheetTitle>
-                </div>
-                <SheetClose asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </SheetClose>
-              </div>
-
-              {user && (
-                <div className="border-b border-border bg-accent/10 px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                      <User className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="font-medium">{user.name}</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
-                    </div>
-                  </div>
-                  <Link
-                    href="/topup"
-                    onClick={() => setOpen(false)}
-                    className="mt-3 flex items-center justify-between rounded-lg bg-background/50 px-3 py-2"
-                  >
-                    <span className="text-sm text-muted-foreground">Balance</span>
-                    <span className="font-semibold text-accent">KES {balance.toLocaleString()}</span>
-                  </Link>
-                </div>
-              )}
-
-              <nav className="flex flex-col p-4">
-                <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Navigation
-                </p>
-                {!user && (
-                  <Link
-                    href="/"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                  >
-                    <Home className="h-5 w-5 text-accent" />
-                    <span className="font-medium">Home</span>
-                  </Link>
-                )}
-                <Link
-                  href="/buy"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                >
-                  <ShoppingCart className="h-5 w-5 text-accent" />
-                  <span className="font-medium">Buy Proxies</span>
-                </Link>
-                <Link
-                  href="/buy-emails"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                >
-                  <ShoppingCart className="h-5 w-5 text-accent" />
-                  <span className="font-medium">Buy Emails</span>
-                </Link>
-                <Link
-                  href="/support"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                >
-                  <span className="h-5 w-5 text-accent text-lg">🤝</span>
-                  <span className="font-medium">Support</span>
-                </Link>
-                <Link
-                  href="/docs"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                >
-                  <span className="h-5 w-5 text-accent text-lg">📖</span>
-                  <span className="font-medium">Documentation</span>
-                </Link>
-
-                {user ? (
-                  <>
-                    <div className="my-3 border-t border-border" />
-                    <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Account
-                    </p>
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                    >
-                      <LayoutDashboard className="h-5 w-5 text-accent" />
-                      <span className="font-medium">Dashboard</span>
-                    </Link>
-                    <Link
-                      href="/dashboard/orders"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                    >
-                      <History className="h-5 w-5 text-accent" />
-                      <span className="font-medium">Order History</span>
-                    </Link>
-                    <Link
-                      href="/topup"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                    >
-                      <Wallet className="h-5 w-5 text-accent" />
-                      <span className="font-medium">Top Up Balance</span>
-                    </Link>
-
-                    {user.role === "admin" && (
-                      <>
-                        <div className="my-3 border-t border-border" />
-                        <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          Admin
-                        </p>
-                        <Link
-                          href="/admin"
-                          onClick={() => setOpen(false)}
-                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                        >
-                          <Shield className="h-5 w-5 text-accent" />
-                          <span className="font-medium">Admin Panel</span>
-                        </Link>
-                      </>
-                    )}
-                    {user.role === "superadmin" && (
-                      <>
-                        <div className="my-3 border-t border-border" />
-                        <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          SuperAdmin
-                        </p>
-                        <Link
-                          href="/admin"
-                          onClick={() => setOpen(false)}
-                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                        >
-                          <Shield className="h-5 w-5 text-accent" />
-                          <span className="font-medium">Admin Panel</span>
-                        </Link>
-                        <Link
-                          href="/admin/settings"
-                          onClick={() => setOpen(false)}
-                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                        >
-                          <span className="h-5 w-5 flex items-center justify-center">⚙️</span>
-                          <span className="font-medium">Settings</span>
-                        </Link>
-                        <Link
-                          href="/admin/upgrade"
-                          onClick={() => setOpen(false)}
-                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-accent/10"
-                        >
-                          <span className="h-5 w-5 flex items-center justify-center">⚡</span>
-                          <span className="font-medium">Upgrade</span>
-                        </Link>
-                      </>
-                    )}
-
-                    <div className="mt-4 px-2">
-                      <Button
-                        onClick={() => {
-                          handleLogout()
-                          setOpen(false)
-                        }}
-                        variant="outline"
-                        className="w-full justify-start gap-2"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Logout
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="mt-6 flex flex-col gap-3 px-2">
-                    <Button asChild className="w-full">
-                      <Link href="/login" onClick={() => setOpen(false)}>
-                        Login
-                      </Link>
-                    </Button>
-                    <Button variant="outline" asChild className="w-full bg-transparent">
-                      <Link href="/register" onClick={() => setOpen(false)}>
-                        Sign Up
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </nav>
-
-              <div className="absolute inset-x-0 bottom-0 border-t border-border bg-accent/5 px-6 py-4">
-                <p className="text-center text-xs text-muted-foreground">Premium Proxies, Instant Access</p>
-              </div>
-            </SheetContent>
-          </Sheet>
+    <header className="h-16 bg-white/40 dark:bg-zinc-950/40 backdrop-blur border-b border-slate-100 dark:border-zinc-800/80 sticky top-0 z-30 flex items-center justify-between px-6 md:px-8">
+      {/* Left Side: Breadcrumb & Mobile menu trigger */}
+      <div className="flex items-center gap-3">
+        {onOpenMobile && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onOpenMobile} 
+            className="md:hidden h-8 w-8 text-slate-500"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        )}
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-zinc-400">
+          <span>Workspace</span>
+          <span className="text-slate-350 dark:text-zinc-600">/</span>
+          <span className="text-slate-800 dark:text-zinc-200 font-extrabold">My Dashboard</span>
         </div>
       </div>
+
+      {/* Right Side: Flex row utility pills */}
+      <div className="flex items-center gap-3.5">
+        {/* Dynamic M-Pesa balance pill — only shown when logged in */}
+        {user && (
+          <Link
+            href="/topup"
+            className="flex items-center gap-1.5 rounded-full border border-blue-100 dark:border-blue-900/35 px-3 py-1 text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50/35 dark:bg-blue-950/15 hover:bg-blue-50/60 dark:hover:bg-blue-950/25 transition-colors"
+          >
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-white font-black text-[9px] leading-none">
+              M
+            </span>
+            <span>KES {balance.toLocaleString()}</span>
+          </Link>
+        )}
+
+        {/* Theme Toggle switch */}
+        {mounted && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8.5 w-8.5 rounded-full border border-slate-100 dark:border-zinc-850 hover:bg-slate-50 dark:hover:bg-zinc-900 text-slate-500"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4 text-amber-500" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        )}
+
+        {/* User profile pill — only shown when logged in */}
+        {user && (
+          <div className="flex items-center gap-2 rounded-full border border-slate-100 dark:border-zinc-850 bg-slate-50/50 dark:bg-zinc-900/40 px-3 py-1 text-slate-700 dark:text-zinc-300">
+            <Avatar className="h-5 w-5 bg-blue-600 text-white flex items-center justify-center font-bold text-[9px] rounded-full">
+              <AvatarFallback className="bg-blue-600 text-white font-extrabold">
+                {getInitials(user.name)}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-xs font-bold hidden sm:inline-block leading-none">
+              {(user.name || user.email).toLowerCase()}
+            </span>
+          </div>
+        )}
+      </div>
     </header>
-    </div>
   )
 }
