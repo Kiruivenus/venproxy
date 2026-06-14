@@ -1,9 +1,10 @@
-import { Header } from '@/components/header'
 import { getSession } from '@/lib/auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ExternalLink, Send } from 'lucide-react'
 import Link from 'next/link'
+import { DashboardLayoutClient } from '@/components/dashboard-layout-client'
+import { PublicNavBar } from '@/components/public-navbar'
 
 export const metadata = {
   title: 'FAQ - RayProxy Hub',
@@ -235,63 +236,84 @@ const faqCategories = [
 
 export default async function FAQPage() {
   const session = await getSession()
+  const user = session?.user ? { email: session.user.email, name: session.user.name, role: session.user.role } : null
+
+  const mainContent = (
+    <div className="space-y-12">
+      {faqCategories.map((category, categoryIndex) => (
+        <div key={categoryIndex}>
+          <h2 className="mb-6 text-2xl font-bold font-sans tracking-tight text-slate-900 dark:text-white">{category.category}</h2>
+          <div className="space-y-4">
+            {category.questions.map((item, questionIndex) => (
+              <Card key={`${categoryIndex}-${questionIndex}`}>
+                <CardHeader>
+                  <CardTitle className="text-base font-semibold">{item.q}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{item.a}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* Still Have Questions */}
+      <Card className="border-accent/50 bg-accent/5">
+        <CardHeader>
+          <CardTitle>Didn't find your answer?</CardTitle>
+          <CardDescription>
+            Our support team is here to help you with any questions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4 sm:flex-row">
+          <Button asChild>
+            <Link href="/support" className="inline-flex items-center gap-2">
+              <Send className="h-4 w-4" />
+              Contact Support
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="bg-transparent">
+            <Link href="/docs" className="inline-flex items-center gap-2">
+              View Documentation
+              <ExternalLink className="h-4 w-4" />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  )
+
+  if (user) {
+    return (
+      <DashboardLayoutClient user={user}>
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold font-sans tracking-tight text-slate-900 dark:text-white">Frequently Asked Questions</h1>
+            <p className="mt-2 text-lg text-slate-500 dark:text-zinc-400">
+              Find answers to common questions about RayProxy Hub
+            </p>
+          </div>
+          {mainContent}
+        </div>
+      </DashboardLayoutClient>
+    )
+  }
 
   return (
-    <main className="min-h-screen bg-background">
-      <Header user={session?.user ? { email: session.user.email, name: session.user.name, role: session.user.role } : null} />
-
-      <div className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold">Frequently Asked Questions</h1>
-          <p className="mt-2 text-lg text-muted-foreground">
+    <div className="min-h-screen bg-background flex flex-col">
+      <PublicNavBar mode="landing" />
+      <main className="flex-1 container mx-auto px-4 pt-28 pb-16">
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold font-sans tracking-tight text-slate-900 dark:text-white">Frequently Asked Questions</h1>
+          <p className="mt-2 text-lg text-slate-500 dark:text-zinc-400">
             Find answers to common questions about RayProxy Hub
           </p>
         </div>
-      </div>
-
-      <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 space-y-12">
-        {faqCategories.map((category, categoryIndex) => (
-          <div key={categoryIndex}>
-            <h2 className="mb-6 text-2xl font-bold">{category.category}</h2>
-            <div className="space-y-4">
-              {category.questions.map((item, questionIndex) => (
-                <Card key={`${categoryIndex}-${questionIndex}`}>
-                  <CardHeader>
-                    <CardTitle className="text-base">{item.q}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{item.a}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {/* Still Have Questions */}
-        <Card className="border-accent/50 bg-accent/5">
-          <CardHeader>
-            <CardTitle>Didn't find your answer?</CardTitle>
-            <CardDescription>
-              Our support team is here to help you with any questions
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4 sm:flex-row">
-            <Button asChild>
-              <Link href="/support" className="inline-flex items-center gap-2">
-                <Send className="h-4 w-4" />
-                Contact Support
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/docs" className="inline-flex items-center gap-2">
-                View Documentation
-                <ExternalLink className="h-4 w-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+        <div className="max-w-4xl mx-auto">
+          {mainContent}
+        </div>
+      </main>
+    </div>
   )
 }

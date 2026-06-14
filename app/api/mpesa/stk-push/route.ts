@@ -100,9 +100,9 @@ export async function POST(request: NextRequest) {
     const password = Buffer.from(`${shortcode}${passkey}${timestamp}`).toString("base64")
 
     // Determine PartyB based on the purchase type
-    const mpesaPartyB = type === "email" 
-      ? (process.env.MPESA_EMAILS_PARTY_B || "5679822")
-      : (process.env.MPESA_PARTY_B || "5679822")
+    const mpesaPartyB = type === "email"
+      ? (process.env.MPESA_EMAILS_PARTY_B || "8583204")
+      : (process.env.MPESA_PARTY_B || "8583204")
 
     const stkPushResponse = await fetch("https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest", {
       method: "POST",

@@ -16,9 +16,10 @@ interface SupportConfig {
 
 interface SupportContentProps {
   user?: { email: string; name: string; role: string } | null
+  isEmbedded?: boolean
 }
 
-export function SupportContent({ user }: SupportContentProps) {
+export function SupportContent({ user, isEmbedded = false }: SupportContentProps) {
   const [supportConfig, setSupportConfig] = useState<SupportConfig>({
     whatsappNumber: "",
     whatsappGroup: "",
@@ -56,18 +57,15 @@ export function SupportContent({ user }: SupportContentProps) {
   const telegramAgentUrl = supportConfig.telegramAgent ? `https://t.me/${supportConfig.telegramAgent}` : ""
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header user={user} />
+    <div className={isEmbedded ? "w-full max-w-4xl mx-auto" : "container mx-auto px-4"}>
+      <div className="mb-12 text-center">
+        <h1 className="text-4xl font-bold font-sans tracking-tight text-slate-900 dark:text-white">Get Support</h1>
+        <p className="mt-2 text-lg text-slate-500 dark:text-zinc-400">
+          Connect with our support team via WhatsApp or Telegram
+        </p>
+      </div>
 
-      <main className="container mx-auto px-4 py-12">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold">Get Support</h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            Connect with our support team via WhatsApp or Telegram
-          </p>
-        </div>
-
-        <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-4xl">
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -315,7 +313,6 @@ await transporter.sendMail({
             </>
           )}
         </div>
-      </main>
     </div>
   )
 }

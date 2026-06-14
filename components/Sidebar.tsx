@@ -14,6 +14,8 @@ import {
   History,
   LogOut,
   CloudLightning,
+  BookOpen,
+  LifeBuoy,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -90,6 +92,14 @@ export function Sidebar({ user, onCloseMobile }: SidebarProps) {
     })
   }
 
+  categories.push({
+    title: "HELP & RESOURCES",
+    items: [
+      { label: "Documentation", href: "/docs", icon: BookOpen },
+      { label: "Support", href: "/support", icon: LifeBuoy },
+    ],
+  })
+
   return (
     <div className="flex h-full w-64 flex-col justify-between border-r border-sidebar-border bg-sidebar text-sidebar-foreground p-6 z-40">
       <div className="space-y-7">
@@ -122,7 +132,11 @@ export function Sidebar({ user, onCloseMobile }: SidebarProps) {
               </h4>
               <nav className="space-y-0.5">
                 {cat.items.map((item, itemIdx) => {
-                  const isActive = pathname === item.href
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href === "/docs" &&
+                      (pathname.startsWith("/docs") ||
+                        pathname.startsWith("/guides")))
                   return (
                     <Link
                       key={itemIdx}
