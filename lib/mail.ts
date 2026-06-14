@@ -15,6 +15,17 @@ interface SendEmailOptions {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+        console.log("\n=========================================")
+        console.log("[SMTP DEBUG FALLBACK] Credentials missing in .env")
+        console.log(`To: ${to}`)
+        console.log(`Subject: ${subject}`)
+        console.log("HTML Content:")
+        console.log(html)
+        console.log("=========================================\n")
+        return true
+    }
+
     const mailOptions = {
         from: `"RayProxy Hub" <${process.env.GMAIL_USER}>`,
         to,

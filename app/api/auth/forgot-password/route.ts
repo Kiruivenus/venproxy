@@ -1,4 +1,4 @@
-import { getClientPromise } from "@/lib/mongodb"
+import { getDb } from "@/lib/mongodb"
 import { hashPassword } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 import { ObjectId } from "mongodb"
@@ -37,8 +37,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email and action are required" }, { status: 400 })
     }
 
-    const client = await getClientPromise()
-    const db = client.db("raypoxy")
+    const db = await getDb()
     const usersCollection = db.collection("users")
 
     // Step 1: Send reset code
