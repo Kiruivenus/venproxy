@@ -101,9 +101,9 @@ export function Sidebar({ user, onCloseMobile }: SidebarProps) {
   })
 
   return (
-    <div className="flex h-full w-64 flex-col justify-between border-r border-sidebar-border bg-sidebar text-sidebar-foreground p-6 z-40">
-      <div className="space-y-7">
-        {/* Brand/Logo Section */}
+    <div className="flex h-full w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground z-40">
+      {/* Brand/Logo Section */}
+      <div className="p-6 pb-2">
         <Link href="/" className="flex items-center gap-2.5 px-1">
           <div className={`flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0 overflow-hidden ${branding.companyLogoUrl ? "bg-transparent" : "bg-blue-600 text-white shadow-sm"}`}>
             {branding.companyLogoUrl ? (
@@ -122,45 +122,45 @@ export function Sidebar({ user, onCloseMobile }: SidebarProps) {
             {branding.companyName}
           </span>
         </Link>
+      </div>
 
-        {/* Link Groups */}
-        <div className="space-y-6">
-          {categories.map((cat, catIdx) => (
-            <div key={catIdx} className="space-y-2">
-              <h4 className="text-[10px] font-bold tracking-widest text-slate-400 dark:text-zinc-500 uppercase px-2">
-                {cat.title}
-              </h4>
-              <nav className="space-y-0.5">
-                {cat.items.map((item, itemIdx) => {
-                  const isActive =
-                    pathname === item.href ||
-                    (item.href === "/docs" &&
-                      (pathname.startsWith("/docs") ||
-                        pathname.startsWith("/guides")))
-                  return (
-                    <Link
-                      key={itemIdx}
-                      href={item.href}
-                      onClick={onCloseMobile}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                        isActive
-                          ? "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400"
-                          : "text-slate-650 hover:bg-slate-50 dark:text-zinc-400 dark:hover:bg-zinc-800/60"
-                      }`}
-                    >
-                      <item.icon className={`h-4.5 w-4.5 ${isActive ? "text-blue-600 dark:text-blue-450" : "text-slate-400 dark:text-zinc-500"}`} strokeWidth={1.75} />
-                      <span>{item.label}</span>
-                    </Link>
-                  )
-                })}
-              </nav>
-            </div>
-          ))}
-        </div>
+      {/* Link Groups - Scrollable Section */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+        {categories.map((cat, catIdx) => (
+          <div key={catIdx} className="space-y-2">
+            <h4 className="text-[10px] font-bold tracking-widest text-slate-400 dark:text-zinc-500 uppercase px-2">
+              {cat.title}
+            </h4>
+            <nav className="space-y-0.5">
+              {cat.items.map((item, itemIdx) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href === "/docs" &&
+                    (pathname.startsWith("/docs") ||
+                      pathname.startsWith("/guides")))
+                return (
+                  <Link
+                    key={itemIdx}
+                    href={item.href}
+                    onClick={onCloseMobile}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                      isActive
+                        ? "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400"
+                        : "text-slate-650 hover:bg-slate-50 dark:text-zinc-400 dark:hover:bg-zinc-800/60"
+                    }`}
+                  >
+                    <item.icon className={`h-4.5 w-4.5 ${isActive ? "text-blue-600 dark:text-blue-450" : "text-slate-400 dark:text-zinc-500"}`} strokeWidth={1.75} />
+                    <span>{item.label}</span>
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
+        ))}
       </div>
 
       {/* Pin User Profile Card to Bottom */}
-      <div className="border-t border-slate-100 dark:border-zinc-800/80 pt-4">
+      <div className="p-6 pt-4 border-t border-slate-100 dark:border-zinc-800/80">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div suppressHydrationWarning className="flex items-center justify-between text-xs font-semibold bg-slate-50/50 dark:bg-zinc-950/30 p-2.5 rounded-xl border border-slate-100 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/45 transition-all cursor-pointer">
