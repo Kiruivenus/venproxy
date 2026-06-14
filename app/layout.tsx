@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/theme-provider"
 import { getPlatformSettings } from "@/app/admin/platform-actions"
+import { BrandingProvider } from "@/lib/use-branding"
 import "./globals.css"
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -105,11 +106,17 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const settings = await getPlatformSettings()
+  const branding = {
+    companyName: settings.companyName || "RayProxy Hub",
+    companyLogoUrl: settings.companyLogoUrl || "",
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
@@ -119,9 +126,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
-          <Analytics />
+          <BrandingProvider initialBranding={branding}>
+            {children}
+            <Toaster />
+            <Analytics />
+          </BrandingProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,29 +1,29 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { createContext, useContext } from "react"
 
 export interface BrandingData {
   companyName: string
   companyLogoUrl: string
 }
 
-const DEFAULT: BrandingData = { companyName: "RayProxy Hub", companyLogoUrl: "" }
+const BrandingContext = createContext<BrandingData | null>(null)
 
-/**
- * Fetches branding from /api/branding once on mount.
- * Returns immediately with defaults so UI never flashes blank.
- */
+export function BrandingProvider({
+  initialBranding,
+  children,
+}: {
+  initialBranding: BrandingData
+  children: React.ReactNode
+}) {
+  return React.createElement(BrandingContext.Provider, { value: initialBranding }, children)
+}
+
 export function useBranding(): BrandingData {
-  const [branding, setBranding] = useState<BrandingData>(DEFAULT)
-
-  useEffect(() => {
-    fetch("/api/branding")
-      .then((res) => res.json())
-      .then((data: BrandingData) => {
-        if (data.companyName) setBranding(data)
-      })
-      .catch(() => {})
-  }, [])
-
-  return branding
+  const context = useContext(BrandingContext)
+  if (!context) {
+    // Ultimate safety fallback if context is completely missing
+    return { companyName: "", companyLogoUrl: "" }
+  }
+  return context
 }
