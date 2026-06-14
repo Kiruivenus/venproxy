@@ -1,6 +1,45 @@
+const fs = require('fs');
+const path = require('path');
 const { MongoClient, ObjectId } = require('mongodb');
 
-const uri = "mongodb+srv://patrickkirui413:41365475@cluster0.kyti0.mongodb.net/";
+// Load environment variables from .env or .env.local files
+function loadEnv() {
+  const envPath = path.join(__dirname, '.env.local');
+  const fallbackEnvPath = path.join(__dirname, '.env');
+  let filePath = '';
+  if (fs.existsSync(envPath)) {
+    filePath = envPath;
+  } else if (fs.existsSync(fallbackEnvPath)) {
+    filePath = fallbackEnvPath;
+  } else {
+    return;
+  }
+
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    content.split(/\r?\n/).forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const index = trimmed.indexOf('=');
+      if (index > 0) {
+        const key = trimmed.substring(0, index).trim();
+        const val = trimmed.substring(index + 1).trim().replace(/^['"]|['"]$/g, '');
+        process.env[key] = val;
+      }
+    });
+  } catch (err) {
+    console.warn("Could not parse environment file:", err.message);
+  }
+}
+
+loadEnv();
+
+const uri = process.env.MONGODB_URI;
+if (!uri) {
+  console.error("Error: MONGODB_URI is not defined in .env or .env.local");
+  process.exit(1);
+}
+
 const client = new MongoClient(uri);
 
 const phone = process.argv[2];
