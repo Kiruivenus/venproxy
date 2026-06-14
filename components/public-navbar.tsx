@@ -20,7 +20,7 @@ export function PublicNavBar({ mode = "landing" }: PublicNavBarProps) {
   useEffect(() => setMounted(true), [])
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-slate-200/70 dark:border-zinc-800/70 flex items-center px-6 md:px-10">
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background/80 backdrop-blur-md border-b border-border/70 flex items-center px-6 md:px-10">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
         <div className={`flex h-8 w-8 items-center justify-center rounded-xl flex-shrink-0 overflow-hidden ${companyLogoUrl ? "bg-transparent" : "bg-blue-600 text-white shadow-sm"}`}>

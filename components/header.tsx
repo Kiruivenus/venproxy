@@ -43,7 +43,7 @@ export function Header({ user, onOpenMobile }: HeaderProps) {
   }
 
   return (
-    <header className="h-16 bg-white/40 dark:bg-zinc-950/40 backdrop-blur border-b border-slate-100 dark:border-zinc-800/80 sticky top-0 z-30 flex items-center justify-between px-6 md:px-8">
+    <header className="h-16 bg-background/40 backdrop-blur border-b border-border sticky top-0 z-30 flex items-center justify-between px-6 md:px-8">
       {/* Left Side: Breadcrumb & Mobile menu trigger */}
       <div className="flex items-center gap-3">
         {onOpenMobile && (

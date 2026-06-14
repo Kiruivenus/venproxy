@@ -14,7 +14,7 @@ export function DashboardLayoutClient({ user, children }: DashboardLayoutClientP
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 flex transition-colors duration-300">
+    <div className="min-h-screen bg-background flex transition-colors duration-300">
       {/* Persistent desktop left sidebar */}
       <aside className="hidden md:block w-64 h-screen sticky top-0 flex-shrink-0 z-40">
         <Sidebar user={user} />
@@ -27,7 +27,7 @@ export function DashboardLayoutClient({ user, children }: DashboardLayoutClientP
 
         {/* Mobile menu drawer */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetContent side="left" className="p-0 w-64 h-full border-r border-slate-200">
+          <SheetContent side="left" className="p-0 w-64 h-full border-r border-sidebar-border">
             <SheetTitle className="sr-only">Navigation Sidebar</SheetTitle>
             <Sidebar user={user} onCloseMobile={() => setMobileOpen(false)} />
           </SheetContent>

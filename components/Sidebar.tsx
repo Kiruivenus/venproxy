@@ -91,7 +91,7 @@ export function Sidebar({ user, onCloseMobile }: SidebarProps) {
   }
 
   return (
-    <div className="flex h-full w-64 flex-col justify-between border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 z-40">
+    <div className="flex h-full w-64 flex-col justify-between border-r border-sidebar-border bg-sidebar text-sidebar-foreground p-6 z-40">
       <div className="space-y-7">
         {/* Brand/Logo Section */}
         <Link href="/" className="flex items-center gap-2.5 px-1">
