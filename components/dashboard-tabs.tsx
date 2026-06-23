@@ -173,21 +173,21 @@ export function DashboardTabs() {
 
         {/* Quick Actions Section (Single Horizontal Row) */}
         <div className="flex flex-row items-center gap-3 overflow-x-auto whitespace-nowrap scrollbar-none py-1">
-          <Button variant="outline" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 border-slate-200 dark:border-zinc-800/80 hover:border-blue-500/30 dark:hover:border-blue-500/30 hover:bg-slate-50 dark:hover:bg-zinc-900 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px]" asChild>
+          <Button variant="ghost" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 bg-blue-50/85 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/60 hover:text-blue-800 dark:hover:text-blue-200 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px] shadow-2xs" asChild>
             <Link href="/buy">
-              <Globe className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+              <Globe className="h-3.5 w-3.5" />
               <span>Buy Proxy</span>
             </Link>
           </Button>
-          <Button variant="outline" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 border-slate-200 dark:border-zinc-800/80 hover:border-purple-500/30 dark:hover:border-purple-500/30 hover:bg-slate-50 dark:hover:bg-zinc-900 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px]" asChild>
+          <Button variant="ghost" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 bg-blue-50/85 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/60 hover:text-blue-800 dark:hover:text-blue-200 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px] shadow-2xs" asChild>
             <Link href="/buy-emails">
-              <Mail className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+              <Mail className="h-3.5 w-3.5" />
               <span>Buy Emails</span>
             </Link>
           </Button>
-          <Button variant="outline" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 border-slate-200 dark:border-zinc-800/80 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 hover:bg-slate-50 dark:hover:bg-zinc-900 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px]" asChild>
+          <Button variant="ghost" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 bg-blue-50/85 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/60 hover:text-blue-800 dark:hover:text-blue-200 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px] shadow-2xs" asChild>
             <Link href="/topup">
-              <Wallet className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-450" />
+              <Wallet className="h-3.5 w-3.5" />
               <span>Top Up Wallet</span>
             </Link>
           </Button>
