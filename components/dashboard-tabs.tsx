@@ -143,49 +143,58 @@ export function DashboardTabs() {
 
   return (
     <div className="space-y-8">
-      {/* Metric Cards Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Active Proxies Card */}
-        <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 hover:border-blue-500/20 dark:hover:border-blue-500/30 flex items-center justify-between group">
-          <div className="space-y-1">
-            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Active Proxies</p>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{activeProxies.length}</h3>
+      {/* Metric Cards Section (Single Horizontal Card) */}
+      <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-stretch justify-between gap-4 sm:gap-0">
+        {/* Active Proxies */}
+        <div className="flex-1 flex items-center gap-3 px-2 sm:px-4">
+          <div className="h-9 w-9 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-450 flex items-center justify-center">
+            <Globe className="h-4.5 w-4.5" />
           </div>
-          <div className="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-450 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <Globe className="h-6 w-6" />
-          </div>
-        </div>
-
-        {/* Expired Proxies Card */}
-        <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 hover:border-amber-500/20 dark:hover:border-amber-500/30 flex items-center justify-between group">
-          <div className="space-y-1">
-            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Expired Proxies</p>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{expiredProxies.length}</h3>
-          </div>
-          <div className="h-12 w-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-450 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <Clock className="h-6 w-6" />
+          <div>
+            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Active Proxies</p>
+            <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1 leading-tight">{activeProxies.length}</h3>
           </div>
         </div>
 
-        {/* Purchased Emails Card */}
-        <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 hover:border-purple-500/20 dark:hover:border-purple-500/30 flex items-center justify-between group">
-          <div className="space-y-1">
-            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Emails</p>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{purchasedEmails.length}</h3>
+        {/* Divider */}
+        <div className="hidden sm:block w-px bg-slate-150/80 dark:bg-zinc-800 my-1" />
+
+        {/* Expired Proxies */}
+        <div className="flex-1 flex items-center gap-3 px-2 sm:px-4">
+          <div className="h-9 w-9 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-450 flex items-center justify-center">
+            <Clock className="h-4.5 w-4.5" />
           </div>
-          <div className="h-12 w-12 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-450 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <Mail className="h-6 w-6" />
+          <div>
+            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Expired Proxies</p>
+            <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1 leading-tight">{expiredProxies.length}</h3>
           </div>
         </div>
 
-        {/* Wallet Balance Card */}
-        <Link href="/topup" className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 hover:border-emerald-500/20 dark:hover:border-emerald-500/30 flex items-center justify-between group cursor-pointer">
-          <div className="space-y-1">
-            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Balance</p>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">KES {balance.toLocaleString()}</h3>
+        {/* Divider */}
+        <div className="hidden sm:block w-px bg-slate-150/80 dark:bg-zinc-800 my-1" />
+
+        {/* Emails */}
+        <div className="flex-1 flex items-center gap-3 px-2 sm:px-4">
+          <div className="h-9 w-9 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-450 flex items-center justify-center">
+            <Mail className="h-4.5 w-4.5" />
           </div>
-          <div className="h-12 w-12 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-450 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <span className="font-extrabold text-xs">KES</span>
+          <div>
+            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Emails</p>
+            <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1 leading-tight">{purchasedEmails.length}</h3>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="hidden sm:block w-px bg-slate-150/80 dark:bg-zinc-800 my-1" />
+
+        {/* Wallet Balance (Linkable to topup) */}
+        <Link href="/topup" className="flex-1 flex items-center gap-3 px-2 sm:px-4 hover:opacity-85 transition-opacity group cursor-pointer">
+          <div className="h-9 w-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-450 flex items-center justify-center">
+            <span className="font-extrabold text-[10px]">KES</span>
+          </div>
+          <div>
+            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none group-hover:text-emerald-500 transition-colors">Balance</p>
+            <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1 leading-tight">KES {balance.toLocaleString()}</h3>
           </div>
         </Link>
       </div>
