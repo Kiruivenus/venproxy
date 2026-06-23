@@ -239,7 +239,7 @@ export function EmailPurchaseForm() {
           const statusRes = await fetch(`/api/palpluss/query-status?checkoutRequestId=${stkData.checkoutRequestId}&type=email`, { cache: "no-store" })
           const statusData = await statusRes.json()
 
-          if (statusData.status === "paid") {
+          if (statusData.status === "paid" || statusData.status === "completed") {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {

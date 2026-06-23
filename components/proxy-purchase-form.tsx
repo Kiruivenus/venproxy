@@ -190,7 +190,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
           const statusRes = await fetch(`/api/palpluss/query-status?checkoutRequestId=${stkData.checkoutRequestId}&type=proxy`, { cache: "no-store" })
           const statusData = await statusRes.json()
 
-          if (statusData.status === "paid") {
+          if (statusData.status === "paid" || statusData.status === "completed") {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {
