@@ -73,8 +73,8 @@ export function Sidebar({ user, onCloseMobile }: SidebarProps) {
     {
       title: "ACCOUNT",
       items: [
-        { label: "Proxies", href: "/buy", icon: Globe },
-        { label: "Emails", href: "/buy-emails", icon: Mail },
+        { label: "Buy Proxies", href: "/buy", icon: Globe },
+        { label: "Buy Emails", href: "/buy-emails", icon: Mail },
         { label: "Order History", href: "/dashboard/orders", icon: History },
         { label: "Billing & Top Up", href: "/topup", icon: CreditCard },
         { label: "Settings", href: "/dashboard/settings", icon: Settings },
