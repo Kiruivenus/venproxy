@@ -72,11 +72,12 @@ export async function initiateStkPush({
     throw new Error(data.message || data.error || `PalPluss STK Push failed with HTTP ${response.status}`)
   }
 
+  const innerData = data.data || data
   return {
     success: true,
-    transactionId: data.transactionId || data.id || data.transaction_id,
-    checkoutRequestId: data.checkoutRequestId || data.checkout_request_id || data.id,
-    message: data.message || "STK Push initiated successfully",
+    transactionId: innerData.transactionId || innerData.id || innerData.transaction_id,
+    checkoutRequestId: innerData.providerCheckoutId || innerData.checkoutRequestId || innerData.checkout_request_id || innerData.id,
+    message: data.message || innerData.message || innerData.resultDescription || "STK Push initiated successfully",
     raw: data,
   }
 }
@@ -116,15 +117,16 @@ export async function queryTransaction(transactionId: string) {
     throw new Error(data.message || data.error || `PalPluss query failed with HTTP ${response.status}`)
   }
 
+  const innerData = data.data || data
   return {
     success: true,
-    status: (data.status || "PENDING").toUpperCase(), // EXPECTED: SUCCESS, FAILED, PENDING, CANCELLED, EXPIRED
-    amount: data.amount,
-    phone: data.phone || data.phone_number,
-    reference: data.accountReference || data.account_reference || data.reference,
-    receiptNumber: data.receiptNumber || data.receipt_number || data.mpesa_receipt || data.mpesaReceiptNumber,
-    resultCode: data.resultCode || data.result_code || "0",
-    resultDescription: data.resultDescription || data.result_description || data.message || "Success",
+    status: (innerData.status || "PENDING").toUpperCase(), // EXPECTED: SUCCESS, FAILED, PENDING, CANCELLED, EXPIRED
+    amount: innerData.amount,
+    phone: innerData.phone || innerData.phone_number,
+    reference: innerData.accountReference || innerData.account_reference || innerData.external_reference || innerData.reference,
+    receiptNumber: innerData.receiptNumber || innerData.receipt_number || innerData.mpesa_receipt || innerData.mpesaReceiptNumber,
+    resultCode: innerData.resultCode || innerData.result_code || "0",
+    resultDescription: innerData.resultDescription || innerData.result_description || innerData.result_desc || data.message || innerData.message || "Success",
     raw: data,
   }
 }
