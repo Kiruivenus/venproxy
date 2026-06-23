@@ -143,58 +143,58 @@ export function DashboardTabs() {
 
   return (
     <div className="space-y-8">
-      {/* Metric Cards Section (Single Horizontal Card) */}
-      <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-stretch justify-between gap-4 sm:gap-0">
+      {/* Metric Cards Section (Single Horizontal Card - Strictly Row) */}
+      <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-3.5 shadow-xs flex flex-row items-center justify-between overflow-x-auto whitespace-nowrap gap-2 md:gap-4 scrollbar-none">
         {/* Active Proxies */}
-        <div className="flex-1 flex items-center gap-3 px-2 sm:px-4">
-          <div className="h-9 w-9 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-450 flex items-center justify-center">
-            <Globe className="h-4.5 w-4.5" />
+        <div className="flex-1 min-w-[100px] flex items-center gap-2.5 px-2 md:px-4">
+          <div className="h-8.5 w-8.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-450 flex items-center justify-center flex-shrink-0">
+            <Globe className="h-4 w-4" />
           </div>
-          <div>
-            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Active Proxies</p>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1 leading-tight">{activeProxies.length}</h3>
+          <div className="min-w-0">
+            <p className="text-[9px] font-extrabold text-slate-450 dark:text-zinc-500 uppercase tracking-wider leading-none truncate">Active Proxies</p>
+            <h3 className="text-sm md:text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{activeProxies.length}</h3>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="hidden sm:block w-px bg-slate-150/80 dark:bg-zinc-800 my-1" />
+        <div className="w-px h-6 bg-slate-150/80 dark:bg-zinc-800 flex-shrink-0" />
 
         {/* Expired Proxies */}
-        <div className="flex-1 flex items-center gap-3 px-2 sm:px-4">
-          <div className="h-9 w-9 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-450 flex items-center justify-center">
-            <Clock className="h-4.5 w-4.5" />
+        <div className="flex-1 min-w-[100px] flex items-center gap-2.5 px-2 md:px-4">
+          <div className="h-8.5 w-8.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-450 flex items-center justify-center flex-shrink-0">
+            <Clock className="h-4 w-4" />
           </div>
-          <div>
-            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Expired Proxies</p>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1 leading-tight">{expiredProxies.length}</h3>
+          <div className="min-w-0">
+            <p className="text-[9px] font-extrabold text-slate-450 dark:text-zinc-500 uppercase tracking-wider leading-none truncate">Expired Proxies</p>
+            <h3 className="text-sm md:text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{expiredProxies.length}</h3>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="hidden sm:block w-px bg-slate-150/80 dark:bg-zinc-800 my-1" />
+        <div className="w-px h-6 bg-slate-150/80 dark:bg-zinc-800 flex-shrink-0" />
 
         {/* Emails */}
-        <div className="flex-1 flex items-center gap-3 px-2 sm:px-4">
-          <div className="h-9 w-9 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-450 flex items-center justify-center">
-            <Mail className="h-4.5 w-4.5" />
+        <div className="flex-1 min-w-[90px] flex items-center gap-2.5 px-2 md:px-4">
+          <div className="h-8.5 w-8.5 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-450 flex items-center justify-center flex-shrink-0">
+            <Mail className="h-4 w-4" />
           </div>
-          <div>
-            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Emails</p>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1 leading-tight">{purchasedEmails.length}</h3>
+          <div className="min-w-0">
+            <p className="text-[9px] font-extrabold text-slate-450 dark:text-zinc-500 uppercase tracking-wider leading-none truncate">Emails</p>
+            <h3 className="text-sm md:text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{purchasedEmails.length}</h3>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="hidden sm:block w-px bg-slate-150/80 dark:bg-zinc-800 my-1" />
+        <div className="w-px h-6 bg-slate-150/80 dark:bg-zinc-800 flex-shrink-0" />
 
         {/* Wallet Balance (Linkable to topup) */}
-        <Link href="/topup" className="flex-1 flex items-center gap-3 px-2 sm:px-4 hover:opacity-85 transition-opacity group cursor-pointer">
-          <div className="h-9 w-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-450 flex items-center justify-center">
-            <span className="font-extrabold text-[10px]">KES</span>
+        <Link href="/topup" className="flex-1 min-w-[125px] flex items-center gap-2.5 px-2 md:px-4 hover:opacity-85 transition-opacity group cursor-pointer">
+          <div className="h-8.5 w-8.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-450 flex items-center justify-center flex-shrink-0">
+            <span className="font-extrabold text-[9px]">KES</span>
           </div>
-          <div>
-            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none group-hover:text-emerald-500 transition-colors">Balance</p>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1 leading-tight">KES {balance.toLocaleString()}</h3>
+          <div className="min-w-0">
+            <p className="text-[9px] font-extrabold text-slate-450 dark:text-zinc-500 uppercase tracking-wider leading-none group-hover:text-emerald-500 transition-colors truncate">Balance</p>
+            <h3 className="text-sm md:text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight truncate">KES {balance.toLocaleString()}</h3>
           </div>
         </Link>
       </div>
