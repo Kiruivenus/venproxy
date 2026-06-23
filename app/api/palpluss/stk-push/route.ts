@@ -157,6 +157,7 @@ export async function POST(request: NextRequest) {
           success: true,
           message: "STK Push initiated successfully.",
           transactionId: stkResult.transactionId,
+          checkoutRequestId: stkResult.checkoutRequestId,
           reference: uniqueRef,
         })
       } else {

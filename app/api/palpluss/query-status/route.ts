@@ -61,9 +61,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     
     // Accept either reference, checkoutRequestId, or transactionId for maximum flexibility
-    const reference = searchParams.get("reference")
-    const checkoutRequestId = searchParams.get("checkoutRequestId")
-    const transactionId = searchParams.get("transactionId")
+    let reference = searchParams.get("reference")
+    let checkoutRequestId = searchParams.get("checkoutRequestId")
+    let transactionId = searchParams.get("transactionId")
+    
+    if (reference === "undefined" || !reference) reference = null
+    if (checkoutRequestId === "undefined" || !checkoutRequestId) checkoutRequestId = null
+    if (transactionId === "undefined" || !transactionId) transactionId = null
     
     if (!reference && !checkoutRequestId && !transactionId) {
       return NextResponse.json({ error: "Query parameter (reference, checkoutRequestId, or transactionId) is required" }, { status: 400 })
