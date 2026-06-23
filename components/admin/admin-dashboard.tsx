@@ -9,7 +9,8 @@ import { EmailManagement } from "@/components/admin/email-management"
 import { SupportSettings } from "@/components/admin/support-settings"
 import { Analytics } from "@/components/admin/analytics"
 import { PlatformSettingsForm } from "@/components/admin/platform-settings-form"
-import { Server, DollarSign, Receipt, Users, Mail, MessageCircle, BarChart3, Settings } from "lucide-react"
+import { PaymentManagement } from "@/components/admin/payment-management"
+import { Server, DollarSign, Receipt, Users, Mail, MessageCircle, BarChart3, Settings, CreditCard } from "lucide-react"
 import type { PlatformSettings } from "@/app/admin/platform-actions"
 
 interface AdminDashboardProps {
@@ -23,6 +24,10 @@ export function AdminDashboard({ platformSettings }: AdminDashboardProps) {
         <TabsTrigger value="analytics" className="flex-1 min-w-[110px] gap-2 py-2 px-3 text-xs font-bold rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer">
           <BarChart3 className="h-4 w-4" />
           <span>Analytics</span>
+        </TabsTrigger>
+        <TabsTrigger value="payments" className="flex-1 min-w-[110px] gap-2 py-2 px-3 text-xs font-bold rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer">
+          <CreditCard className="h-4 w-4" />
+          <span>Payments</span>
         </TabsTrigger>
         <TabsTrigger value="proxies" className="flex-1 min-w-[110px] gap-2 py-2 px-3 text-xs font-bold rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer">
           <Server className="h-4 w-4" />
@@ -56,6 +61,10 @@ export function AdminDashboard({ platformSettings }: AdminDashboardProps) {
 
       <TabsContent value="analytics" className="mt-6">
         <Analytics />
+      </TabsContent>
+
+      <TabsContent value="payments" className="mt-6">
+        <PaymentManagement />
       </TabsContent>
 
       <TabsContent value="proxies" className="mt-6">

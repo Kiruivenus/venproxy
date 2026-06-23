@@ -79,7 +79,7 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
 
       // Initiate STK Push
       setPaymentStatus("pending")
-      const stkRes = await fetch("/api/mpesa/stk-push", {
+      const stkRes = await fetch("/api/palpluss/stk-push", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topUpId: topUpData.topUp.id }),
@@ -110,15 +110,15 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
         }
 
         try {
-          const statusRes = await fetch(`/api/mpesa/query-status?checkoutRequestId=${stkData.checkoutRequestId}&type=topup`, { cache: "no-store" })
+          const statusRes = await fetch(`/api/palpluss/query-status?checkoutRequestId=${stkData.checkoutRequestId}&type=topup`, { cache: "no-store" })
           const statusData = await statusRes.json()
 
           if (statusData.status === "completed") {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {
-              router.push("/dashboard")
-              router.refresh()
+              // Trigger window level reload or route push
+              window.location.reload()
             }, 2000)
           } else if (statusData.status === "failed") {
             clearInterval(pollInterval)

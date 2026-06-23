@@ -6,6 +6,7 @@ import { useTheme } from "next-themes"
 import { Sun, Moon, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { NotificationsDropdown } from "@/components/notifications-dropdown"
 
 interface HeaderProps {
   user?: { email: string; name: string | null; role: string } | null
@@ -94,6 +95,9 @@ export function Header({ user, onOpenMobile }: HeaderProps) {
             <span className="sr-only">Toggle theme</span>
           </Button>
         )}
+
+        {/* Notifications Dropdown */}
+        {user && <NotificationsDropdown />}
 
         {/* User profile pill — only shown when logged in */}
         {user && (

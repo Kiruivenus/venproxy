@@ -150,3 +150,48 @@ export interface WebsiteSettings {
   lastPaymentAt?: Date
   updatedAt: Date
 }
+
+export interface Transaction {
+  _id: ObjectId
+  userId: ObjectId
+  transactionId?: string
+  reference: string
+  phone: string
+  amount: number
+  currency: string
+  provider: string
+  providerRequestId?: string
+  providerCheckoutId?: string
+  status: "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED" | "CANCELLED" | "EXPIRED"
+  paymentMethod: string
+  receiptNumber?: string
+  resultCode?: string
+  resultDescription?: string
+  processedAt?: Date
+  createdAt: Date
+  updatedAt: Date
+  type: "deposit" | "proxy" | "email"
+  targetId?: ObjectId
+}
+
+export interface WalletLedger {
+  _id: ObjectId
+  userId: ObjectId
+  amount: number
+  type: "deposit" | "purchase" | "refund"
+  reference: string
+  transactionId?: ObjectId
+  balanceBefore: number
+  balanceAfter: number
+  createdAt: Date
+}
+
+export interface Notification {
+  _id: ObjectId
+  userId: ObjectId
+  title: string
+  message: string
+  type: "info" | "success" | "warning" | "error"
+  read: boolean
+  createdAt: Date
+}

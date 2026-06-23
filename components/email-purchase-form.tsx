@@ -205,7 +205,7 @@ export function EmailPurchaseForm() {
 
       // Initiate STK Push for M-Pesa
       setPaymentStatus("pending")
-      const stkRes = await fetch("/api/mpesa/stk-push", {
+      const stkRes = await fetch("/api/palpluss/stk-push", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId: data.orderId, type: "email" }),
@@ -236,7 +236,7 @@ export function EmailPurchaseForm() {
         }
 
         try {
-          const statusRes = await fetch(`/api/mpesa/query-status?checkoutRequestId=${stkData.checkoutRequestId}&type=email`, { cache: "no-store" })
+          const statusRes = await fetch(`/api/palpluss/query-status?checkoutRequestId=${stkData.checkoutRequestId}&type=email`, { cache: "no-store" })
           const statusData = await statusRes.json()
 
           if (statusData.status === "paid") {

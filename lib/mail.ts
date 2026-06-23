@@ -197,3 +197,151 @@ export function getStyledEmailTemplate(
     </html>
     `
 }
+
+export async function sendDepositPendingEmail(email: string, name: string, amount: number, reference: string): Promise<boolean> {
+    let companyName = "RayProxy Hub"
+    let companyLogoUrl = ""
+    try {
+        const db = await getDb()
+        const settings = await db.collection("website_settings").findOne({})
+        if (settings) {
+            companyName = settings.companyName || "RayProxy Hub"
+            companyLogoUrl = settings.companyLogoUrl || ""
+        }
+    } catch (e) {
+        console.error("Failed to query settings for pending deposit email:", e)
+    }
+
+    const content = `
+        <h2>Deposit Initiated</h2>
+        <p>Hi ${name || "User"},</p>
+        <p>A deposit of <strong>KES ${amount.toLocaleString()}</strong> has been initiated for your ${companyName} account. Please verify the details below:</p>
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin: 18px 0; font-size: 14px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Reference:</td>
+                    <td style="font-weight: bold; text-align: right; color: #0f172a;">${reference}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Amount:</td>
+                    <td style="font-weight: bold; text-align: right; color: #0f172a;">KES ${amount.toLocaleString()}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Status:</td>
+                    <td style="font-weight: bold; text-align: right; color: #f59e0b;">Pending PIN entry</td>
+                </tr>
+            </table>
+        </div>
+        <p>Check your M-Pesa phone for a prompt asking you to enter your secure PIN to complete this payment. If you did not initiate this request, you can ignore the M-Pesa prompt.</p>
+    `
+    const footerText = "Safe and Secure Payments."
+    const html = getStyledEmailTemplate("Deposit Initiated", content, footerText, companyName, companyLogoUrl)
+
+    return await sendEmail({
+        to: email,
+        subject: `${companyName} - Deposit Initiated (KES ${amount.toLocaleString()})`,
+        html,
+    })
+}
+
+export async function sendDepositSuccessfulEmail(email: string, name: string, amount: number, reference: string, receiptNumber: string): Promise<boolean> {
+    let companyName = "RayProxy Hub"
+    let companyLogoUrl = ""
+    try {
+        const db = await getDb()
+        const settings = await db.collection("website_settings").findOne({})
+        if (settings) {
+            companyName = settings.companyName || "RayProxy Hub"
+            companyLogoUrl = settings.companyLogoUrl || ""
+        }
+    } catch (e) {
+        console.error("Failed to query settings for successful deposit email:", e)
+    }
+
+    const content = `
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; border-radius: 50%; color: #ffffff; font-size: 24px; font-weight: bold; margin-bottom: 10px; background-color: #10b981;">✓</div>
+        </div>
+        <h2>Deposit Successful!</h2>
+        <p>Hi ${name || "User"},</p>
+        <p>Your deposit has been completed successfully and credited to your wallet balance. Here is your transaction summary:</p>
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin: 18px 0; font-size: 14px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Reference:</td>
+                    <td style="font-weight: bold; text-align: right; color: #0f172a;">${reference}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Receipt Number:</td>
+                    <td style="font-weight: bold; text-align: right; color: #0f172a;">${receiptNumber}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Amount:</td>
+                    <td style="font-weight: bold; text-align: right; color: #10b981;">KES ${amount.toLocaleString()}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Status:</td>
+                    <td style="font-weight: bold; text-align: right; color: #10b981;">Completed</td>
+                </tr>
+            </table>
+        </div>
+        <p>You can now use your updated balance to purchase proxies or email accounts directly from your dashboard.</p>
+    `
+    const footerText = "Thank you for using our services."
+    const html = getStyledEmailTemplate("Deposit Successful", content, footerText, companyName, companyLogoUrl)
+
+    return await sendEmail({
+        to: email,
+        subject: `${companyName} - Deposit Successful (KES ${amount.toLocaleString()})`,
+        html,
+    })
+}
+
+export async function sendDepositFailedEmail(email: string, name: string, amount: number, reference: string, reason: string): Promise<boolean> {
+    let companyName = "RayProxy Hub"
+    let companyLogoUrl = ""
+    try {
+        const db = await getDb()
+        const settings = await db.collection("website_settings").findOne({})
+        if (settings) {
+            companyName = settings.companyName || "RayProxy Hub"
+            companyLogoUrl = settings.companyLogoUrl || ""
+        }
+    } catch (e) {
+        console.error("Failed to query settings for failed deposit email:", e)
+    }
+
+    const content = `
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; border-radius: 50%; color: #ffffff; font-size: 24px; font-weight: bold; margin-bottom: 10px; background-color: #ef4444;">✗</div>
+        </div>
+        <h2>Deposit Failed</h2>
+        <p>Hi ${name || "User"},</p>
+        <p>We are sorry, but your deposit request of <strong>KES ${amount.toLocaleString()}</strong> has failed. Details of the transaction are below:</p>
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin: 18px 0; font-size: 14px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Reference:</td>
+                    <td style="font-weight: bold; text-align: right; color: #0f172a;">${reference}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Amount:</td>
+                    <td style="font-weight: bold; text-align: right; color: #0f172a;">KES ${amount.toLocaleString()}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; padding: 4px 0;">Failure Reason:</td>
+                    <td style="font-weight: bold; text-align: right; color: #ef4444;">${reason || "Transaction cancelled by user or timed out."}</td>
+                </tr>
+            </table>
+        </div>
+        <p>No funds were deducted from your M-Pesa account. If funds were deducted, please contact support and provide the reference code above for manual verification.</p>
+    `
+    const footerText = "Need help? Contact support."
+    const html = getStyledEmailTemplate("Deposit Failed", content, footerText, companyName, companyLogoUrl)
+
+    return await sendEmail({
+        to: email,
+        subject: `${companyName} - Deposit Failed (KES ${amount.toLocaleString()})`,
+        html,
+    })
+}

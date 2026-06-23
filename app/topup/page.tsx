@@ -1,14 +1,14 @@
 import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { DashboardLayoutClient } from "@/components/dashboard-layout-client"
-import { TopUpForm } from "@/components/topup-form"
+import { WalletHub } from "@/components/wallet-hub"
 import { ServicePaused } from "@/components/service-paused"
 import { getPlatformSettings } from "@/app/admin/platform-actions"
 import { Wallet } from "lucide-react"
 
 export const metadata = {
-  title: "Top Up - RayProxy Hub",
-  description: "Add funds to your account instantly via M-Pesa",
+  title: "Wallet Hub - RayProxy Hub",
+  description: "Manage your funds, view transaction history, and top up balance",
 }
 
 export default async function TopUpPage() {
@@ -37,18 +37,18 @@ export default async function TopUpPage() {
 
   return (
     <DashboardLayoutClient user={user}>
-      <div className="space-y-6 max-w-xl mx-auto">
+      <div className="space-y-6">
         {/* Page Header */}
         <div className="flex flex-col items-center gap-3 mb-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100/50 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900/30 shadow-2xs">
             <Wallet className="h-3.5 w-3.5" strokeWidth={2} />
-            <span>Account Balance</span>
+            <span>My Personal Wallet</span>
           </div>
           <h1 className="font-sans font-extrabold text-3xl md:text-4xl text-slate-900 dark:text-white tracking-tight text-center">
-            Top Up Balance
+            Wallet Hub & Payments
           </h1>
           <p className="text-slate-500 dark:text-zinc-400 text-base max-w-lg text-center">
-            Add funds to your account instantly via M-Pesa.
+            Add funds instantly via M-Pesa, view transaction details and manage balance.
           </p>
         </div>
 
@@ -56,7 +56,7 @@ export default async function TopUpPage() {
           {platformSettings.disableMpesaDeposits ? (
             <ServicePaused serviceName="M-Pesa Deposits" />
           ) : (
-            <TopUpForm currentBalance={session.user.balance || 0} />
+            <WalletHub currentBalance={session.user.balance || 0} />
           )}
         </div>
       </div>
