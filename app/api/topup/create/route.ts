@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    if (amount < 10) {
-      return NextResponse.json({ error: "Minimum top-up amount is KES 10" }, { status: 400 })
+    if (amount < 1) {
+      return NextResponse.json({ error: "Minimum top-up amount is KES 1" }, { status: 400 })
     }
 
     const db = await getDb()

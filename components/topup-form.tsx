@@ -41,8 +41,8 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
     setPaymentStatus("idle")
 
     const numAmount = Number.parseInt(amount)
-    if (isNaN(numAmount) || numAmount < 10) {
-      setError("Minimum top-up amount is KES 10")
+    if (isNaN(numAmount) || numAmount < 1) {
+      setError("Minimum top-up amount is KES 1")
       setLoading(false)
       return
     }
