@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ProxyCard } from "@/components/proxy-card"
-import { Loader2, Package, Clock, Mail, Copy, Eye, EyeOff, AlertCircle, Globe } from "lucide-react"
+import { Loader2, Package, Clock, Mail, Copy, Eye, EyeOff, AlertCircle, Globe, Plus, Wallet } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
@@ -143,30 +143,54 @@ export function DashboardTabs() {
 
   return (
     <div className="space-y-8">
-      {/* Metric Cards Section (Single Horizontal Card - Strictly Row) */}
-      <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-4 shadow-xs flex flex-row items-center justify-between overflow-x-auto whitespace-nowrap gap-4 scrollbar-none">
-        {/* Active Proxies */}
-        <div className="flex-1 min-w-[100px] flex flex-col items-center justify-center">
-          <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Active Proxies</p>
-          <h3 className="text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{activeProxies.length}</h3>
+      <div className="flex flex-col gap-3">
+        {/* Metric Cards Section (Single Horizontal Card - Strictly Row) */}
+        <div className="bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl p-4 shadow-xs flex flex-row items-center justify-between overflow-x-auto whitespace-nowrap gap-4 scrollbar-none">
+          {/* Active Proxies */}
+          <div className="flex-1 min-w-[100px] flex flex-col items-center justify-center">
+            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Active Proxies</p>
+            <h3 className="text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{activeProxies.length}</h3>
+          </div>
+
+          {/* Divider - Vertical Black Line */}
+          <div className="w-px h-6 bg-black dark:bg-zinc-700 flex-shrink-0" />
+
+          {/* Expired Proxies */}
+          <div className="flex-1 min-w-[100px] flex flex-col items-center justify-center">
+            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Expired Proxies</p>
+            <h3 className="text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{expiredProxies.length}</h3>
+          </div>
+
+          {/* Divider - Vertical Black Line */}
+          <div className="w-px h-6 bg-black dark:bg-zinc-700 flex-shrink-0" />
+
+          {/* Emails */}
+          <div className="flex-1 min-w-[100px] flex flex-col items-center justify-center">
+            <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Emails</p>
+            <h3 className="text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{purchasedEmails.length}</h3>
+          </div>
         </div>
 
-        {/* Divider - Vertical Black Line */}
-        <div className="w-px h-6 bg-black dark:bg-zinc-700 flex-shrink-0" />
-
-        {/* Expired Proxies */}
-        <div className="flex-1 min-w-[100px] flex flex-col items-center justify-center">
-          <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Expired Proxies</p>
-          <h3 className="text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{expiredProxies.length}</h3>
-        </div>
-
-        {/* Divider - Vertical Black Line */}
-        <div className="w-px h-6 bg-black dark:bg-zinc-700 flex-shrink-0" />
-
-        {/* Emails */}
-        <div className="flex-1 min-w-[100px] flex flex-col items-center justify-center">
-          <p className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 uppercase tracking-wider leading-none">Emails</p>
-          <h3 className="text-base font-black text-slate-900 dark:text-white mt-1.5 leading-tight">{purchasedEmails.length}</h3>
+        {/* Quick Actions Section (Single Horizontal Row) */}
+        <div className="flex flex-row items-center gap-3 overflow-x-auto whitespace-nowrap scrollbar-none py-1">
+          <Button variant="outline" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 border-slate-200 dark:border-zinc-800/80 hover:border-blue-500/30 dark:hover:border-blue-500/30 hover:bg-slate-50 dark:hover:bg-zinc-900 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px]" asChild>
+            <Link href="/buy">
+              <Globe className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+              <span>Buy Proxy</span>
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 border-slate-200 dark:border-zinc-800/80 hover:border-purple-500/30 dark:hover:border-purple-500/30 hover:bg-slate-50 dark:hover:bg-zinc-900 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px]" asChild>
+            <Link href="/buy-emails">
+              <Mail className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+              <span>Buy Emails</span>
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" className="rounded-xl font-bold text-xs gap-1.5 h-9 px-4 border-slate-200 dark:border-zinc-800/80 hover:border-emerald-500/30 dark:hover:border-emerald-500/30 hover:bg-slate-50 dark:hover:bg-zinc-900 hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200 flex-1 min-w-[110px]" asChild>
+            <Link href="/topup">
+              <Wallet className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-450" />
+              <span>Top Up Wallet</span>
+            </Link>
+          </Button>
         </div>
       </div>
 
