@@ -88,6 +88,17 @@ export function DashboardTabs() {
   const [loading, setLoading] = useState(true)
   const [visiblePasswords, setVisiblePasswords] = useState<Set<string>>(new Set())
   const [copiedItem, setCopiedItem] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState("active")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      const tab = params.get("tab")
+      if (tab === "active" || tab === "expired" || tab === "emails") {
+        setActiveTab(tab)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     fetchData()
@@ -179,7 +190,7 @@ export function DashboardTabs() {
         </Link>
       </div>
 
-      <Tabs defaultValue="active" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         {/* Pill-shaped container Segmented tabs */}
         <TabsList className="flex w-full max-w-md bg-white/60 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800/80 p-1 rounded-full h-auto mb-8 shadow-2xs">
           <TabsTrigger 

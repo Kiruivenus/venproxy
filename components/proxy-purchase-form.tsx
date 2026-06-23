@@ -194,7 +194,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {
-              router.push("/dashboard")
+              router.push("/dashboard?tab=active")
               router.refresh()
             }, 2000)
           } else if (statusData.status === "failed") {

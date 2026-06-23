@@ -243,7 +243,7 @@ export function EmailPurchaseForm() {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {
-              router.push("/dashboard")
+              router.push("/dashboard?tab=emails")
               router.refresh()
             }, 2000)
           } else if (statusData.status === "failed") {
