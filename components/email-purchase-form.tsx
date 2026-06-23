@@ -197,8 +197,7 @@ export function EmailPurchaseForm() {
       if (data.paid) {
         setPaymentStatus("success")
         setTimeout(() => {
-          router.push("/dashboard")
-          router.refresh()
+          window.location.href = "/dashboard?tab=emails"
         }, 1500)
         return
       }
@@ -243,8 +242,7 @@ export function EmailPurchaseForm() {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {
-              router.push("/dashboard?tab=emails")
-              router.refresh()
+              window.location.href = "/dashboard?tab=emails"
             }, 2000)
           } else if (statusData.status === "failed") {
             clearInterval(pollInterval)

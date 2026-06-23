@@ -148,8 +148,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
       if (orderData.paid) {
         setPaymentStatus("success")
         setTimeout(() => {
-          router.push("/dashboard")
-          router.refresh()
+          window.location.href = "/dashboard?tab=active"
         }, 1500)
         return
       }
@@ -194,8 +193,7 @@ export function ProxyPurchaseForm({ pricing, userId }: ProxyPurchaseFormProps) {
             clearInterval(pollInterval)
             setPaymentStatus("success")
             setTimeout(() => {
-              router.push("/dashboard?tab=active")
-              router.refresh()
+              window.location.href = "/dashboard?tab=active"
             }, 2000)
           } else if (statusData.status === "failed") {
             clearInterval(pollInterval)
