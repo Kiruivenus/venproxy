@@ -199,31 +199,31 @@ export function DashboardTabs() {
         <TabsList className="flex w-full max-w-md bg-white/60 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800/80 p-1 rounded-full h-auto mb-8 shadow-2xs">
           <TabsTrigger 
             value="active" 
-            className="flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+            className="group flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-blue-600 dark:data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
           >
             <Package className="h-3.5 w-3.5" />
           <span>Active</span>
-          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800">
+          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800 group-data-[state=active]:bg-blue-700/50 dark:group-data-[state=active]:bg-blue-900/60 group-data-[state=active]:text-white dark:group-data-[state=active]:text-blue-100 group-data-[state=active]:border-transparent">
             {activeProxies.length}
           </span>
         </TabsTrigger>
         <TabsTrigger 
           value="expired" 
-          className="flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+          className="group flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-blue-600 dark:data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
         >
           <Clock className="h-3.5 w-3.5" />
           <span>Expired</span>
-          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800">
+          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800 group-data-[state=active]:bg-blue-700/50 dark:group-data-[state=active]:bg-blue-900/60 group-data-[state=active]:text-white dark:group-data-[state=active]:text-blue-100 group-data-[state=active]:border-transparent">
             {expiredProxies.length}
           </span>
         </TabsTrigger>
         <TabsTrigger 
           value="emails" 
-          className="flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-450 data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+          className="group flex-1 gap-1.5 py-2 px-3 text-xs font-bold rounded-full data-[state=active]:bg-blue-600 dark:data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-xs transition-all text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
         >
           <Mail className="h-3.5 w-3.5" />
           <span>Emails</span>
-          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800">
+          <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-slate-50 dark:bg-zinc-950 text-slate-500 dark:text-zinc-400 border border-slate-100 dark:border-zinc-800 group-data-[state=active]:bg-blue-700/50 dark:group-data-[state=active]:bg-blue-900/60 group-data-[state=active]:text-white dark:group-data-[state=active]:text-blue-100 group-data-[state=active]:border-transparent">
             {purchasedEmails.length}
           </span>
         </TabsTrigger>
