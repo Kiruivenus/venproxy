@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
+import { usePathname } from "next/navigation"
 import { Sun, Moon, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -15,6 +16,7 @@ interface HeaderProps {
 
 export function Header({ user, onOpenMobile }: HeaderProps) {
   const { theme, setTheme } = useTheme()
+  const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
   const [balance, setBalance] = useState<number>(0)
 
@@ -43,6 +45,28 @@ export function Header({ user, onOpenMobile }: HeaderProps) {
     return name.substring(0, 2).toUpperCase()
   }
 
+  const getPageTitle = () => {
+    if (!pathname) return "Dashboard"
+    if (pathname === "/dashboard") return "My Dashboard"
+    if (pathname === "/dashboard/orders") return "Order History"
+    if (pathname === "/dashboard/settings") return "Account Settings"
+    if (pathname === "/buy") return "Buy Proxies"
+    if (pathname === "/buy-emails") return "Purchase Emails"
+    if (pathname === "/topup") return "Wallet & Top Up"
+    if (pathname === "/settings") return "Settings"
+    if (pathname === "/support") return "Help & Support"
+    if (pathname.startsWith("/docs")) return "Documentation"
+    if (pathname.startsWith("/admin")) return "Admin Dashboard"
+    
+    const segments = pathname.split("/").filter(Boolean)
+    if (segments.length === 0) return "Dashboard"
+    const lastSegment = segments[segments.length - 1]
+    return lastSegment
+      .split("-")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")
+  }
+
   return (
     <header className="h-16 bg-background/40 backdrop-blur border-b border-border sticky top-0 z-30 flex items-center justify-between px-6 md:px-8">
       {/* Left Side: Breadcrumb & Mobile menu trigger */}
@@ -57,10 +81,8 @@ export function Header({ user, onOpenMobile }: HeaderProps) {
             <Menu className="h-5 w-5" />
           </Button>
         )}
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-zinc-400">
-          <span>Workspace</span>
-          <span className="text-slate-350 dark:text-zinc-600">/</span>
-          <span className="text-slate-800 dark:text-zinc-200 font-extrabold">My Dashboard</span>
+        <div className="text-sm font-extrabold text-slate-800 dark:text-zinc-200">
+          {getPageTitle()}
         </div>
       </div>
 
