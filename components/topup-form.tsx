@@ -187,7 +187,7 @@ export function TopUpForm({ currentBalance }: TopUpFormProps) {
                 placeholder="Enter amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                min={10}
+                min={1}
                 required
                 className="w-full h-14 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-600 dark:focus:border-blue-600 focus:ring-1 focus:ring-blue-650 transition-all outline-none font-semibold shadow-xs"
               />
