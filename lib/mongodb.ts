@@ -35,7 +35,7 @@ function getClientPromise(): Promise<MongoClient> {
 
 export async function getDb(): Promise<Db> {
   const client = await getClientPromise()
-  return client.db("proxy_store")
+  return client.db("venproxy")
 }
 
 export { getClientPromise }

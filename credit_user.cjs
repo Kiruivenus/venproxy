@@ -68,7 +68,7 @@ if (formattedPhone.startsWith("0")) {
 async function run() {
   try {
     await client.connect();
-    const db = client.db('proxy_store');
+    const db = client.db('venproxy');
     console.log("Connected to database");
 
     // Find the most recent pending top-up matching the phone number and amount

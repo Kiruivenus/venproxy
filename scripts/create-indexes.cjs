@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb")
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://patrickkirui413:41365475@cluster0.kyti0.mongodb.net/"
-const DB_NAME = "proxy_store"
+const DB_NAME = "venproxy"
 
 async function run() {
   const client = new MongoClient(MONGODB_URI)
