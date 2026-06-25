@@ -1,12 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { CloudLightning } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
 import { Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useBranding } from "@/lib/use-branding"
+import { BrandLogo } from "@/components/brand-logo"
 
 interface PublicNavBarProps {
   mode?: "landing" | "login" | "register"
@@ -22,24 +22,7 @@ export function PublicNavBar({ mode = "landing" }: PublicNavBarProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background/80 backdrop-blur-md border-b border-border/70 flex items-center px-6 md:px-10">
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
-        <div className={`flex h-8 w-8 items-center justify-center rounded-xl flex-shrink-0 overflow-hidden ${companyLogoUrl ? "bg-transparent" : "bg-blue-600 text-white shadow-sm"}`}>
-          {companyLogoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={companyLogoUrl}
-              alt={companyName}
-              className="h-full w-full object-contain"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-            />
-          ) : (
-            <CloudLightning className="h-4.5 w-4.5 stroke-[2]" />
-          )}
-        </div>
-        <span className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white font-sans">
-          {companyName}
-        </span>
-      </Link>
+      <BrandLogo size="sm" />
 
       <div className="flex-1" />
 

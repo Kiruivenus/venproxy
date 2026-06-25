@@ -1,20 +1,34 @@
 import Link from "next/link"
 import { CloudLightning, Wrench } from "lucide-react"
+import { getPlatformSettings } from "@/app/admin/platform-actions"
 
 export const metadata = {
   title: "Maintenance | RayProxy Hub",
   description: "We are currently performing scheduled maintenance. We'll be back shortly.",
 }
 
-export default function MaintenancePage() {
+export default async function MaintenancePage() {
+  const settings = await getPlatformSettings()
+  const companyName = settings.companyName || "RayProxy Hub"
+  const companyLogoUrl = settings.companyLogoUrl
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md text-center space-y-6">
         {/* Logo */}
         <div className="flex justify-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200">
-            <CloudLightning className="h-9 w-9 stroke-[2]" />
-          </div>
+          {companyLogoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={companyLogoUrl}
+              alt={companyName}
+              className="h-16 w-auto max-w-[240px] object-contain flex-shrink-0"
+            />
+          ) : (
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200">
+              <CloudLightning className="h-9 w-9 stroke-[2]" />
+            </div>
+          )}
         </div>
 
         {/* Icon */}

@@ -114,7 +114,8 @@ export function getStyledEmailTemplate(
         }
         .logo-img {
           height: 36px;
-          width: 36px;
+          width: auto;
+          max-width: 180px;
           object-fit: contain;
           border-radius: 8px;
         }

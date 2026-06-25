@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useBranding } from "@/lib/use-branding"
+import { BrandLogo } from "@/components/brand-logo"
 import {
   LayoutDashboard,
   Globe,
@@ -13,7 +14,6 @@ import {
   Shield,
   History,
   LogOut,
-  CloudLightning,
   BookOpen,
   LifeBuoy,
 } from "lucide-react"
@@ -104,24 +104,7 @@ export function Sidebar({ user, onCloseMobile }: SidebarProps) {
     <div className="flex h-full w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground z-40">
       {/* Brand/Logo Section */}
       <div className="p-6 pb-2">
-        <Link href="/" className="flex items-center gap-2.5 px-1">
-          <div className={`flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0 overflow-hidden ${branding.companyLogoUrl ? "bg-transparent" : "bg-blue-600 text-white shadow-sm"}`}>
-            {branding.companyLogoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={branding.companyLogoUrl}
-                alt={branding.companyName}
-                className="h-full w-full object-contain"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-              />
-            ) : (
-              <CloudLightning className="h-5 w-5 stroke-[2]" />
-            )}
-          </div>
-          <span className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white font-sans truncate">
-            {branding.companyName}
-          </span>
-        </Link>
+        <BrandLogo size="md" className="px-1" />
       </div>
 
       {/* Link Groups - Scrollable Section */}

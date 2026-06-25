@@ -250,7 +250,7 @@ export function PlatformSettingsForm({ initialSettings }: PlatformSettingsFormPr
               placeholder="https://your-domain.com/logo.png"
               className="h-12 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-600 dark:focus:border-blue-600 focus:ring-1 focus:ring-blue-650 transition-all outline-none font-medium"
             />
-            <p className="text-xs text-slate-455 dark:text-zinc-500">Use an HTTPS URL. Ideal dimensions: 40×40px or square SVG.</p>
+            <p className="text-xs text-slate-455 dark:text-zinc-500">Use an HTTPS URL. Supports any shape (square, wide, or rectangular).</p>
           </div>
 
           {brandingLogo && (
@@ -259,7 +259,7 @@ export function PlatformSettingsForm({ initialSettings }: PlatformSettingsFormPr
               <img
                 src={brandingLogo}
                 alt="Brand logo preview"
-                className="h-10 w-10 rounded-lg object-contain border border-slate-200 dark:border-slate-800 bg-white dark:bg-transparent"
+                className="h-10 w-auto max-w-[150px] rounded-lg object-contain border border-slate-200 dark:border-slate-800 bg-white dark:bg-transparent"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
               />
               <div>
