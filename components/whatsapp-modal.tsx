@@ -14,19 +14,28 @@ export function WhatsappModal({ show = false, whatsappUrl = "" }: WhatsappModalP
   useEffect(() => {
     if (!show || !whatsappUrl) return
 
-    // Check localStorage to see if the user previously dismissed the modal
-    const dismissed = localStorage.getItem("proxiva_whatsapp_modal_dismissed")
-    if (!dismissed) {
-      // Delay showing the modal slightly for a smoother entry feel
-      const timer = setTimeout(() => {
-        setIsOpen(true)
-      }, 1500)
-      return () => clearTimeout(timer)
+    // Check last dismissed timestamp from localStorage
+    const lastDismissedStr = localStorage.getItem("proxiva_whatsapp_modal_last_dismissed")
+    
+    if (lastDismissedStr) {
+      const lastDismissed = parseInt(lastDismissedStr, 10)
+      const oneDayInMs = 24 * 60 * 60 * 1000
+      
+      // If 24 hours haven't passed, do not show the modal
+      if (Date.now() - lastDismissed < oneDayInMs) {
+        return
+      }
     }
+
+    // Delay showing the modal slightly for a smoother entry feel
+    const timer = setTimeout(() => {
+      setIsOpen(true)
+    }, 1500)
+    return () => clearTimeout(timer)
   }, [show, whatsappUrl])
 
   const handleDismiss = () => {
-    localStorage.setItem("proxiva_whatsapp_modal_dismissed", "true")
+    localStorage.setItem("proxiva_whatsapp_modal_last_dismissed", Date.now().toString())
     setIsOpen(false)
   }
 
