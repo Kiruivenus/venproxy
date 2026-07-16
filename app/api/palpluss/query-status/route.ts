@@ -126,9 +126,12 @@ export async function GET(request: NextRequest) {
           const receiptNumber = apiStatus.receiptNumber || "QUERY_" + transaction.reference
           
           if (isFinalSuccess) {
-            // Update Transaction
-            await db.collection<Transaction>("transactions").updateOne(
-              { _id: transaction._id },
+            // Atomically update Transaction status from pending/processing to SUCCESS
+            const updateResult = await db.collection<Transaction>("transactions").updateOne(
+              { 
+                _id: transaction._id, 
+                status: { $in: ["PENDING", "PROCESSING"] } 
+              },
               {
                 $set: {
                   status: "SUCCESS",
@@ -141,172 +144,180 @@ export async function GET(request: NextRequest) {
               }
             )
 
-            // Update Target
-            if (transaction.type === "deposit") {
-              const userData = await db.collection("users").findOne({ _id: transaction.userId })
-              if (userData) {
-                const balanceBefore = userData.balance || 0
-                const balanceAfter = balanceBefore + transaction.amount
+            // If modifiedCount is 0, it means it was already processed by another concurrent process
+            if (updateResult.modifiedCount > 0) {
+              // Update Target
+              if (transaction.type === "deposit") {
+                const userData = await db.collection("users").findOne({ _id: transaction.userId })
+                if (userData) {
+                  const balanceBefore = userData.balance || 0
+                  const balanceAfter = balanceBefore + transaction.amount
 
-                await db.collection("users").updateOne(
-                  { _id: transaction.userId },
-                  { $inc: { balance: transaction.amount } }
-                )
-
-                // Ledger
-                const ledger: WalletLedger = {
-                  _id: new ObjectId(),
-                  userId: transaction.userId,
-                  amount: transaction.amount,
-                  type: "deposit",
-                  reference: transaction.reference,
-                  transactionId: transaction._id,
-                  balanceBefore,
-                  balanceAfter,
-                  createdAt: new Date(),
-                }
-                await db.collection("wallet_ledgers").insertOne(ledger)
-
-                // Topup Status
-                await db.collection("topups").updateOne(
-                  { _id: transaction.targetId },
-                  {
-                    $set: {
-                      status: "completed",
-                      mpesaReceiptNumber: receiptNumber,
-                      completedAt: new Date(),
-                    },
-                  }
-                )
-
-                // In-app Notification
-                await db.collection("notifications").insertOne({
-                  _id: new ObjectId(),
-                  userId: transaction.userId,
-                  title: "Deposit Successful",
-                  message: `Your deposit of KES ${transaction.amount.toLocaleString()} was successful.`,
-                  type: "success",
-                  read: false,
-                  createdAt: new Date(),
-                })
-
-                // Email
-                sendDepositSuccessfulEmail(userData.email, userData.name || userData.email, transaction.amount, transaction.reference, receiptNumber).catch((e) =>
-                  console.error("Failed to send query success email:", e)
-                )
-              }
-            } else if (transaction.type === "proxy") {
-              const order = await db.collection<Order>("orders").findOne({ _id: transaction.targetId })
-              if (order && order.status === "pending") {
-                const selectedProxy = await findAvailableProxyForCallback(db, order.country, order.userId)
-                let proxy = null
-
-                if (selectedProxy) {
-                  proxy = await db
-                    .collection<Proxy>("proxies")
-                    .findOneAndUpdate({ _id: selectedProxy._id }, { $inc: { currentUsage: 1 } }, { returnDocument: "after" })
-                }
-
-                if (proxy) {
-                  const purchase: ProxyPurchase = {
-                    _id: new ObjectId(),
-                    userId: order.userId,
-                    proxyId: proxy._id,
-                    orderId: order._id,
-                    proxy: {
-                      ip: proxy.ip,
-                      port: proxy.port,
-                      username: proxy.username,
-                      password: proxy.password,
-                      country: proxy.country,
-                      countryCode: proxy.countryCode,
-                    },
-                    expiresAt: proxy.expiresAt,
-                    purchasedAt: new Date(),
-                  }
-
-                  await db.collection<ProxyPurchase>("purchases").insertOne(purchase)
-
-                  if (proxy.currentUsage >= proxy.maxUsage) {
-                    await db.collection<Proxy>("proxies").updateOne({ _id: proxy._id }, { $set: { isActive: false } })
-                  }
-                }
-
-                await db.collection<Order>("orders").updateOne(
-                  { _id: order._id },
-                  {
-                    $set: {
-                      status: proxy ? "paid" : "failed",
-                      failureReason: proxy ? undefined : "No proxies available in this country",
-                      mpesaReceiptNumber: receiptNumber,
-                      paidAt: new Date(),
-                    },
-                  }
-                )
-              }
-            } else if (transaction.type === "email") {
-              const emailOrder = await db.collection("emailOrders").findOne({ _id: transaction.targetId })
-              if (emailOrder && emailOrder.status === "pending") {
-                const availableEmails = await db
-                  .collection("emails")
-                  .find({
-                    domainId: emailOrder.domainId,
-                    status: "available",
-                  })
-                  .limit(emailOrder.quantity)
-                  .toArray()
-
-                if (availableEmails.length >= emailOrder.quantity) {
-                  const emailIds = availableEmails.map((e) => e._id)
-                  await db.collection("emails").updateMany(
-                    { _id: { $in: emailIds } },
-                    { $set: { status: "sold" } }
+                  await db.collection("users").updateOne(
+                    { _id: transaction.userId },
+                    { $inc: { balance: transaction.amount } }
                   )
 
-                  await db.collection("emailPurchases").insertOne({
-                    userId: emailOrder.userId,
-                    orderId: emailOrder._id,
-                    emails: availableEmails.map((e) => ({
-                      emailAddress: e.emailAddress,
-                      password: e.password,
-                      domain: e.domain,
-                      server: e.server,
-                    })),
-                    quantity: emailOrder.quantity,
-                    domain: emailOrder.domain,
-                    totalPrice: emailOrder.totalPrice,
-                    purchasedAt: new Date(),
-                  })
+                  // Ledger
+                  const ledger: WalletLedger = {
+                    _id: new ObjectId(),
+                    userId: transaction.userId,
+                    amount: transaction.amount,
+                    type: "deposit",
+                    reference: transaction.reference,
+                    transactionId: transaction._id,
+                    balanceBefore,
+                    balanceAfter,
+                    createdAt: new Date(),
+                  }
+                  await db.collection("wallet_ledgers").insertOne(ledger)
 
-                  await db.collection("emailOrders").updateOne(
-                    { _id: emailOrder._id },
+                  // Topup Status
+                  await db.collection("topups").updateOne(
+                    { _id: transaction.targetId },
                     {
                       $set: {
-                        status: "paid",
+                        status: "completed",
+                        mpesaReceiptNumber: receiptNumber,
+                        completedAt: new Date(),
+                      },
+                    }
+                  )
+
+                  // In-app Notification
+                  await db.collection("notifications").insertOne({
+                    _id: new ObjectId(),
+                    userId: transaction.userId,
+                    title: "Deposit Successful",
+                    message: `Your deposit of KES ${transaction.amount.toLocaleString()} was successful.`,
+                    type: "success",
+                    read: false,
+                    createdAt: new Date(),
+                  })
+
+                  // Email
+                  sendDepositSuccessfulEmail(userData.email, userData.name || userData.email, transaction.amount, transaction.reference, receiptNumber).catch((e) =>
+                    console.error("Failed to send query success email:", e)
+                  )
+                }
+              } else if (transaction.type === "proxy") {
+                const order = await db.collection<Order>("orders").findOne({ _id: transaction.targetId })
+                if (order && order.status === "pending") {
+                  const selectedProxy = await findAvailableProxyForCallback(db, order.country, order.userId)
+                  let proxy = null
+
+                  if (selectedProxy) {
+                    proxy = await db
+                      .collection<Proxy>("proxies")
+                      .findOneAndUpdate({ _id: selectedProxy._id }, { $inc: { currentUsage: 1 } }, { returnDocument: "after" })
+                  }
+
+                  if (proxy) {
+                    const purchase: ProxyPurchase = {
+                      _id: new ObjectId(),
+                      userId: order.userId,
+                      proxyId: proxy._id,
+                      orderId: order._id,
+                      proxy: {
+                        ip: proxy.ip,
+                        port: proxy.port,
+                        username: proxy.username,
+                        password: proxy.password,
+                        country: proxy.country,
+                        countryCode: proxy.countryCode,
+                      },
+                      expiresAt: proxy.expiresAt,
+                      purchasedAt: new Date(),
+                    }
+
+                    await db.collection<ProxyPurchase>("purchases").insertOne(purchase)
+
+                    if (proxy.currentUsage >= proxy.maxUsage) {
+                      await db.collection<Proxy>("proxies").updateOne({ _id: proxy._id }, { $set: { isActive: false } })
+                    }
+                  }
+
+                  await db.collection<Order>("orders").updateOne(
+                    { _id: order._id },
+                    {
+                      $set: {
+                        status: proxy ? "paid" : "failed",
+                        failureReason: proxy ? undefined : "No proxies available in this country",
                         mpesaReceiptNumber: receiptNumber,
                         paidAt: new Date(),
                       },
                     }
                   )
-                } else {
-                  await db.collection("emailOrders").updateOne(
-                    { _id: emailOrder._id },
-                    {
-                      $set: {
-                        status: "failed",
-                        failureReason: "Insufficient emails available for this domain",
-                      },
-                    }
-                  )
+                }
+              } else if (transaction.type === "email") {
+                const emailOrder = await db.collection("emailOrders").findOne({ _id: transaction.targetId })
+                if (emailOrder && emailOrder.status === "pending") {
+                  const availableEmails = await db
+                    .collection("emails")
+                    .find({
+                      domainId: emailOrder.domainId,
+                      status: "available",
+                    })
+                    .limit(emailOrder.quantity)
+                    .toArray()
+
+                  if (availableEmails.length >= emailOrder.quantity) {
+                    const emailIds = availableEmails.map((e) => e._id)
+                    await db.collection("emails").updateMany(
+                      { _id: { $in: emailIds } },
+                      { $set: { status: "sold" } }
+                    )
+
+                    await db.collection("emailPurchases").insertOne({
+                      userId: emailOrder.userId,
+                      orderId: emailOrder._id,
+                      emails: availableEmails.map((e) => ({
+                        emailAddress: e.emailAddress,
+                        password: e.password,
+                        domain: e.domain,
+                        server: e.server,
+                      })),
+                      quantity: emailOrder.quantity,
+                      domain: emailOrder.domain,
+                      totalPrice: emailOrder.totalPrice,
+                      purchasedAt: new Date(),
+                    })
+
+                    await db.collection("emailOrders").updateOne(
+                      { _id: emailOrder._id },
+                      {
+                        $set: {
+                          status: "paid",
+                          mpesaReceiptNumber: receiptNumber,
+                          paidAt: new Date(),
+                        },
+                      }
+                    )
+                  } else {
+                    await db.collection("emailOrders").updateOne(
+                      { _id: emailOrder._id },
+                      {
+                        $set: {
+                          status: "failed",
+                          failureReason: "Insufficient emails available for this domain",
+                        },
+                      }
+                    )
+                  }
                 }
               }
+            } else {
+              console.log(`[Query Status API] Transaction ${transaction.reference} already finalized by another thread. Skipping fulfillment.`)
             }
 
             return NextResponse.json({ status: "completed", receiptNumber })
           } else {
-            // Transaction failed on PalPluss side
-            await db.collection<Transaction>("transactions").updateOne(
-              { _id: transaction._id },
+            // Transaction failed on PalPluss side. Atomically update Transaction status from pending/processing to FAILED
+            const updateResult = await db.collection<Transaction>("transactions").updateOne(
+              { 
+                _id: transaction._id, 
+                status: { $in: ["PENDING", "PROCESSING"] } 
+              },
               {
                 $set: {
                   status: "FAILED",
@@ -318,36 +329,40 @@ export async function GET(request: NextRequest) {
               }
             )
 
-            const updateCollectionName = 
-              transaction.type === "email" ? "emailOrders" : (transaction.type === "proxy" ? "orders" : "topups")
-            
-            await db.collection(updateCollectionName).updateOne(
-              { _id: transaction.targetId },
-              {
-                $set: {
-                  status: "failed",
-                  failureReason: apiStatus.resultDescription,
-                },
-              }
-            )
+            if (updateResult.modifiedCount > 0) {
+              const updateCollectionName = 
+                transaction.type === "email" ? "emailOrders" : (transaction.type === "proxy" ? "orders" : "topups")
+              
+              await db.collection(updateCollectionName).updateOne(
+                { _id: transaction.targetId },
+                {
+                  $set: {
+                    status: "failed",
+                    failureReason: apiStatus.resultDescription,
+                  },
+                }
+              )
 
-            if (transaction.type === "deposit") {
-              const userData = await db.collection("users").findOne({ _id: transaction.userId })
-              if (userData) {
-                sendDepositFailedEmail(userData.email, userData.name || userData.email, transaction.amount, transaction.reference, apiStatus.resultDescription).catch((e) =>
-                  console.error("Failed to send query failed email:", e)
-                )
-              }
+              if (transaction.type === "deposit") {
+                const userData = await db.collection("users").findOne({ _id: transaction.userId })
+                if (userData) {
+                  sendDepositFailedEmail(userData.email, userData.name || userData.email, transaction.amount, transaction.reference, apiStatus.resultDescription).catch((e) =>
+                    console.error("Failed to send query failed email:", e)
+                  )
+                }
 
-              await db.collection("notifications").insertOne({
-                _id: new ObjectId(),
-                userId: transaction.userId,
-                title: "Deposit Failed",
-                message: `Your deposit of KES ${transaction.amount.toLocaleString()} failed: ${apiStatus.resultDescription}.`,
-                type: "error",
-                read: false,
-                createdAt: new Date(),
-              })
+                await db.collection("notifications").insertOne({
+                  _id: new ObjectId(),
+                  userId: transaction.userId,
+                  title: "Deposit Failed",
+                  message: `Your deposit of KES ${transaction.amount.toLocaleString()} failed: ${apiStatus.resultDescription}.`,
+                  type: "error",
+                  read: false,
+                  createdAt: new Date(),
+                })
+              }
+            } else {
+              console.log(`[Query Status API] Transaction ${transaction.reference} already finalized by another thread. Skipping failure processing.`)
             }
 
             return NextResponse.json({ status: "failed", error: apiStatus.resultDescription })
