@@ -16,6 +16,8 @@ export interface PlatformSettings {
   smtpUser?: string
   smtpPass?: string
   smtpSender?: string
+  showWhatsappModal?: boolean
+  whatsappGroupUrl?: string
 }
 
 const DEFAULT_SETTINGS: PlatformSettings = {
@@ -31,6 +33,8 @@ const DEFAULT_SETTINGS: PlatformSettings = {
   smtpUser: "",
   smtpPass: "",
   smtpSender: "",
+  showWhatsappModal: false,
+  whatsappGroupUrl: "",
 }
 
 export async function getPlatformSettings(): Promise<PlatformSettings> {
@@ -51,6 +55,8 @@ export async function getPlatformSettings(): Promise<PlatformSettings> {
       smtpUser: doc.smtpUser ?? "",
       smtpPass: doc.smtpPass ?? "",
       smtpSender: doc.smtpSender ?? "",
+      showWhatsappModal: doc.showWhatsappModal ?? false,
+      whatsappGroupUrl: doc.whatsappGroupUrl ?? "",
     }
   } catch {
     return DEFAULT_SETTINGS

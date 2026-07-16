@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { DashboardLayoutClient } from "@/components/dashboard-layout-client"
 import { DashboardTabs } from "@/components/dashboard-tabs"
 import { getPlatformSettings } from "@/app/admin/platform-actions"
+import { WhatsappModal } from "@/components/whatsapp-modal"
 
 export default async function DashboardPage() {
   const session = await getSession()
@@ -25,6 +26,10 @@ export default async function DashboardPage() {
   return (
     <DashboardLayoutClient user={{ email: session.user.email, name: session.user.name, role: session.user.role }}>
       <div className="space-y-6">
+        <WhatsappModal 
+          show={platformSettings.showWhatsappModal} 
+          whatsappUrl={platformSettings.whatsappGroupUrl} 
+        />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-sans tracking-tight">

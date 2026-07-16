@@ -17,6 +17,7 @@ import {
   Building2,
   Image as ImageIcon,
   Key,
+  MessageCircle,
 } from "lucide-react"
 
 interface PlatformSettingsFormProps {
@@ -36,6 +37,33 @@ export function PlatformSettingsForm({ initialSettings }: PlatformSettingsFormPr
   const [smtpUser, setSmtpUser] = useState(initialSettings.smtpUser || "")
   const [smtpPass, setSmtpPass] = useState(initialSettings.smtpPass || "")
   const [smtpSender, setSmtpSender] = useState(initialSettings.smtpSender || "")
+  const [savingWhatsapp, setSavingWhatsapp] = useState(false)
+  const [showWhatsapp, setShowWhatsapp] = useState(initialSettings.showWhatsappModal || false)
+  const [whatsappUrl, setWhatsappUrl] = useState(initialSettings.whatsappGroupUrl || "")
+
+  const handleSaveWhatsapp = async () => {
+    setSavingWhatsapp(true)
+    try {
+      const result = await updatePlatformSettings({
+        showWhatsappModal: showWhatsapp,
+        whatsappGroupUrl: whatsappUrl,
+      })
+      if (result.success) {
+        setSettings((s) => ({
+          ...s,
+          showWhatsappModal: showWhatsapp,
+          whatsappGroupUrl: whatsappUrl,
+        }))
+        toast({ title: "WhatsApp Settings Saved", description: result.message })
+      } else {
+        toast({ variant: "destructive", title: "Error", description: result.error })
+      }
+    } catch {
+      toast({ variant: "destructive", title: "Error", description: "Failed to save WhatsApp settings." })
+    } finally {
+      setSavingWhatsapp(false)
+    }
+  }
 
   const handleToggle = async (key: keyof PlatformSettings, value: boolean) => {
     const prev = settings[key]
@@ -375,6 +403,65 @@ export function PlatformSettingsForm({ initialSettings }: PlatformSettingsFormPr
             </>
           ) : (
             "Save SMTP Settings"
+          )}
+        </Button>
+      </div>
+
+      {/* Card 4: WhatsApp Modal Settings */}
+      <div className="bg-white dark:bg-card rounded-2xl shadow-xs border border-slate-200 dark:border-border p-6 md:p-8">
+        <div className="border-b border-slate-100 dark:border-border pb-4 mb-6">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <MessageCircle className="h-5 w-5 text-emerald-500" />
+            WhatsApp Community Update Modal
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+            Display a pop-up modal to dashboard users inviting them to join a WhatsApp group for daily proxy updates.
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          <div className="flex items-center justify-between gap-4 p-4 rounded-xl border bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800/60">
+            <div className="flex flex-col">
+              <Label htmlFor="showWhatsapp" className="text-sm font-bold text-slate-800 dark:text-zinc-200 cursor-pointer">
+                Show WhatsApp Modal
+              </Label>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                Enable this to show the popup invitation to users in their dashboard.
+              </p>
+            </div>
+            <Switch
+              id="showWhatsapp"
+              checked={showWhatsapp}
+              onCheckedChange={setShowWhatsapp}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="whatsappUrl" className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-zinc-300">
+              WhatsApp Group Invite URL
+            </Label>
+            <Input
+              id="whatsappUrl"
+              value={whatsappUrl}
+              onChange={(e) => setWhatsappUrl(e.target.value)}
+              placeholder="https://chat.whatsapp.com/..."
+              className="h-12 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl px-4 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-600 dark:focus:border-blue-600 focus:ring-1 focus:ring-blue-650 transition-all outline-none font-medium"
+            />
+          </div>
+        </div>
+
+        <Button
+          onClick={handleSaveWhatsapp}
+          disabled={savingWhatsapp}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl px-6 h-11 transition-colors w-full mt-6 cursor-pointer"
+        >
+          {savingWhatsapp ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving WhatsApp Settings...
+            </>
+          ) : (
+            "Save WhatsApp Settings"
           )}
         </Button>
       </div>
