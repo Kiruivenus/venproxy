@@ -22,7 +22,7 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
     const pass = smtpSettings?.smtpPass || process.env.GMAIL_APP_PASSWORD
     const port = smtpSettings?.smtpPort ? Number(smtpSettings.smtpPort) : 587
     const sender = smtpSettings?.smtpSender || user || "noreply@rayproxy.com"
-    const companyName = smtpSettings?.companyName || "RayProxy Hub"
+    const companyName = smtpSettings?.companyName || "Proxiva"
 
     // 2. Fallback to debug log if no credentials are set
     if (!user || !pass) {
@@ -68,7 +68,7 @@ export function getStyledEmailTemplate(
     title: string,
     content: string,
     footerText: string,
-    companyName: string = "RayProxy Hub",
+    companyName: string = "Proxiva",
     companyLogoUrl: string = ""
 ) {
     return `
@@ -200,13 +200,13 @@ export function getStyledEmailTemplate(
 }
 
 export async function sendDepositPendingEmail(email: string, name: string, amount: number, reference: string): Promise<boolean> {
-    let companyName = "RayProxy Hub"
+    let companyName = "Proxiva"
     let companyLogoUrl = ""
     try {
         const db = await getDb()
         const settings = await db.collection("website_settings").findOne({})
         if (settings) {
-            companyName = settings.companyName || "RayProxy Hub"
+            companyName = settings.companyName || "Proxiva"
             companyLogoUrl = settings.companyLogoUrl || ""
         }
     } catch (e) {
@@ -246,13 +246,13 @@ export async function sendDepositPendingEmail(email: string, name: string, amoun
 }
 
 export async function sendDepositSuccessfulEmail(email: string, name: string, amount: number, reference: string, receiptNumber: string): Promise<boolean> {
-    let companyName = "RayProxy Hub"
+    let companyName = "Proxiva"
     let companyLogoUrl = ""
     try {
         const db = await getDb()
         const settings = await db.collection("website_settings").findOne({})
         if (settings) {
-            companyName = settings.companyName || "RayProxy Hub"
+            companyName = settings.companyName || "Proxiva"
             companyLogoUrl = settings.companyLogoUrl || ""
         }
     } catch (e) {
@@ -299,13 +299,13 @@ export async function sendDepositSuccessfulEmail(email: string, name: string, am
 }
 
 export async function sendDepositFailedEmail(email: string, name: string, amount: number, reference: string, reason: string): Promise<boolean> {
-    let companyName = "RayProxy Hub"
+    let companyName = "Proxiva"
     let companyLogoUrl = ""
     try {
         const db = await getDb()
         const settings = await db.collection("website_settings").findOne({})
         if (settings) {
-            companyName = settings.companyName || "RayProxy Hub"
+            companyName = settings.companyName || "Proxiva"
             companyLogoUrl = settings.companyLogoUrl || ""
         }
     } catch (e) {

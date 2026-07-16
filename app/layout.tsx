@@ -15,7 +15,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPlatformSettings()
-  const name = settings.companyName || "RayProxy Hub"
+  const name = settings.companyName || "Proxiva"
   const logoUrl = settings.companyLogoUrl
 
   const icons: Metadata["icons"] = logoUrl
@@ -35,19 +35,52 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: {
-      default: `${name} | Premium Residential Proxies Kenya`,
+      default: `${name} | Buy Premium Proxies & Residential Proxies Kenya`,
       template: `%s | ${name}`,
     },
     description:
-      "Get high-performance residential proxies instantly. Secure M-Pesa payments, 99.9% uptime, and global coverage. The #1 proxy service in Kenya.",
+      "Proxiva is the #1 provider of high-speed premium residential proxies in Kenya. Buy secure HTTP/Socks5 proxies instantly using M-Pesa. Uptime guaranteed, 99.9% success rate, anonymous browsing, and web scraping support.",
     keywords: [
-      "Residential Proxies Kenya",
-      "M-Pesa Proxy Payment",
-      "Buy Proxies Kenya",
-      name,
-      "Anonymous Browsing",
-      "Data Scraping Proxies",
-      "Cheap Proxies Kenya",
+      "proxiva",
+      "proxiva proxy",
+      "proxiva.co.ke",
+      "proxiva co ke",
+      "proxiva.co",
+      "proxy",
+      "proxies",
+      "proxy purchase",
+      "buy proxies",
+      "buy proxies kenya",
+      "buy proxy",
+      "residential proxies",
+      "residential proxies kenya",
+      "residential proxy",
+      "best proxies",
+      "cheap proxies",
+      "cheap proxy",
+      "mpesa proxies",
+      "mpesa proxy",
+      "buy proxies with mpesa",
+      "kenyan proxies",
+      "private proxies",
+      "socks5 proxy kenya",
+      "http proxy kenya",
+      "anonymous proxy",
+      "web scraping proxy",
+      "secure proxy",
+      "rayproxy",
+      "rayproxy hub",
+      "iproyal",
+      "strong proxy",
+      "best proxy",
+      "socks5 proxy",
+      "residential proxy network",
+      "buy proxies online",
+      "residential proxies for scraping",
+      "best proxies kenya",
+      "socks5 proxies kenya",
+      "http proxies kenya",
+      name
     ],
     authors: [{ name: `${name} Team` }],
     creator: name,
@@ -58,14 +91,14 @@ export async function generateMetadata(): Promise<Metadata> {
       telephone: false,
     },
     metadataBase: new URL(
-      process.env.NEXT_PUBLIC_APP_URL || "https://rayproxy.com"
+      process.env.NEXT_PUBLIC_APP_URL || "https://www.proxiva.co.ke"
     ),
     alternates: { canonical: "/" },
     openGraph: {
-      title: `${name} | Premium Residential Proxies`,
+      title: `${name} | Premium Residential Proxies & Proxy Purchase`,
       description:
-        "Purchase premium proxies instantly with M-Pesa. Global coverage and high-speed residential IPs.",
-      url: "/",
+        "Buy premium proxies instantly with M-Pesa. Proxiva offers high-speed anonymous residential, mobile, and datacenter IPs with 99.9% uptime.",
+      url: "https://www.proxiva.co.ke",
       siteName: name,
       images: [
         {
@@ -80,9 +113,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${name} | Premium Residential Proxies`,
+      title: `${name} | Premium Residential Proxies & Proxy Purchase`,
       description:
-        "Instant proxy delivery with M-Pesa. Premium residential IPs for secure browsing.",
+        "Proxiva offers high-speed anonymous residential, mobile, and datacenter IPs in Kenya. Buy proxies instantly with M-Pesa.",
       images: [logoUrl || "/og-image.png"],
     },
     icons,
@@ -113,7 +146,7 @@ export default async function RootLayout({
 }>) {
   const settings = await getPlatformSettings()
   const branding = {
-    companyName: settings.companyName || "RayProxy Hub",
+    companyName: settings.companyName || "Proxiva",
     companyLogoUrl: settings.companyLogoUrl || "",
   }
 

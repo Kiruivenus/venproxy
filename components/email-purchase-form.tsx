@@ -351,7 +351,7 @@ export function EmailPurchaseForm() {
                         value={domain._id}
                         className="text-xs font-semibold py-2.5 focus:bg-indigo-50 dark:focus:bg-zinc-800/80 focus:text-indigo-600 dark:focus:text-indigo-400 rounded-lg cursor-pointer"
                       >
-                        {domain.domain} ({domain.type === "gmail" ? "Gmail" : "RayProxy SMTP"}) — {available} available
+                        {domain.domain} ({domain.type === "gmail" ? "Gmail" : "Proxiva SMTP"}) — {available} available
                       </SelectItem>
                     )
                   })}

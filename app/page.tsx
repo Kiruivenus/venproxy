@@ -26,7 +26,7 @@ const customerReviews = [
     name: "David Kimani",
     location: "Mombasa, Kenya",
     rating: 5,
-    review: "Been using RayProxy Hub for 3 months now. Never had any downtime. Highly recommended!",
+    review: "Been using Proxiva for 3 months now. Never had any downtime. Highly recommended!",
     avatar: "DK",
   },
   {
@@ -110,7 +110,7 @@ export default async function HomePage() {
         <section className="py-24 relative bg-slate-50/50 dark:bg-transparent">
           <div className="container mx-auto px-4 max-w-6xl">
             <div className="mx-auto max-w-2xl text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white">Why Choose RayProxy Hub?</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white">Why Choose Proxiva?</h2>
               <p className="text-base text-muted-foreground font-medium">
                 Pristine, secure infrastructure engineered for data scapers and modern developers.
               </p>
@@ -176,7 +176,7 @@ export default async function HomePage() {
                       </svg>
                     </div>
                     <p className="text-[9px] font-black text-white leading-tight uppercase">M-Pesa STK PIN</p>
-                    <p className="text-[7.5px] text-zinc-400 mt-1">Pay KES 100 to RayProxy Hub?</p>
+                    <p className="text-[7.5px] text-zinc-400 mt-1">Pay KES 100 to Proxiva?</p>
                     <div className="flex gap-1 justify-center mt-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
                       <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
@@ -276,7 +276,7 @@ export default async function HomePage() {
           <div className="container mx-auto px-4 max-w-6xl">
             <div className="mx-auto max-w-2xl text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">Trusted by Thousands</h2>
-              <p className="text-base text-muted-foreground font-medium">See why local businesses and scraping teams rely on RayProxy Hub.</p>
+              <p className="text-base text-muted-foreground font-medium">See why local businesses and scraping teams rely on Proxiva.</p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -353,7 +353,7 @@ export default async function HomePage() {
           </div>
           
           <div className="pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-semibold">
-            <p>&copy; {new Date().getFullYear()} RayProxy Hub. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Proxiva. All rights reserved.</p>
             <div className="flex items-center gap-2">
               <span className="flex h-2 w-2 rounded-full bg-emerald-500"></span>
               Systems Operational

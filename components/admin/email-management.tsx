@@ -381,7 +381,7 @@ export function EmailManagement() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="gmail">Gmail</SelectItem>
-                      <SelectItem value="rayproxy">RayProxy SMTP</SelectItem>
+                      <SelectItem value="rayproxy">Proxiva SMTP</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -428,7 +428,7 @@ export function EmailManagement() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="gmail">Gmail</SelectItem>
-                      <SelectItem value="rayproxy">RayProxy SMTP</SelectItem>
+                      <SelectItem value="rayproxy">Proxiva SMTP</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -478,7 +478,7 @@ export function EmailManagement() {
                         </TableCell>
                         <TableCell>
                           <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
-                            {domain.type === "gmail" ? "Gmail" : "RayProxy SMTP"}
+                            {domain.type === "gmail" ? "Gmail" : "Proxiva SMTP"}
                           </span>
                         </TableCell>
                         <TableCell>{domain.server || "-"}</TableCell>

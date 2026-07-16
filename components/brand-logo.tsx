@@ -77,7 +77,7 @@ export function BrandLogo({ size = "sm", className = "" }: BrandLogoProps) {
       */}
       {(!companyLogoUrl || imageError || !isWide) && (
         <span className={`${textClass} font-extrabold tracking-tight text-slate-900 dark:text-white font-sans truncate max-w-[180px]`}>
-          {companyName || "RayProxy Hub"}
+          {companyName || "Proxiva"}
         </span>
       )}
     </Link>

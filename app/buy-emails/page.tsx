@@ -7,8 +7,8 @@ import { redirect } from "next/navigation"
 import { Mail } from "lucide-react"
 
 export const metadata = {
-  title: "Buy Emails - RayProxy Hub",
-  description: "Purchase premium email accounts from RayProxy Hub",
+  title: "Buy Emails - Proxiva",
+  description: "Purchase premium email accounts from Proxiva",
 }
 
 export default async function BuyEmailsPage() {

@@ -335,7 +335,7 @@ export function UpgradeForm({ userName }: { userName: string }) {
                    </div>
 
                    <p className="text-[11px] text-zinc-500 leading-tight">
-                     By providing your card information, you allow RayProxy Hub to charge your card for future payments in accordance with their terms.
+                     By providing your card information, you allow Proxiva to charge your card for future payments in accordance with their terms.
                    </p>
 
                    <div className="space-y-4">

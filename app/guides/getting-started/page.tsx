@@ -4,7 +4,7 @@ import { PublicNavBar } from '@/components/public-navbar'
 import { GettingStartedContent } from './getting-started-content'
 
 export const metadata = {
-  title: 'Getting Started - RayProxy Hub',
+  title: 'Getting Started - Proxiva',
   description: 'Your complete guide to purchasing proxies and emails',
 }
 
@@ -33,7 +33,7 @@ export default async function GettingStartedPage() {
       <PublicNavBar mode="landing" />
       <main className="flex-1 container mx-auto px-4 pt-28 pb-16">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold font-sans tracking-tight text-slate-900 dark:text-white">Getting Started with RayProxy Hub</h1>
+          <h1 className="text-4xl font-bold font-sans tracking-tight text-slate-900 dark:text-white">Getting Started with Proxiva</h1>
           <p className="mt-2 text-lg text-slate-500 dark:text-zinc-400">
             Your complete guide to purchasing proxies and emails
           </p>

@@ -15,7 +15,7 @@ export function GettingStartedContent({ user, isEmbedded = false }: GettingStart
     {
       number: 1,
       title: 'Create Your Account',
-      description: 'Sign up for a free RayProxy Hub account to get started.',
+      description: 'Sign up for a free Proxiva account to get started.',
       icon: Lock,
       color: 'text-blue-500',
       bg: 'bg-blue-500/10',
@@ -146,7 +146,7 @@ export function GettingStartedContent({ user, isEmbedded = false }: GettingStart
 
       {/* Key Features */}
       <div>
-        <h2 className="text-2xl font-bold mb-8 font-sans tracking-tight text-slate-900 dark:text-white">Why Choose RayProxy Hub?</h2>
+        <h2 className="text-2xl font-bold mb-8 font-sans tracking-tight text-slate-900 dark:text-white">Why Choose Proxiva?</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {[
             {
@@ -254,7 +254,7 @@ export function GettingStartedContent({ user, isEmbedded = false }: GettingStart
       {/* CTA */}
       <div className="rounded-lg border border-border bg-accent/10 p-8 text-center">
         <h2 className="text-2xl font-bold">Ready to Get Started?</h2>
-        <p className="mt-2 text-muted-foreground">Join thousands of users already using RayProxy Hub</p>
+        <p className="mt-2 text-muted-foreground">Join thousands of users already using Proxiva</p>
         {user ? (
           <Button asChild size="lg" className="mt-6">
             <Link href="/buy">Start Shopping</Link>

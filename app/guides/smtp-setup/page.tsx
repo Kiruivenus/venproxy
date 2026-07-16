@@ -4,7 +4,7 @@ import { PublicNavBar } from '@/components/public-navbar'
 import { SMTPSetupContent } from './smtp-setup-content'
 
 export const metadata = {
-  title: 'SMTP Setup Guide - RayProxy Hub',
+  title: 'SMTP Setup Guide - Proxiva',
   description: 'Configure email sending for your application',
 }
 

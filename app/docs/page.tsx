@@ -7,8 +7,8 @@ import { DashboardLayoutClient } from '@/components/dashboard-layout-client'
 import { PublicNavBar } from '@/components/public-navbar'
 
 export const metadata = {
-  title: 'Documentation - RayProxy Hub',
-  description: 'Complete documentation and guides for RayProxy Hub',
+  title: 'Documentation - Proxiva',
+  description: 'Complete documentation and guides for Proxiva',
 }
 
 export default async function DocsPage() {

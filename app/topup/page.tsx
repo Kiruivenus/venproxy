@@ -7,7 +7,7 @@ import { getPlatformSettings } from "@/app/admin/platform-actions"
 import { Wallet } from "lucide-react"
 
 export const metadata = {
-  title: "Wallet Hub - RayProxy Hub",
+  title: "Wallet Hub - Proxiva",
   description: "Manage your funds, view transaction history, and top up balance",
 }
 

@@ -10,13 +10,13 @@ function generateResetCode(): string {
 import { sendEmail, getStyledEmailTemplate } from "@/lib/mail"
 
 async function sendResetEmail(email: string, code: string): Promise<boolean> {
-  let companyName = "RayProxy Hub"
+  let companyName = "Proxiva"
   let companyLogoUrl = ""
   try {
     const db = await getDb()
     const settings = await db.collection("website_settings").findOne({})
     if (settings) {
-      companyName = settings.companyName || "RayProxy Hub"
+      companyName = settings.companyName || "Proxiva"
       companyLogoUrl = settings.companyLogoUrl || ""
     }
   } catch (e) {

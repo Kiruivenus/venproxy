@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
             <span className="text-accent">Recovery</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-md leading-relaxed">
-            Follow the steps to securely verify your identity and regain access to your RayProxy account.
+            Follow the steps to securely verify your identity and regain access to your Proxiva account.
           </p>
           
           <div className="mt-10 space-y-4">

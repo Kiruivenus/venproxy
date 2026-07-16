@@ -7,8 +7,8 @@ import { DashboardLayoutClient } from '@/components/dashboard-layout-client'
 import { PublicNavBar } from '@/components/public-navbar'
 
 export const metadata = {
-  title: 'FAQ - RayProxy Hub',
-  description: 'Frequently asked questions about RayProxy Hub proxies and email services',
+  title: 'FAQ - Proxiva',
+  description: 'Frequently asked questions about Proxiva proxies and email services',
 }
 
 const faqCategories = [

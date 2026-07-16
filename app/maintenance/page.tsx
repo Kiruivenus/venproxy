@@ -3,13 +3,13 @@ import { CloudLightning, Wrench } from "lucide-react"
 import { getPlatformSettings } from "@/app/admin/platform-actions"
 
 export const metadata = {
-  title: "Maintenance | RayProxy Hub",
+  title: "Maintenance | Proxiva",
   description: "We are currently performing scheduled maintenance. We'll be back shortly.",
 }
 
 export default async function MaintenancePage() {
   const settings = await getPlatformSettings()
-  const companyName = settings.companyName || "RayProxy Hub"
+  const companyName = settings.companyName || "Proxiva"
   const companyLogoUrl = settings.companyLogoUrl
 
   return (

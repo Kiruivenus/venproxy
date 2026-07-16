@@ -5,7 +5,7 @@ import { DashboardLayoutClient } from "@/components/dashboard-layout-client"
 import { PublicNavBar } from "@/components/public-navbar"
 
 export const metadata: Metadata = {
-  title: "Support - RayProxy Hub",
+  title: "Support - Proxiva",
   description: "Get support from our team via WhatsApp and Telegram",
 }
 
