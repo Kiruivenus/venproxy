@@ -40,8 +40,34 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
 
   const getFlagEmoji = (countryCode: string) => {
     if (!countryCode) return "🌐"
-    const codePoints = countryCode
-      .toUpperCase()
+    let code = countryCode.toUpperCase().trim()
+    
+    // Map common 3-letter codes to 2-letter codes
+    const alpha3ToAlpha2: { [key: string]: string } = {
+      USA: "US",
+      KEN: "KE",
+      GBR: "GB",
+      DEU: "DE",
+      FRA: "FR",
+      ESP: "ES",
+      MAR: "MA",
+      ZAF: "ZA",
+      IND: "IN",
+      NGA: "NG",
+      HKG: "HK",
+      SGP: "SG",
+    }
+
+    if (alpha3ToAlpha2[code]) {
+      code = alpha3ToAlpha2[code]
+    }
+
+    const cleanCode = code.slice(0, 2)
+    if (!/^[A-Z]{2}$/.test(cleanCode)) {
+      return "🌐"
+    }
+
+    const codePoints = cleanCode
       .split("")
       .map(char => 127397 + char.charCodeAt(0))
     try {
@@ -71,7 +97,7 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
         {/* Combined Proxy Field */}
         <div className="flex items-center justify-between gap-2.5 rounded-xl bg-slate-50/50 dark:bg-zinc-950/40 border border-slate-100 dark:border-zinc-800/60 p-3">
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-1">Proxy Link</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-1">Proxy</p>
             <code className="font-semibold text-xs font-mono break-all text-slate-800 dark:text-zinc-200">
               {proxyString}
             </code>
