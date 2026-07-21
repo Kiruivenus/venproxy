@@ -17,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPlatformSettings()
   const name = settings.companyName || "Proxiva"
   const logoUrl = settings.companyLogoUrl
+  const ogImageUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://www.proxiva.co.ke"}/og-image.png`
 
   const icons: Metadata["icons"] = logoUrl
     ? {
@@ -102,7 +103,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: name,
       images: [
         {
-          url: "/og-image.png",
+          url: ogImageUrl,
           width: 1200,
           height: 630,
           alt: `${name} Premium Proxies`,
@@ -116,7 +117,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: `${name} | Premium Residential Proxies & Proxy Purchase`,
       description:
         "Proxiva offers high-speed anonymous residential, mobile, and datacenter IPs in Kenya. Buy proxies instantly with M-Pesa.",
-      images: ["/og-image.png"],
+      images: [ogImageUrl],
     },
     icons,
     robots: {
