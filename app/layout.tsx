@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/theme-provider"
 import { getPlatformSettings } from "@/app/admin/platform-actions"
 import { BrandingProvider } from "@/lib/use-branding"
+import { JsonLd } from "@/components/json-ld"
 import "./globals.css"
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -151,6 +152,59 @@ export default async function RootLayout({
     companyLogoUrl: settings.companyLogoUrl || "",
   }
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://www.proxiva.co.ke/#organization",
+    "name": branding.companyName,
+    "url": "https://www.proxiva.co.ke",
+    "logo": branding.companyLogoUrl || "https://www.proxiva.co.ke/favicon.png",
+    "sameAs": [
+      "https://twitter.com/proxiva",
+      "https://facebook.com/proxiva"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+254700000000",
+      "contactType": "customer support",
+      "email": "support@proxiva.co.ke"
+    }
+  }
+
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://www.proxiva.co.ke/#localbusiness",
+    "name": branding.companyName,
+    "image": "https://www.proxiva.co.ke/og-image.png",
+    "priceRange": "$$",
+    "telephone": "+254700000055",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Nairobi CBD",
+      "addressLocality": "Nairobi",
+      "addressCountry": "KE"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "-1.2921",
+      "longitude": "36.8219"
+    },
+    "paymentAccepted": ["M-Pesa", "Credit Card", "Debit Card"]
+  }
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://www.proxiva.co.ke",
+    "name": branding.companyName,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.proxiva.co.ke/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
@@ -161,6 +215,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <BrandingProvider initialBranding={branding}>
+            <JsonLd data={[organizationSchema, localBusinessSchema, websiteSchema]} />
             {children}
             <Toaster />
             <Analytics />

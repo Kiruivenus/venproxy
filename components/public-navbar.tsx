@@ -46,6 +46,18 @@ export function PublicNavBar({ mode = "landing" }: PublicNavBarProps) {
         {mode === "landing" && (
           <>
             <Link
+              href="/blog"
+              className="text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-colors px-3 py-1.5"
+            >
+              Blog
+            </Link>
+            <Link
+              href="/docs"
+              className="text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-colors px-3 py-1.5"
+            >
+              Docs
+            </Link>
+            <Link
               href="/login"
               className="text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-colors px-3 py-1.5"
             >
