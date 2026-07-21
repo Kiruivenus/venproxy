@@ -102,7 +102,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: name,
       images: [
         {
-          url: logoUrl || "/og-image.png",
+          url: "/og-image.png",
           width: 1200,
           height: 630,
           alt: `${name} Premium Proxies`,
@@ -116,7 +116,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: `${name} | Premium Residential Proxies & Proxy Purchase`,
       description:
         "Proxiva offers high-speed anonymous residential, mobile, and datacenter IPs in Kenya. Buy proxies instantly with M-Pesa.",
-      images: [logoUrl || "/og-image.png"],
+      images: ["/og-image.png"],
     },
     icons,
     robots: {
