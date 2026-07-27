@@ -134,13 +134,13 @@ export default async function HomePage() {
                         ))}
                       </div>
                     </div>
-                    {/* Generated Global Map Graphic */}
+                    {/* Generated Global Map Graphic (Fully visible) */}
                     <div className="lg:col-span-2 flex justify-center items-center">
-                      <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                      <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
                         <img 
                           src="/feature-countries.png" 
                           alt="Global connected proxy nodes map illustration" 
-                          className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" 
+                          className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500" 
                           loading="lazy"
                         />
                       </div>
@@ -163,12 +163,12 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Instant Delivery Graphic */}
-                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    {/* Generated Instant Delivery Graphic (Fully visible) */}
+                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
                       <img 
                         src="/feature-instant.png" 
                         alt="Instant automated setup speed stream illustration" 
-                        className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                     </div>
@@ -176,7 +176,7 @@ export default async function HomePage() {
                 </Card>
               </ScrollReveal>
 
-              {/* Card 3: M-Pesa Payment Card (Harmonized styling with standard card theme) */}
+              {/* Card 3: M-Pesa Checkout Card */}
               <ScrollReveal className="md:row-span-2" delay={0} direction="up">
                 <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
                   <div>
@@ -234,12 +234,12 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Plan Duration Graphic */}
-                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    {/* Generated Plan Duration Graphic (Fully visible) */}
+                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
                       <img 
                         src="/feature-duration.png" 
                         alt="Flexible daily, weekly, monthly schedules plan illustration" 
-                        className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                     </div>
@@ -261,12 +261,12 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Encryption Shield Graphic */}
-                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    {/* Generated Encryption Shield Graphic (Fully visible) */}
+                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
                       <img 
                         src="/feature-secure.png" 
                         alt="Secure AES encryption shield lock illustration" 
-                        className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                     </div>
@@ -287,13 +287,13 @@ export default async function HomePage() {
                         Hosted on redundant cloud architectures built to withstand large concurrency peaks and high request rates without packet loss.
                       </CardDescription>
                     </div>
-                    {/* Generated Server Uptime Graphic */}
+                    {/* Generated Server Uptime Graphic (Fully visible) */}
                     <div className="lg:col-span-2 flex justify-center items-center">
-                      <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                      <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
                         <img 
                           src="/feature-uptime.png" 
                           alt="99.9% uptime server cloud database illustration" 
-                          className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
                         />
                       </div>
