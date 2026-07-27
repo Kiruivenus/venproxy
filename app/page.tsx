@@ -146,14 +146,14 @@ export default async function HomePage() {
                 </div>
               </Card>
 
-              {/* Card 3: M-Pesa Payment Card (Visually Highlighted) */}
-              <Card className="md:row-span-2 bg-gradient-to-b from-emerald-500/10 via-emerald-500/5 to-transparent border-emerald-500/30 dark:border-emerald-500/15 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-emerald-500/50 transition-all duration-300">
+              {/* Card 3: M-Pesa Payment Card (Harmonized styling with standard card theme) */}
+              <Card className="md:row-span-2 bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
                 <div>
-                  <div className="h-10 w-10 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4">
-                    <Phone className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  <div className="h-10 w-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                    <Phone className="h-5 w-5 text-emerald-600 dark:text-emerald-450" />
                   </div>
-                  <CardTitle className="text-lg font-extrabold text-emerald-800 dark:text-emerald-400 mb-2">M-Pesa Checkout</CardTitle>
-                  <CardDescription className="text-sm font-semibold text-emerald-950/70 dark:text-emerald-100/70 leading-relaxed">
+                  <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">M-Pesa Checkout</CardTitle>
+                  <CardDescription className="text-sm font-medium leading-relaxed">
                     Seamless automated STK Push. Enter your active phone number, receive a pin prompt on your device, and get credited in real-time.
                   </CardDescription>
                 </div>
