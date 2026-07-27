@@ -135,7 +135,7 @@ export default function RegisterPage() {
         <div className="absolute top-0 left-0 w-full h-[20vh] bg-gradient-to-b from-zinc-950 via-zinc-950/20 to-transparent pointer-events-none" />
         
         {/* Form container floating directly on background */}
-        <div className="w-full max-w-[390px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out bg-zinc-950/40 backdrop-blur-xs p-5 rounded-2xl border border-white/5 my-8">
+        <div className="w-full max-w-[390px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out my-8">
           <div className="lg:hidden flex items-center justify-center mb-8">
             <BrandLogo size="lg" />
           </div>
