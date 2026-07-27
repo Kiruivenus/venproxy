@@ -132,24 +132,15 @@ export default async function HomePage() {
                       ))}
                     </div>
                   </div>
-                  {/* Interactive Global Network Map Graphic */}
+                  {/* Generated Global Map Graphic */}
                   <div className="lg:col-span-2 flex justify-center items-center">
-                    <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-4 flex items-center justify-center overflow-hidden">
-                      <svg viewBox="0 0 100 100" className="w-full h-full stroke-primary/30 fill-none">
-                        {/* Global Latitudes/Longitudes */}
-                        <circle cx="50" cy="50" r="40" strokeDasharray="3 3" />
-                        <ellipse cx="50" cy="50" rx="40" ry="15" />
-                        <ellipse cx="50" cy="50" rx="15" ry="40" />
-                        <path d="M10 50 H90 M50 10 V90" strokeDasharray="2 2" />
-                        {/* Connected Node Dots */}
-                        <circle cx="30" cy="30" r="2.5" className="fill-blue-400 stroke-blue-500 animate-pulse" />
-                        <circle cx="70" cy="40" r="2.5" className="fill-emerald-400 stroke-emerald-500 animate-ping" />
-                        <circle cx="70" cy="40" r="2" className="fill-emerald-400" />
-                        <circle cx="50" cy="75" r="2.5" className="fill-amber-400 stroke-amber-500" />
-                        <circle cx="25" cy="65" r="2" className="fill-primary" />
-                        {/* Node lines */}
-                        <path d="M30 30 L70 40 M70 40 L50 75 M50 75 L25 65 M25 65 L30 30" stroke="currentColor" className="text-primary/40" strokeWidth="0.75" />
-                      </svg>
+                    <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                      <img 
+                        src="/feature-countries.png" 
+                        alt="Global connected proxy nodes map illustration" 
+                        className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" 
+                        loading="lazy"
+                      />
                     </div>
                   </div>
                 </div>
@@ -157,26 +148,25 @@ export default async function HomePage() {
 
               {/* Card 2: Instant Delivery */}
               <Card className="bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                    <Zap className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">Instant Delivery</CardTitle>
-                  <CardDescription className="text-sm font-medium leading-relaxed">
-                    No support queues or validation lag. Your proxy endpoints are provisioned immediately after checkout.
-                  </CardDescription>
-
-                  {/* Dynamic API response simulation visual */}
-                  <div className="mt-4 w-full rounded-xl bg-zinc-950 border border-border/40 p-3 font-mono text-[10px] text-zinc-400 space-y-1.5 shadow-inner">
-                    <div className="flex justify-between border-b border-zinc-800 pb-1 text-[9px] text-zinc-500">
-                      <span>API Response</span>
-                      <span className="text-emerald-500">Status: 200 OK</span>
+                <div className="space-y-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                      <Zap className="h-5 w-5 text-primary" />
                     </div>
-                    <div className="text-primary font-bold">curl https://api.proxiva.co.ke/v1/proxies</div>
-                    <div className="text-zinc-500">{"{"}</div>
-                    <div className="pl-3"><span className="text-emerald-400">"status"</span>: <span className="text-amber-400">"delivered"</span>,</div>
-                    <div className="pl-3"><span className="text-emerald-400">"ip"</span>: <span className="text-blue-400">"197.248.11.90:8000"</span></div>
-                    <div className="text-zinc-500">{"}"}</div>
+                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Instant Delivery</CardTitle>
+                    <CardDescription className="text-sm font-medium leading-relaxed">
+                      No support queues or validation lag. Your proxy endpoints are provisioned immediately after checkout.
+                    </CardDescription>
+                  </div>
+
+                  {/* Generated Instant Delivery Graphic */}
+                  <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    <img 
+                      src="/feature-instant.png" 
+                      alt="Instant automated setup speed stream illustration" 
+                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
                   </div>
                 </div>
               </Card>
@@ -225,63 +215,57 @@ export default async function HomePage() {
 
               {/* Card 4: Flexible Duration */}
               <Card className="bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                    <Clock className="h-5 w-5 text-primary" />
+                <div className="space-y-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                      <Clock className="h-5 w-5 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Flexible Duration</CardTitle>
+                    <CardDescription className="text-sm font-medium leading-relaxed">
+                      Choose from daily, weekly, or monthly subscription plans tailored exactly to your runtime constraints.
+                    </CardDescription>
                   </div>
-                  <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">Flexible Duration</CardTitle>
-                  <CardDescription className="text-sm font-medium leading-relaxed">
-                    Choose from daily, weekly, or monthly subscription plans tailored exactly to your runtime constraints.
-                  </CardDescription>
 
-                  {/* Flexible plan selector mockup */}
-                  <div className="mt-4 space-y-2">
-                    {[
-                      { name: "Daily Pass", time: "24 Hours", active: false },
-                      { name: "Weekly Plan", time: "7 Days", active: true },
-                      { name: "Monthly Plan", time: "30 Days", active: false }
-                    ].map((plan, i) => (
-                      <div key={i} className={`flex items-center justify-between p-2.5 rounded-xl border transition-colors ${plan.active ? "bg-primary/10 border-primary text-primary" : "bg-zinc-950/20 dark:bg-zinc-950/40 border-border/40 text-muted-foreground"}`}>
-                        <div className="flex items-center gap-2">
-                          <div className={`h-3 w-3 rounded-full border ${plan.active ? "bg-primary border-primary" : "border-muted-foreground"}`} />
-                          <span className="text-xs font-bold">{plan.name}</span>
-                        </div>
-                        <span className="text-[10px] font-semibold opacity-85">{plan.time}</span>
-                      </div>
-                    ))}
+                  {/* Generated Plan Duration Graphic */}
+                  <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    <img 
+                      src="/feature-duration.png" 
+                      alt="Flexible daily, weekly, monthly schedules plan illustration" 
+                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
                   </div>
                 </div>
               </Card>
 
               {/* Card 5: Secure & Private */}
               <Card className="bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                    <Lock className="h-5 w-5 text-primary" />
+                <div className="space-y-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                      <Lock className="h-5 w-5 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Secure & Private</CardTitle>
+                    <CardDescription className="text-sm font-medium leading-relaxed">
+                      High-level server configurations ensure your proxy endpoints and traffic requests stay private.
+                    </CardDescription>
                   </div>
-                  <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">Secure & Private</CardTitle>
-                  <CardDescription className="text-sm font-medium leading-relaxed">
-                    High-level server configurations ensure your proxy endpoints and traffic requests stay private.
-                  </CardDescription>
 
-                  {/* Encryption lock visualization */}
-                  <div className="mt-4 rounded-xl bg-zinc-950/25 border border-border/40 p-3 flex items-center justify-between">
-                    <div className="space-y-1">
-                      <span className="text-[9px] font-bold text-zinc-500 uppercase block">Encryption Level</span>
-                      <span className="text-xs font-extrabold text-slate-900 dark:text-zinc-200">AES-256 GCM</span>
-                    </div>
-                    <div className="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 stroke-current fill-none" strokeWidth="2.5">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                      </svg>
-                    </div>
+                  {/* Generated Encryption Shield Graphic */}
+                  <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    <img 
+                      src="/feature-secure.png" 
+                      alt="Secure AES encryption shield lock illustration" 
+                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
                   </div>
                 </div>
               </Card>
 
               {/* Card 6: 99.9% Uptime */}
               <Card className="md:col-span-2 bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center w-full">
                   <div className="lg:col-span-3 space-y-4">
                     <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
                       <Server className="h-5 w-5 text-primary" />
@@ -291,24 +275,15 @@ export default async function HomePage() {
                       Hosted on redundant cloud architectures built to withstand large concurrency peaks and high request rates without packet loss.
                     </CardDescription>
                   </div>
-                  {/* Uptime signal panel visual */}
+                  {/* Generated Server Uptime Graphic */}
                   <div className="lg:col-span-2 flex justify-center items-center">
-                    <div className="w-full max-w-[200px] rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-4 space-y-3">
-                      <div className="flex justify-between items-center text-[10px] font-bold text-zinc-500">
-                        <span>LIVE STATUS</span>
-                        <span className="flex items-center gap-1 text-emerald-500">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
-                          99.98%
-                        </span>
-                      </div>
-                      {/* Grid representation of node blocks */}
-                      <div className="grid grid-cols-8 gap-1.5">
-                        {Array.from({ length: 16 }).map((_, i) => (
-                          <div key={i} className="h-3.5 rounded bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500/80" />
-                          </div>
-                        ))}
-                      </div>
+                    <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                      <img 
+                        src="/feature-uptime.png" 
+                        alt="99.9% uptime server cloud database illustration" 
+                        className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
                     </div>
                   </div>
                 </div>
