@@ -118,7 +118,7 @@ export default async function HomePage() {
             <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
               {/* Card 1: Multiple Countries */}
               <ScrollReveal className="md:col-span-2" delay={0} direction="up">
-                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 overflow-hidden transition-all duration-300">
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">
                     <div className="lg:col-span-3 space-y-4">
                       <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
@@ -134,16 +134,16 @@ export default async function HomePage() {
                         ))}
                       </div>
                     </div>
-                    {/* Generated Global Map Graphic (Borderless & transparent background container) */}
-                    <div className="lg:col-span-2 flex justify-center items-center">
-                      <div className="relative w-full max-w-[200px] aspect-square p-0 flex items-center justify-center overflow-hidden">
+                    {/* Generated Global Map Graphic (Enlarged & Slide-in Animation from Right/Outside Card) */}
+                    <div className="lg:col-span-2 flex justify-center items-center h-48 overflow-visible">
+                      <ScrollReveal className="w-full flex justify-center items-center" delay={150} direction="image-left">
                         <img 
                           src="/feature-countries.png" 
                           alt="Global connected proxy nodes map illustration" 
-                          className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500" 
+                          className="w-full max-w-[220px] object-contain rounded-xl transition-transform duration-500 hover:scale-[1.25]" 
                           loading="lazy"
                         />
-                      </div>
+                      </ScrollReveal>
                     </div>
                   </div>
                 </Card>
@@ -151,7 +151,7 @@ export default async function HomePage() {
 
               {/* Card 2: Instant Delivery */}
               <ScrollReveal delay={100} direction="up">
-                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 overflow-hidden transition-all duration-300">
                   <div className="space-y-4 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
@@ -163,14 +163,16 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Instant Delivery Graphic (Borderless & transparent background container) */}
-                    <div className="relative w-full aspect-video p-0 flex items-center justify-center overflow-hidden mt-4">
-                      <img 
-                        src="/feature-instant.png" 
-                        alt="Instant automated setup speed stream illustration" 
-                        className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
+                    {/* Generated Instant Delivery Graphic (Enlarged & Slide-up Animation from below Outside Card) */}
+                    <div className="relative w-full h-32 flex items-center justify-center overflow-visible mt-6">
+                      <ScrollReveal className="w-full flex justify-center items-center" delay={200} direction="image-bottom">
+                        <img 
+                          src="/feature-instant.png" 
+                          alt="Instant automated setup speed stream illustration" 
+                          className="w-full max-h-36 object-contain rounded-lg transition-transform duration-500 hover:scale-[1.25]"
+                          loading="lazy"
+                        />
+                      </ScrollReveal>
                     </div>
                   </div>
                 </Card>
@@ -178,7 +180,7 @@ export default async function HomePage() {
 
               {/* Card 3: M-Pesa Checkout Card */}
               <ScrollReveal className="md:row-span-2" delay={0} direction="up">
-                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 overflow-hidden transition-all duration-300">
                   <div className="space-y-4 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="h-10 w-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
@@ -190,14 +192,16 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated M-Pesa Checkout Graphic (Borderless & transparent background container) */}
-                    <div className="relative w-full aspect-video p-0 flex items-center justify-center overflow-hidden mt-4">
-                      <img 
-                        src="/feature-mpesa.png" 
-                        alt="Automated M-Pesa checkout STK push illustration" 
-                        className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
+                    {/* Generated M-Pesa Checkout Graphic (Enlarged & Slide-up Animation from below Outside Card) */}
+                    <div className="relative w-full h-44 flex items-center justify-center overflow-visible mt-6">
+                      <ScrollReveal className="w-full flex justify-center items-center" delay={150} direction="image-bottom">
+                        <img 
+                          src="/feature-mpesa.png" 
+                          alt="Automated M-Pesa checkout STK push illustration" 
+                          className="w-full max-h-48 object-contain rounded-lg transition-transform duration-500 hover:scale-[1.25]"
+                          loading="lazy"
+                        />
+                      </ScrollReveal>
                     </div>
                   </div>
                 </Card>
@@ -205,7 +209,7 @@ export default async function HomePage() {
 
               {/* Card 4: Flexible Duration */}
               <ScrollReveal delay={100} direction="up">
-                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 overflow-hidden transition-all duration-300">
                   <div className="space-y-4 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
@@ -217,14 +221,16 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Plan Duration Graphic (Borderless & transparent background container) */}
-                    <div className="relative w-full aspect-video p-0 flex items-center justify-center overflow-hidden mt-4">
-                      <img 
-                        src="/feature-duration.png" 
-                        alt="Flexible daily, weekly, monthly schedules plan illustration" 
-                        className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
+                    {/* Generated Plan Duration Graphic (Enlarged & Slide-in Animation from Left/Outside Card) */}
+                    <div className="relative w-full h-32 flex items-center justify-center overflow-visible mt-6">
+                      <ScrollReveal className="w-full flex justify-center items-center" delay={200} direction="image-right">
+                        <img 
+                          src="/feature-duration.png" 
+                          alt="Flexible daily, weekly, monthly schedules plan illustration" 
+                          className="w-full max-h-36 object-contain rounded-lg transition-transform duration-500 hover:scale-[1.25]"
+                          loading="lazy"
+                        />
+                      </ScrollReveal>
                     </div>
                   </div>
                 </Card>
@@ -232,7 +238,7 @@ export default async function HomePage() {
 
               {/* Card 5: Secure & Private */}
               <ScrollReveal delay={200} direction="up">
-                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 overflow-hidden transition-all duration-300">
                   <div className="space-y-4 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
@@ -244,14 +250,16 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Encryption Shield Graphic (Borderless & transparent background container) */}
-                    <div className="relative w-full aspect-video p-0 flex items-center justify-center overflow-hidden mt-4">
-                      <img 
-                        src="/feature-secure.png" 
-                        alt="Secure AES encryption shield lock illustration" 
-                        className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
+                    {/* Generated Encryption Shield Graphic (Enlarged & Slide-in Animation from Right/Outside Card) */}
+                    <div className="relative w-full h-32 flex items-center justify-center overflow-visible mt-6">
+                      <ScrollReveal className="w-full flex justify-center items-center" delay={250} direction="image-left">
+                        <img 
+                          src="/feature-secure.png" 
+                          alt="Secure AES encryption shield lock illustration" 
+                          className="w-full max-h-36 object-contain rounded-lg transition-transform duration-500 hover:scale-[1.25]"
+                          loading="lazy"
+                        />
+                      </ScrollReveal>
                     </div>
                   </div>
                 </Card>
@@ -259,7 +267,7 @@ export default async function HomePage() {
 
               {/* Card 6: 99.9% Uptime */}
               <ScrollReveal className="md:col-span-2" delay={100} direction="up">
-                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 overflow-hidden transition-all duration-300">
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center w-full">
                     <div className="lg:col-span-3 space-y-4">
                       <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
@@ -270,16 +278,16 @@ export default async function HomePage() {
                         Hosted on redundant cloud architectures built to withstand large concurrency peaks and high request rates without packet loss.
                       </CardDescription>
                     </div>
-                    {/* Generated Server Uptime Graphic (Borderless & transparent background container) */}
-                    <div className="lg:col-span-2 flex justify-center items-center">
-                      <div className="relative w-full max-w-[200px] aspect-square p-0 flex items-center justify-center overflow-hidden">
+                    {/* Generated Server Uptime Graphic (Enlarged & Slide-in Animation from Right/Outside Card) */}
+                    <div className="lg:col-span-2 flex justify-center items-center h-48 overflow-visible">
+                      <ScrollReveal className="w-full flex justify-center items-center" delay={150} direction="image-left">
                         <img 
                           src="/feature-uptime.png" 
                           alt="99.9% uptime server cloud database illustration" 
-                          className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500"
+                          className="w-full max-w-[220px] object-contain rounded-xl transition-transform duration-500 hover:scale-[1.25]"
                           loading="lazy"
                         />
-                      </div>
+                      </ScrollReveal>
                     </div>
                   </div>
                 </Card>
