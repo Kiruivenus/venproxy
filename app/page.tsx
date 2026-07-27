@@ -71,22 +71,22 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-slate-950/85 z-0" />
 
           <div className="container relative z-10 mx-auto px-4 text-center max-w-4xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-wider mb-8 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-8 animate-fade-in">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></span>
               </span>
               Now supporting automated M-Pesa integration
             </div>
             
             <h1 className="text-balance text-4xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6 leading-[1.15] text-white">
               Premium Proxies. <br />
-              <span className="text-primary dark:text-blue-400">
+              <span className="text-blue-400">
                 Instant Access.
               </span>
             </h1>
             
-            <p className="mx-auto max-w-2xl text-base md:text-lg text-slate-350 dark:text-slate-300 mb-10 leading-relaxed font-medium">
+            <p className="mx-auto max-w-2xl text-base md:text-lg text-slate-300 mb-10 leading-relaxed font-medium">
               Power your data operations. Pay securely with M-Pesa, activate instantly. Trusted across Kenya for speed and absolute privacy.
             </p>
             
