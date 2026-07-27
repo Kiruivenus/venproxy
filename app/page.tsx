@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Globe, Shield, Zap, Clock, CreditCard, Server, Star, Quote, ArrowRight, CheckCircle2, Phone, UserPlus, Lock } from "lucide-react"
 import Link from "next/link"
+import { ScrollReveal } from "@/components/scroll-reveal"
 
 const customerReviews = [
   {
@@ -116,178 +117,190 @@ export default async function HomePage() {
 
             <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
               {/* Card 1: Multiple Countries */}
-              <Card className="md:col-span-2 bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">
-                  <div className="lg:col-span-3 space-y-4">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                      <Globe className="h-5 w-5 text-primary" />
+              <ScrollReveal className="md:col-span-2" delay={0} direction="up">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">
+                    <div className="lg:col-span-3 space-y-4">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                        <Globe className="h-5 w-5 text-primary" />
+                      </div>
+                      <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">Multiple Countries</CardTitle>
+                      <CardDescription className="text-sm font-medium leading-relaxed">
+                        Access premium residential and datacenter IPs from diverse locations worldwide. Bypass geo-blocking constraints seamlessly and scrape from anywhere.
+                      </CardDescription>
+                      <div className="pt-2 flex flex-wrap gap-2 opacity-80">
+                        {["🇺🇸 USA", "🇬🇧 UK", "🇩🇪 Germany", "🇰🇪 Kenya", "🇿🇦 South Africa", "🇮🇳 India"].map((c, i) => (
+                          <span key={i} className="text-xs bg-muted px-2.5 py-1 rounded-full font-semibold">{c}</span>
+                        ))}
+                      </div>
                     </div>
-                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">Multiple Countries</CardTitle>
-                    <CardDescription className="text-sm font-medium leading-relaxed">
-                      Access premium residential and datacenter IPs from diverse locations worldwide. Bypass geo-blocking constraints seamlessly and scrape from anywhere.
-                    </CardDescription>
-                    <div className="pt-2 flex flex-wrap gap-2 opacity-80">
-                      {["🇺🇸 USA", "🇬🇧 UK", "🇩🇪 Germany", "🇰🇪 Kenya", "🇿🇦 South Africa", "🇮🇳 India"].map((c, i) => (
-                        <span key={i} className="text-xs bg-muted px-2.5 py-1 rounded-full font-semibold">{c}</span>
-                      ))}
+                    {/* Generated Global Map Graphic */}
+                    <div className="lg:col-span-2 flex justify-center items-center">
+                      <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src="/feature-countries.png" 
+                          alt="Global connected proxy nodes map illustration" 
+                          className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" 
+                          loading="lazy"
+                        />
+                      </div>
                     </div>
                   </div>
-                  {/* Generated Global Map Graphic */}
-                  <div className="lg:col-span-2 flex justify-center items-center">
-                    <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
-                      <img 
-                        src="/feature-countries.png" 
-                        alt="Global connected proxy nodes map illustration" 
-                        className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" 
-                        loading="lazy"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </Card>
+                </Card>
+              </ScrollReveal>
 
               {/* Card 2: Instant Delivery */}
-              <Card className="bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="space-y-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                      <Zap className="h-5 w-5 text-primary" />
+              <ScrollReveal delay={100} direction="up">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                  <div className="space-y-4 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                        <Zap className="h-5 w-5 text-primary" />
+                      </div>
+                      <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Instant Delivery</CardTitle>
+                      <CardDescription className="text-sm font-medium leading-relaxed">
+                        No support queues or validation lag. Your proxy endpoints are provisioned immediately after checkout.
+                      </CardDescription>
                     </div>
-                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Instant Delivery</CardTitle>
-                    <CardDescription className="text-sm font-medium leading-relaxed">
-                      No support queues or validation lag. Your proxy endpoints are provisioned immediately after checkout.
-                    </CardDescription>
-                  </div>
 
-                  {/* Generated Instant Delivery Graphic */}
-                  <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
-                    <img 
-                      src="/feature-instant.png" 
-                      alt="Instant automated setup speed stream illustration" 
-                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </Card>
-
-              {/* Card 3: M-Pesa Payment Card (Harmonized styling with standard card theme) */}
-              <Card className="md:row-span-2 bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div>
-                  <div className="h-10 w-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                    <Phone className="h-5 w-5 text-emerald-600 dark:text-emerald-450" />
-                  </div>
-                  <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">M-Pesa Checkout</CardTitle>
-                  <CardDescription className="text-sm font-medium leading-relaxed">
-                    Seamless automated STK Push. Enter your active phone number, receive a pin prompt on your device, and get credited in real-time.
-                  </CardDescription>
-                </div>
-
-                {/* Stylized Mobile Phone Mockup */}
-                <div className="relative mx-auto mt-6 w-36 h-56 bg-zinc-950 rounded-[2rem] border-4 border-zinc-800 shadow-xl overflow-hidden flex flex-col justify-between p-3 font-sans">
-                  {/* Notch */}
-                  <div className="absolute top-1 left-1/2 -translate-x-1/2 w-14 h-3 bg-zinc-800 rounded-full flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 bg-zinc-900 rounded-full mr-1" />
-                    <div className="w-5 h-0.5 bg-zinc-900 rounded-full" />
-                  </div>
-                  {/* M-Pesa prompt screen */}
-                  <div className="mt-4 flex-1 flex flex-col justify-center items-center text-center">
-                    <div className="h-8 w-8 rounded-full bg-[#4B9A25] flex items-center justify-center p-1 mb-2 shadow-md">
-                      <svg viewBox="0 0 100 100" className="h-full w-full" fill="none">
-                        <path d="M25 70V30L45 52L65 30V70" stroke="white" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
-                        <circle cx="78" cy="50" r="10" fill="#E21A22"/>
-                      </svg>
-                    </div>
-                    <p className="text-[9px] font-black text-white leading-tight uppercase">M-Pesa STK PIN</p>
-                    <p className="text-[7.5px] text-zinc-400 mt-1">Pay KES 100 to Proxiva?</p>
-                    <div className="flex gap-1 justify-center mt-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
-                    </div>
-                  </div>
-                  <div className="h-5 w-full bg-emerald-600 rounded-lg flex items-center justify-center text-[7px] text-white font-bold uppercase tracking-wider animate-pulse">
-                    Sending STK Push
-                  </div>
-                </div>
-              </Card>
-
-              {/* Card 4: Flexible Duration */}
-              <Card className="bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="space-y-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                      <Clock className="h-5 w-5 text-primary" />
-                    </div>
-                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Flexible Duration</CardTitle>
-                    <CardDescription className="text-sm font-medium leading-relaxed">
-                      Choose from daily, weekly, or monthly subscription plans tailored exactly to your runtime constraints.
-                    </CardDescription>
-                  </div>
-
-                  {/* Generated Plan Duration Graphic */}
-                  <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
-                    <img 
-                      src="/feature-duration.png" 
-                      alt="Flexible daily, weekly, monthly schedules plan illustration" 
-                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </Card>
-
-              {/* Card 5: Secure & Private */}
-              <Card className="bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="space-y-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                      <Lock className="h-5 w-5 text-primary" />
-                    </div>
-                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Secure & Private</CardTitle>
-                    <CardDescription className="text-sm font-medium leading-relaxed">
-                      High-level server configurations ensure your proxy endpoints and traffic requests stay private.
-                    </CardDescription>
-                  </div>
-
-                  {/* Generated Encryption Shield Graphic */}
-                  <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
-                    <img 
-                      src="/feature-secure.png" 
-                      alt="Secure AES encryption shield lock illustration" 
-                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </Card>
-
-              {/* Card 6: 99.9% Uptime */}
-              <Card className="md:col-span-2 bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center w-full">
-                  <div className="lg:col-span-3 space-y-4">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                      <Server className="h-5 w-5 text-primary" />
-                    </div>
-                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">99.9% Infrastructure Uptime</CardTitle>
-                    <CardDescription className="text-sm font-medium leading-relaxed">
-                      Hosted on redundant cloud architectures built to withstand large concurrency peaks and high request rates without packet loss.
-                    </CardDescription>
-                  </div>
-                  {/* Generated Server Uptime Graphic */}
-                  <div className="lg:col-span-2 flex justify-center items-center">
-                    <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                    {/* Generated Instant Delivery Graphic */}
+                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
                       <img 
-                        src="/feature-uptime.png" 
-                        alt="99.9% uptime server cloud database illustration" 
-                        className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                        src="/feature-instant.png" 
+                        alt="Instant automated setup speed stream illustration" 
+                        className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                     </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </ScrollReveal>
+
+              {/* Card 3: M-Pesa Payment Card (Harmonized styling with standard card theme) */}
+              <ScrollReveal className="md:row-span-2" delay={0} direction="up">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                  <div>
+                    <div className="h-10 w-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                      <Phone className="h-5 w-5 text-emerald-600 dark:text-emerald-450" />
+                    </div>
+                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">M-Pesa Checkout</CardTitle>
+                    <CardDescription className="text-sm font-medium leading-relaxed">
+                      Seamless automated STK Push. Enter your active phone number, receive a pin prompt on your device, and get credited in real-time.
+                    </CardDescription>
+                  </div>
+
+                  {/* Stylized Mobile Phone Mockup */}
+                  <div className="relative mx-auto mt-6 w-36 h-56 bg-zinc-950 rounded-[2rem] border-4 border-zinc-800 shadow-xl overflow-hidden flex flex-col justify-between p-3 font-sans">
+                    {/* Notch */}
+                    <div className="absolute top-1 left-1/2 -translate-x-1/2 w-14 h-3 bg-zinc-800 rounded-full flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 bg-zinc-900 rounded-full mr-1" />
+                      <div className="w-5 h-0.5 bg-zinc-900 rounded-full" />
+                    </div>
+                    {/* M-Pesa prompt screen */}
+                    <div className="mt-4 flex-1 flex flex-col justify-center items-center text-center">
+                      <div className="h-8 w-8 rounded-full bg-[#4B9A25] flex items-center justify-center p-1 mb-2 shadow-md">
+                        <svg viewBox="0 0 100 100" className="h-full w-full" fill="none">
+                          <path d="M25 70V30L45 52L65 30V70" stroke="white" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
+                          <circle cx="78" cy="50" r="10" fill="#E21A22"/>
+                        </svg>
+                      </div>
+                      <p className="text-[9px] font-black text-white leading-tight uppercase">M-Pesa STK PIN</p>
+                      <p className="text-[7.5px] text-zinc-400 mt-1">Pay KES 100 to Proxiva?</p>
+                      <div className="flex gap-1 justify-center mt-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
+                      </div>
+                    </div>
+                    <div className="h-5 w-full bg-emerald-600 rounded-lg flex items-center justify-center text-[7px] text-white font-bold uppercase tracking-wider animate-pulse">
+                      Sending STK Push
+                    </div>
+                  </div>
+                </Card>
+              </ScrollReveal>
+
+              {/* Card 4: Flexible Duration */}
+              <ScrollReveal delay={100} direction="up">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                  <div className="space-y-4 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </div>
+                      <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Flexible Duration</CardTitle>
+                      <CardDescription className="text-sm font-medium leading-relaxed">
+                        Choose from daily, weekly, or monthly subscription plans tailored exactly to your runtime constraints.
+                      </CardDescription>
+                    </div>
+
+                    {/* Generated Plan Duration Graphic */}
+                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                      <img 
+                        src="/feature-duration.png" 
+                        alt="Flexible daily, weekly, monthly schedules plan illustration" 
+                        className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
+                </Card>
+              </ScrollReveal>
+
+              {/* Card 5: Secure & Private */}
+              <ScrollReveal delay={200} direction="up">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                  <div className="space-y-4 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                        <Lock className="h-5 w-5 text-primary" />
+                      </div>
+                      <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">Secure & Private</CardTitle>
+                      <CardDescription className="text-sm font-medium leading-relaxed">
+                        High-level server configurations ensure your proxy endpoints and traffic requests stay private.
+                      </CardDescription>
+                    </div>
+
+                    {/* Generated Encryption Shield Graphic */}
+                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                      <img 
+                        src="/feature-secure.png" 
+                        alt="Secure AES encryption shield lock illustration" 
+                        className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
+                </Card>
+              </ScrollReveal>
+
+              {/* Card 6: 99.9% Uptime */}
+              <ScrollReveal className="md:col-span-2" delay={100} direction="up">
+                <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
+                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center w-full">
+                    <div className="lg:col-span-3 space-y-4">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                        <Server className="h-5 w-5 text-primary" />
+                      </div>
+                      <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">99.9% Infrastructure Uptime</CardTitle>
+                      <CardDescription className="text-sm font-medium leading-relaxed">
+                        Hosted on redundant cloud architectures built to withstand large concurrency peaks and high request rates without packet loss.
+                      </CardDescription>
+                    </div>
+                    {/* Generated Server Uptime Graphic */}
+                    <div className="lg:col-span-2 flex justify-center items-center">
+                      <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/20 dark:bg-zinc-950/40 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src="/feature-uptime.png" 
+                          alt="99.9% uptime server cloud database illustration" 
+                          className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </ScrollReveal>
             </div>
           </div>
         </section>
@@ -301,32 +314,38 @@ export default async function HomePage() {
             </div>
 
             <div className="grid gap-8 md:grid-cols-3 relative">
-              <div className="flex flex-col items-center text-center">
-                <div className="h-16 w-16 rounded-2xl bg-card border border-border/50 flex items-center justify-center mb-6 shadow-sm relative group">
-                  <UserPlus className="h-7 w-7 text-primary" />
-                  <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center border-2 border-background">1</div>
+              <ScrollReveal delay={0} direction="up">
+                <div className="flex flex-col items-center text-center">
+                  <div className="h-16 w-16 rounded-2xl bg-card border border-border/50 flex items-center justify-center mb-6 shadow-sm relative group">
+                    <UserPlus className="h-7 w-7 text-primary" />
+                    <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center border-2 border-background">1</div>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Create Account</h3>
+                  <p className="text-sm text-muted-foreground font-medium leading-relaxed">Sign up in seconds to access the main client workspace panel.</p>
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Create Account</h3>
-                <p className="text-sm text-muted-foreground font-medium leading-relaxed">Sign up in seconds to access the main client workspace panel.</p>
-              </div>
+              </ScrollReveal>
 
-              <div className="flex flex-col items-center text-center">
-                <div className="h-16 w-16 rounded-2xl bg-card border border-border/50 flex items-center justify-center mb-6 shadow-sm relative group">
-                  <CreditCard className="h-7 w-7 text-primary" />
-                  <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center border-2 border-background">2</div>
+              <ScrollReveal delay={150} direction="up">
+                <div className="flex flex-col items-center text-center">
+                  <div className="h-16 w-16 rounded-2xl bg-card border border-border/50 flex items-center justify-center mb-6 shadow-sm relative group">
+                    <CreditCard className="h-7 w-7 text-primary" />
+                    <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center border-2 border-background">2</div>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Pay via M-Pesa</h3>
+                  <p className="text-sm text-muted-foreground font-medium leading-relaxed">Trigger an STK push payment via your local Safaricom phone line.</p>
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Pay via M-Pesa</h3>
-                <p className="text-sm text-muted-foreground font-medium leading-relaxed">Trigger an STK push payment via your local Safaricom phone line.</p>
-              </div>
+              </ScrollReveal>
 
-              <div className="flex flex-col items-center text-center">
-                <div className="h-16 w-16 rounded-2xl bg-card border border-border/50 flex items-center justify-center mb-6 shadow-sm relative group">
-                  <CheckCircle2 className="h-7 w-7 text-primary" />
-                  <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center border-2 border-background">3</div>
+              <ScrollReveal delay={300} direction="up">
+                <div className="flex flex-col items-center text-center">
+                  <div className="h-16 w-16 rounded-2xl bg-card border border-border/50 flex items-center justify-center mb-6 shadow-sm relative group">
+                    <CheckCircle2 className="h-7 w-7 text-primary" />
+                    <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center border-2 border-background">3</div>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Get Proxies</h3>
+                  <p className="text-sm text-muted-foreground font-medium leading-relaxed">Access credentials immediately from the billing log dashboard.</p>
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Get Proxies</h3>
-                <p className="text-sm text-muted-foreground font-medium leading-relaxed">Access credentials immediately from the billing log dashboard.</p>
-              </div>
+              </ScrollReveal>
             </div>
           </div>
         </section>
@@ -341,24 +360,26 @@ export default async function HomePage() {
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {customerReviews.map((review, index) => (
-                <Card key={index} className="relative bg-card border-border/50 p-6 rounded-2xl shadow-sm hover:border-primary/45 transition-all duration-300">
-                  <Quote className="absolute right-6 top-6 h-8 w-8 text-primary/10" />
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white font-bold text-sm shadow-inner">
-                      {review.avatar}
+                <ScrollReveal key={index} delay={index * 100} direction="up">
+                  <Card className="h-full relative bg-card border-border/50 p-6 rounded-2xl shadow-sm hover:border-primary/45 transition-all duration-300">
+                    <Quote className="absolute right-6 top-6 h-8 w-8 text-primary/10" />
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white font-bold text-sm shadow-inner">
+                        {review.avatar}
+                      </div>
+                      <div>
+                        <CardTitle className="text-sm font-bold text-slate-900 dark:text-white">{review.name}</CardTitle>
+                        <CardDescription className="text-xs font-semibold">{review.location}</CardDescription>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle className="text-sm font-bold text-slate-900 dark:text-white">{review.name}</CardTitle>
-                      <CardDescription className="text-xs font-semibold">{review.location}</CardDescription>
+                    <div className="flex gap-0.5 mb-4">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />
+                      ))}
                     </div>
-                  </div>
-                  <div className="flex gap-0.5 mb-4">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />
-                    ))}
-                  </div>
-                  <p className="text-sm font-medium leading-relaxed text-muted-foreground/90">"{review.review}"</p>
-                </Card>
+                    <p className="text-sm font-medium leading-relaxed text-muted-foreground/90">"{review.review}"</p>
+                  </Card>
+                </ScrollReveal>
               ))}
             </div>
           </div>
