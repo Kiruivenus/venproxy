@@ -130,9 +130,9 @@ export default function RegisterPage() {
           className="absolute inset-0 bg-cover bg-center opacity-[0.82] pointer-events-none" 
           style={{ backgroundImage: `url('/login-bg.png')` }}
         />
-        {/* Dark radial vignette overlays to preserve text readability over the image */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(9,9,11,0.2)_10%,rgba(9,9,11,0.85)_95%)] pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-[20vh] bg-gradient-to-b from-zinc-950 via-zinc-950/20 to-transparent pointer-events-none" />
+        {/* Uniform low-opacity overlay to keep image clear from top to bottom while maintaining text contrast */}
+        <div className="absolute inset-0 bg-zinc-950/20 pointer-events-none" />
+        
         
         {/* Form container floating directly on background */}
         <div className="w-full max-w-[390px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out my-8">
