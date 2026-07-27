@@ -91,25 +91,25 @@ export default function LoginPage() {
       </div>
 
       {/* Right Auth Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 relative overflow-hidden bg-zinc-950">
-        {/* Improved background image visibility (unblurred & higher opacity) */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative overflow-hidden bg-zinc-950">
+        {/* Unblurred, high-visibility background image (almost clear) */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-[0.42] pointer-events-none" 
+          className="absolute inset-0 bg-cover bg-center opacity-[0.82] pointer-events-none" 
           style={{ backgroundImage: `url('/login-bg.png')` }}
         />
-        {/* Soft vignette overlay to ensure text contrast remains safe */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(9,9,11,0.9)_95%)] pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-[25vh] bg-gradient-to-b from-zinc-950 via-zinc-950/20 to-transparent pointer-events-none" />
+        {/* Dark radial vignette overlays to preserve text readability over the image */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(9,9,11,0.2)_10%,rgba(9,9,11,0.85)_95%)] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-[20vh] bg-gradient-to-b from-zinc-950 via-zinc-950/20 to-transparent pointer-events-none" />
         
-        {/* Premium Glassmorphic Login Form Card wrapper */}
-        <div className="w-full max-w-[440px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out bg-zinc-950/65 backdrop-blur-md border border-white/5 rounded-3xl p-6 sm:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]">
+        {/* Form container floating directly on background */}
+        <div className="w-full max-w-[390px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out bg-zinc-950/40 backdrop-blur-xs p-5 rounded-2xl border border-white/5">
           <div className="lg:hidden flex items-center justify-center mb-8">
             <BrandLogo size="lg" />
           </div>
 
           <div className="text-center lg:text-left mb-6">
-            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2 text-foreground">Welcome back</h2>
-            <p className="text-sm text-muted-foreground">Sign in to your account to continue</p>
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2 text-foreground drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Welcome back</h2>
+            <p className="text-sm text-muted-foreground drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Sign in to your account to continue</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -120,7 +120,7 @@ export default function LoginPage() {
             )}
             
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider">
+              <Label htmlFor="email" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                 Email Address
               </Label>
               <div className="relative group">
@@ -132,17 +132,17 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="pl-10 h-12 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
+                  className="pl-10 h-12 bg-zinc-950/70 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
                 />
               </div>
             </div>
             
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider">
+                <Label htmlFor="password" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                   Password
                 </Label>
-                <Link href="/forgot-password" className="text-xs font-bold text-accent hover:text-accent/80 transition-colors">
+                <Link href="/forgot-password" className="text-xs font-bold text-accent hover:text-accent/80 transition-colors drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                   Forgot password?
                 </Link>
               </div>
@@ -155,7 +155,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pl-10 h-12 bg-zinc-950/40 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
+                  className="pl-10 h-12 bg-zinc-950/70 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
                 />
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function LoginPage() {
             </Button>
           </form>
  
-          <p className="text-center text-sm text-muted-foreground mt-6">
+          <p className="text-center text-sm text-muted-foreground mt-6 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
             Don't have an account?{" "}
             <Link href="/register" className="font-semibold text-foreground hover:text-accent transition-colors">
               Create an account
