@@ -92,13 +92,13 @@ export default function LoginPage() {
 
       {/* Right Auth Form Section */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative overflow-hidden bg-zinc-950">
-        {/* Unblurred, high-visibility background image (almost clear) */}
+        {/* Soft blur, reduced clarity background image */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-[0.82] pointer-events-none" 
+          className="absolute inset-0 bg-cover bg-center opacity-[0.70] pointer-events-none filter blur-[4px]" 
           style={{ backgroundImage: `url('/login-bg.png')` }}
         />
         {/* Uniform low-opacity overlay to keep image clear from top to bottom while maintaining text contrast */}
-        <div className="absolute inset-0 bg-zinc-950/20 pointer-events-none" />
+        <div className="absolute inset-0 bg-zinc-950/25 pointer-events-none" />
         
         
         {/* Form container floating directly on background */}
