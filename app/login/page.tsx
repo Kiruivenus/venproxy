@@ -91,35 +91,36 @@ export default function LoginPage() {
       </div>
 
       {/* Right Auth Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative overflow-hidden bg-zinc-950">
-        {/* Clean, low-contrast background image with overlay to avoid distraction */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 relative overflow-hidden bg-zinc-950">
+        {/* Improved background image visibility (unblurred & higher opacity) */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-[0.22] pointer-events-none filter blur-[2px]" 
+          className="absolute inset-0 bg-cover bg-center opacity-[0.42] pointer-events-none" 
           style={{ backgroundImage: `url('/login-bg.png')` }}
         />
-        {/* Dark radial fade to ensure text fields remain completely clear and readable */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(9,9,11,0.92)_90%)] pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-[30vh] bg-gradient-to-b from-zinc-950 via-zinc-950/40 to-transparent pointer-events-none" />
+        {/* Soft vignette overlay to ensure text contrast remains safe */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(9,9,11,0.9)_95%)] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-[25vh] bg-gradient-to-b from-zinc-950 via-zinc-950/20 to-transparent pointer-events-none" />
         
-        <div className="w-full max-w-[420px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
-          <div className="lg:hidden flex items-center justify-center mb-10">
+        {/* Premium Glassmorphic Login Form Card wrapper */}
+        <div className="w-full max-w-[440px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out bg-zinc-950/65 backdrop-blur-md border border-white/5 rounded-3xl p-6 sm:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]">
+          <div className="lg:hidden flex items-center justify-center mb-8">
             <BrandLogo size="lg" />
           </div>
 
-          <div className="text-center lg:text-left mb-8">
-            <h2 className="text-3xl font-semibold tracking-tight mb-2 text-foreground">Welcome back</h2>
-            <p className="text-muted-foreground">Sign in to your account to continue</p>
+          <div className="text-center lg:text-left mb-6">
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2 text-foreground">Welcome back</h2>
+            <p className="text-sm text-muted-foreground">Sign in to your account to continue</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
                 {error}
               </div>
             )}
             
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-foreground/90">
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider">
                 Email Address
               </Label>
               <div className="relative group">
@@ -136,12 +137,12 @@ export default function LoginPage() {
               </div>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-sm font-medium text-foreground/90">
+                <Label htmlFor="password" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider">
                   Password
                 </Label>
-                <Link href="/forgot-password" className="text-sm font-medium text-accent hover:text-accent/80 transition-colors">
+                <Link href="/forgot-password" className="text-xs font-bold text-accent hover:text-accent/80 transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -158,10 +159,10 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-
+ 
             <Button 
               type="submit" 
-              className="group w-full h-12 mt-2 bg-accent hover:bg-accent/90 text-background font-semibold text-base transition-all duration-300 shadow-[0_0_15px_rgba(var(--color-accent),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-accent),0.5)]" 
+              className="group w-full h-12 mt-4 bg-accent hover:bg-accent/90 text-background font-semibold text-base transition-all duration-300 shadow-[0_0_15px_rgba(var(--color-accent),0.2)] hover:shadow-[0_0_25px_rgba(var(--color-accent),0.4)]" 
               disabled={loading}
             >
               {loading ? (
@@ -174,8 +175,8 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
-
-          <p className="text-center text-sm text-muted-foreground mt-8">
+ 
+          <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{" "}
             <Link href="/register" className="font-semibold text-foreground hover:text-accent transition-colors">
               Create an account
