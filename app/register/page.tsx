@@ -124,32 +124,36 @@ export default function RegisterPage() {
       </div>
 
       {/* Right Auth Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative overflow-y-auto">
-        {/* Mobile Background Elements */}
-        <div className="absolute inset-0 bg-background lg:hidden z-0">
-          <div className="absolute top-0 left-0 w-full h-[50vh] bg-gradient-to-b from-accent/5 to-transparent" />
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent/10 blur-[80px]" />
-        </div>
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 relative overflow-y-auto bg-zinc-950">
+        {/* Improved background image visibility (unblurred & higher opacity) */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-[0.42] pointer-events-none" 
+          style={{ backgroundImage: `url('/login-bg.png')` }}
+        />
+        {/* Soft vignette overlay to ensure text contrast remains safe */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(9,9,11,0.9)_95%)] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-[20vh] bg-gradient-to-b from-zinc-950 via-zinc-950/20 to-transparent pointer-events-none" />
         
-        <div className="w-full max-w-[420px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out py-8">
+        {/* Premium Glassmorphic Register Form Card wrapper */}
+        <div className="w-full max-w-[440px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out bg-zinc-950/65 backdrop-blur-md border border-white/5 rounded-3xl p-6 sm:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] my-8">
           <div className="lg:hidden flex items-center justify-center mb-8">
             <BrandLogo size="lg" />
           </div>
 
-          <div className="text-center lg:text-left mb-8">
-            <h2 className="text-3xl font-semibold tracking-tight mb-2 text-foreground">Create an account</h2>
-            <p className="text-muted-foreground">Join thousands of satisfied users today</p>
+          <div className="text-center lg:text-left mb-6">
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2 text-foreground">Create an account</h2>
+            <p className="text-sm text-muted-foreground">Join thousands of satisfied users today</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
                 {error}
               </div>
             )}
             
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium text-foreground/90">
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider">
                 Full Name
               </Label>
               <div className="relative group">
@@ -166,8 +170,8 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-foreground/90">
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider">
                 Email Address
               </Label>
               <div className="relative group">
@@ -184,8 +188,8 @@ export default function RegisterPage() {
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-foreground/90">
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider">
                 Password
               </Label>
               <div className="relative group">
@@ -214,7 +218,7 @@ export default function RegisterPage() {
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1.5 text-right">
+                  <p className="text-xs text-muted-foreground mt-1.5 text-right font-medium">
                     {strength <= 1 && "Weak"}
                     {strength === 2 && "Fair"}
                     {strength === 3 && "Good"}
@@ -224,8 +228,8 @@ export default function RegisterPage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground/90">
+            <div className="space-y-1.5">
+              <Label htmlFor="confirmPassword" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider">
                 Confirm Password
               </Label>
               <div className="relative group">
@@ -244,7 +248,7 @@ export default function RegisterPage() {
 
             <Button 
               type="submit" 
-              className="group w-full h-12 mt-4 bg-accent hover:bg-accent/90 text-background font-semibold text-base transition-all duration-300 shadow-[0_0_15px_rgba(var(--color-accent),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-accent),0.5)]" 
+              className="group w-full h-12 mt-4 bg-accent hover:bg-accent/90 text-background font-semibold text-base transition-all duration-300 shadow-[0_0_15px_rgba(var(--color-accent),0.2)] hover:shadow-[0_0_25px_rgba(var(--color-accent),0.4)]" 
               disabled={loading}
             >
               {loading ? (
@@ -258,7 +262,7 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-8 pb-4">
+          <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{" "}
             <Link href="/login" className="font-semibold text-foreground hover:text-accent transition-colors">
               Sign in
