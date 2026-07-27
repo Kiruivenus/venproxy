@@ -297,7 +297,7 @@ export default async function HomePage() {
         </section>
 
         {/* HOW IT WORKS */}
-        <section className="py-24 border-y border-border/40 bg-zinc-950/30">
+        <section className="py-24 border-y border-border/40 bg-slate-50/70 dark:bg-zinc-950/30">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">How It Works</h2>
@@ -377,7 +377,7 @@ export default async function HomePage() {
         </section>
 
         {/* CTA SECTION */}
-        <section className="py-20 relative overflow-hidden border-t border-border/40 bg-zinc-950/20">
+        <section className="py-20 relative overflow-hidden border-t border-border/40 bg-slate-50/50 dark:bg-zinc-950/20">
           <div className="container mx-auto px-4 text-center relative z-10 max-w-2xl">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">Ready to Get Started?</h2>
             <p className="text-base text-muted-foreground font-medium mb-8">

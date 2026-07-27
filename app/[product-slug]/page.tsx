@@ -231,7 +231,7 @@ export default async function LandingPage({ params }: PageProps) {
         </section>
 
         {/* FINAL CTA SECTION */}
-        <section className="py-20 border-t border-border/40 bg-zinc-950/20">
+        <section className="py-20 border-t border-border/40 bg-slate-50/50 dark:bg-zinc-950/20">
           <div className="container mx-auto px-4 text-center max-w-2xl">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">Start Scraping with High-Speed IPs</h2>
             <p className="text-base text-muted-foreground font-medium mb-8">

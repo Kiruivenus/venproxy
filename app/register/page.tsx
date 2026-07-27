@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Globe, Loader2, Mail, Lock, ArrowRight, User, ShieldCheck } from "lucide-react"
+import { Globe, Loader2, Mail, Lock, ArrowRight, User, ShieldCheck, Eye, EyeOff } from "lucide-react"
 import { PublicNavBar } from "@/components/public-navbar"
 import { BrandLogo } from "@/components/brand-logo"
 
@@ -18,6 +18,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -137,7 +138,7 @@ export default function RegisterPage() {
         {/* Form container floating directly on background */}
         <div className="w-full max-w-[390px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out my-8">
           <div className="lg:hidden flex items-center justify-center mb-8">
-            <BrandLogo size="lg" />
+            <BrandLogo size="lg" textColor="text-white" />
           </div>
 
           <div className="text-center lg:text-left mb-6 font-sans">
@@ -196,13 +197,24 @@ export default function RegisterPage() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 group-focus-within:text-accent transition-colors duration-300" />
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pl-10 h-12 bg-zinc-900/60 backdrop-blur-md border-zinc-800/80 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300 font-medium"
+                  className="pl-10 pr-10 h-12 bg-zinc-900/60 backdrop-blur-md border-zinc-800/80 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300 font-medium"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
               {password.length > 0 && (
                 <div className="pt-2 animate-in fade-in duration-300">
@@ -236,13 +248,24 @@ export default function RegisterPage() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 group-focus-within:text-accent transition-colors duration-300" />
                 <Input
                   id="confirmPassword"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="pl-10 h-12 bg-zinc-900/60 backdrop-blur-md border-zinc-800/80 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300 font-medium"
+                  className="pl-10 pr-10 h-12 bg-zinc-900/60 backdrop-blur-md border-zinc-800/80 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300 font-medium"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
             </div>
 

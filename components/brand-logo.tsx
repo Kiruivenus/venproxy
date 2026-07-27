@@ -9,9 +9,10 @@ interface BrandLogoProps {
   /** Visual style: 'sidebar' = small square icon + name, 'auth' = larger panel logo */
   size?: "sm" | "md" | "lg"
   className?: string
+  textColor?: string
 }
 
-export function BrandLogo({ size = "sm", className = "" }: BrandLogoProps) {
+export function BrandLogo({ size = "sm", className = "", textColor }: BrandLogoProps) {
   const { companyName, companyLogoUrl } = useBranding()
   const [isWide, setIsWide] = useState(false)
   const [imageError, setImageError] = useState(false)
@@ -76,7 +77,7 @@ export function BrandLogo({ size = "sm", className = "" }: BrandLogoProps) {
           3. The custom logo is NOT wide (meaning it is a square/vertical icon-only logo, so we show the name next to it)
       */}
       {(!companyLogoUrl || imageError || !isWide) && (
-        <span className={`${textClass} font-extrabold tracking-tight text-slate-900 dark:text-white font-sans truncate max-w-[180px]`}>
+        <span className={`${textClass} font-extrabold tracking-tight ${textColor || "text-slate-900 dark:text-white"} font-sans truncate max-w-[180px]`}>
           {companyName || "Proxiva"}
         </span>
       )}
