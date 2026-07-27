@@ -91,12 +91,15 @@ export default function LoginPage() {
       </div>
 
       {/* Right Auth Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative">
-        {/* Mobile Background Elements */}
-        <div className="absolute inset-0 bg-background lg:hidden">
-          <div className="absolute top-0 left-0 w-full h-[50vh] bg-gradient-to-b from-accent/5 to-transparent" />
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent/10 blur-[80px]" />
-        </div>
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative overflow-hidden bg-zinc-950">
+        {/* Clean, low-contrast background image with overlay to avoid distraction */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-[0.22] pointer-events-none filter blur-[2px]" 
+          style={{ backgroundImage: `url('/login-bg.png')` }}
+        />
+        {/* Dark radial fade to ensure text fields remain completely clear and readable */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(9,9,11,0.92)_90%)] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-[30vh] bg-gradient-to-b from-zinc-950 via-zinc-950/40 to-transparent pointer-events-none" />
         
         <div className="w-full max-w-[420px] relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
           <div className="lg:hidden flex items-center justify-center mb-10">
