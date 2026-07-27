@@ -140,12 +140,12 @@ export default function RegisterPage() {
             <BrandLogo size="lg" />
           </div>
 
-          <div className="text-center lg:text-left mb-6">
-            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2 text-foreground drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Create an account</h2>
-            <p className="text-sm text-muted-foreground drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Join thousands of satisfied users today</p>
+          <div className="text-center lg:text-left mb-6 font-sans">
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Create an account</h2>
+            <p className="text-sm text-zinc-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] font-medium">Join thousands of satisfied users today</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 font-sans">
             {error && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
                 {error}
@@ -153,11 +153,11 @@ export default function RegisterPage() {
             )}
             
             <div className="space-y-1.5">
-              <Label htmlFor="name" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+              <Label htmlFor="name" className="text-xs font-bold text-zinc-300 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                 Full Name
               </Label>
               <div className="relative group">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-accent transition-colors duration-300" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 group-focus-within:text-accent transition-colors duration-300" />
                 <Input
                   id="name"
                   type="text"
@@ -165,17 +165,17 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="pl-10 h-12 bg-zinc-950/70 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
+                  className="pl-10 h-12 bg-zinc-900/60 backdrop-blur-md border-zinc-800/80 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300 font-medium"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+              <Label htmlFor="email" className="text-xs font-bold text-zinc-300 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                 Email Address
               </Label>
               <div className="relative group">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-accent transition-colors duration-300" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 group-focus-within:text-accent transition-colors duration-300" />
                 <Input
                   id="email"
                   type="email"
@@ -183,17 +183,17 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="pl-10 h-12 bg-zinc-950/70 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
+                  className="pl-10 h-12 bg-zinc-900/60 backdrop-blur-md border-zinc-800/80 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300 font-medium"
                 />
               </div>
             </div>
             
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+              <Label htmlFor="password" className="text-xs font-bold text-zinc-300 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                 Password
               </Label>
               <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-accent transition-colors duration-300" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 group-focus-within:text-accent transition-colors duration-300" />
                 <Input
                   id="password"
                   type="password"
@@ -201,7 +201,7 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pl-10 h-12 bg-zinc-950/70 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
+                  className="pl-10 h-12 bg-zinc-900/60 backdrop-blur-md border-zinc-800/80 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300 font-medium"
                 />
               </div>
               {password.length > 0 && (
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1.5 text-right font-medium drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+                  <p className="text-xs text-zinc-400 mt-1.5 text-right font-medium drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                     {strength <= 1 && "Weak"}
                     {strength === 2 && "Fair"}
                     {strength === 3 && "Good"}
@@ -229,11 +229,11 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="confirmPassword" className="text-xs font-semibold text-foreground/90 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+              <Label htmlFor="confirmPassword" className="text-xs font-bold text-zinc-300 uppercase tracking-wider drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                 Confirm Password
               </Label>
               <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-accent transition-colors duration-300" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400 group-focus-within:text-accent transition-colors duration-300" />
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -241,7 +241,7 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="pl-10 h-12 bg-zinc-950/70 backdrop-blur-md border-border/50 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300"
+                  className="pl-10 h-12 bg-zinc-900/60 backdrop-blur-md border-zinc-800/80 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-accent focus-visible:border-accent transition-all duration-300 font-medium"
                 />
               </div>
             </div>
@@ -262,9 +262,9 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-6 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+          <p className="text-center text-sm text-zinc-400 mt-6 font-semibold drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-foreground hover:text-accent transition-colors">
+            <Link href="/login" className="font-extrabold text-white hover:text-accent transition-colors">
               Sign in
             </Link>
           </p>
