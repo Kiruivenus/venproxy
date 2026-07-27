@@ -67,8 +67,8 @@ export default async function HomePage() {
       <main>
         {/* HERO SECTION WITH BACKGROUND PHOTO */}
         <section className="relative overflow-hidden pt-32 pb-24 md:pt-44 md:pb-36 border-b border-border/40 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-bg.png')" }}>
-          {/* Dark Overlay to guarantee visibility of the background image while maintaining high text contrast */}
-          <div className="absolute inset-0 bg-slate-950/85 z-0" />
+          {/* Semi-transparent dark overlay to make background image highly visible while keeping text legible */}
+          <div className="absolute inset-0 bg-slate-950/50 z-0" />
 
           <div className="container relative z-10 mx-auto px-4 text-center max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-8 animate-fade-in">
