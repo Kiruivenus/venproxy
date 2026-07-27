@@ -134,9 +134,9 @@ export default async function HomePage() {
                         ))}
                       </div>
                     </div>
-                    {/* Generated Global Map Graphic (Fully visible) */}
+                    {/* Generated Global Map Graphic (Borderless & transparent background container) */}
                     <div className="lg:col-span-2 flex justify-center items-center">
-                      <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                      <div className="relative w-full max-w-[200px] aspect-square p-0 flex items-center justify-center overflow-hidden">
                         <img 
                           src="/feature-countries.png" 
                           alt="Global connected proxy nodes map illustration" 
@@ -163,8 +163,8 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Instant Delivery Graphic (Fully visible) */}
-                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    {/* Generated Instant Delivery Graphic (Borderless & transparent background container) */}
+                    <div className="relative w-full aspect-video p-0 flex items-center justify-center overflow-hidden mt-4">
                       <img 
                         src="/feature-instant.png" 
                         alt="Instant automated setup speed stream illustration" 
@@ -179,42 +179,25 @@ export default async function HomePage() {
               {/* Card 3: M-Pesa Checkout Card */}
               <ScrollReveal className="md:row-span-2" delay={0} direction="up">
                 <Card className="h-full bg-card border-border/50 rounded-2xl p-6 shadow-sm flex flex-col justify-between group hover:border-primary/45 transition-all duration-300">
-                  <div>
-                    <div className="h-10 w-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                      <Phone className="h-5 w-5 text-emerald-600 dark:text-emerald-450" />
+                  <div className="space-y-4 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="h-10 w-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                        <Phone className="h-5 w-5 text-emerald-600 dark:text-emerald-450" />
+                      </div>
+                      <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">M-Pesa Checkout</CardTitle>
+                      <CardDescription className="text-sm font-medium leading-relaxed">
+                        Seamless automated STK Push. Enter your active phone number, receive a pin prompt on your device, and get credited in real-time.
+                      </CardDescription>
                     </div>
-                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white mb-2">M-Pesa Checkout</CardTitle>
-                    <CardDescription className="text-sm font-medium leading-relaxed">
-                      Seamless automated STK Push. Enter your active phone number, receive a pin prompt on your device, and get credited in real-time.
-                    </CardDescription>
-                  </div>
 
-                  {/* Stylized Mobile Phone Mockup */}
-                  <div className="relative mx-auto mt-6 w-36 h-56 bg-zinc-950 rounded-[2rem] border-4 border-zinc-800 shadow-xl overflow-hidden flex flex-col justify-between p-3 font-sans">
-                    {/* Notch */}
-                    <div className="absolute top-1 left-1/2 -translate-x-1/2 w-14 h-3 bg-zinc-800 rounded-full flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 bg-zinc-900 rounded-full mr-1" />
-                      <div className="w-5 h-0.5 bg-zinc-900 rounded-full" />
-                    </div>
-                    {/* M-Pesa prompt screen */}
-                    <div className="mt-4 flex-1 flex flex-col justify-center items-center text-center">
-                      <div className="h-8 w-8 rounded-full bg-[#4B9A25] flex items-center justify-center p-1 mb-2 shadow-md">
-                        <svg viewBox="0 0 100 100" className="h-full w-full" fill="none">
-                          <path d="M25 70V30L45 52L65 30V70" stroke="white" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
-                          <circle cx="78" cy="50" r="10" fill="#E21A22"/>
-                        </svg>
-                      </div>
-                      <p className="text-[9px] font-black text-white leading-tight uppercase">M-Pesa STK PIN</p>
-                      <p className="text-[7.5px] text-zinc-400 mt-1">Pay KES 100 to Proxiva?</p>
-                      <div className="flex gap-1 justify-center mt-3">
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
-                      </div>
-                    </div>
-                    <div className="h-5 w-full bg-emerald-600 rounded-lg flex items-center justify-center text-[7px] text-white font-bold uppercase tracking-wider animate-pulse">
-                      Sending STK Push
+                    {/* Generated M-Pesa Checkout Graphic (Borderless & transparent background container) */}
+                    <div className="relative w-full aspect-video p-0 flex items-center justify-center overflow-hidden mt-4">
+                      <img 
+                        src="/feature-mpesa.png" 
+                        alt="Automated M-Pesa checkout STK push illustration" 
+                        className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
                     </div>
                   </div>
                 </Card>
@@ -234,8 +217,8 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Plan Duration Graphic (Fully visible) */}
-                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    {/* Generated Plan Duration Graphic (Borderless & transparent background container) */}
+                    <div className="relative w-full aspect-video p-0 flex items-center justify-center overflow-hidden mt-4">
                       <img 
                         src="/feature-duration.png" 
                         alt="Flexible daily, weekly, monthly schedules plan illustration" 
@@ -261,8 +244,8 @@ export default async function HomePage() {
                       </CardDescription>
                     </div>
 
-                    {/* Generated Encryption Shield Graphic (Fully visible) */}
-                    <div className="relative w-full aspect-video rounded-xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-1 flex items-center justify-center overflow-hidden mt-4">
+                    {/* Generated Encryption Shield Graphic (Borderless & transparent background container) */}
+                    <div className="relative w-full aspect-video p-0 flex items-center justify-center overflow-hidden mt-4">
                       <img 
                         src="/feature-secure.png" 
                         alt="Secure AES encryption shield lock illustration" 
@@ -287,9 +270,9 @@ export default async function HomePage() {
                         Hosted on redundant cloud architectures built to withstand large concurrency peaks and high request rates without packet loss.
                       </CardDescription>
                     </div>
-                    {/* Generated Server Uptime Graphic (Fully visible) */}
+                    {/* Generated Server Uptime Graphic (Borderless & transparent background container) */}
                     <div className="lg:col-span-2 flex justify-center items-center">
-                      <div className="relative w-full max-w-[200px] aspect-square rounded-2xl bg-zinc-950/5 dark:bg-zinc-950/20 border border-border/40 p-2 flex items-center justify-center overflow-hidden">
+                      <div className="relative w-full max-w-[200px] aspect-square p-0 flex items-center justify-center overflow-hidden">
                         <img 
                           src="/feature-uptime.png" 
                           alt="99.9% uptime server cloud database illustration" 
