@@ -18,6 +18,7 @@ interface ProxyCardProps {
     expiresAt: string
     purchasedAt: string
     status?: "available" | "expired" | "dead"
+    uniqueCode?: string
   }
   isExpired?: boolean
 }
@@ -117,6 +118,16 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
             )}
           </Button>
         </div>
+
+        {/* Unique Identifier */}
+        {proxy.uniqueCode && (
+          <div className="flex items-center justify-between pt-1 border-t border-slate-100/50 dark:border-zinc-800/30">
+            <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">ID Code</span>
+            <span className="text-xs font-bold text-blue-600 dark:text-blue-450 bg-blue-50/50 dark:bg-blue-950/20 px-2 py-0.5 rounded">
+              #{proxy.uniqueCode}
+            </span>
+          </div>
+        )}
 
         {/* Expiry Time */}
         <div className="flex items-center justify-between pt-1 border-t border-slate-100/50 dark:border-zinc-800/30">

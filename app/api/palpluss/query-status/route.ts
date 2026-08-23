@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getDb } from "@/lib/mongodb"
+import { getDb, generateUnique4DigitCode } from "@/lib/mongodb"
 import { requireAuth } from "@/lib/auth"
 import type { Db } from "mongodb"
 import { ObjectId } from "mongodb"
@@ -213,6 +213,8 @@ export async function GET(request: NextRequest) {
                   }
 
                   if (proxy) {
+                    const uniqueCode = await generateUnique4DigitCode(db)
+
                     const purchase: ProxyPurchase = {
                       _id: new ObjectId(),
                       userId: order.userId,
@@ -228,6 +230,7 @@ export async function GET(request: NextRequest) {
                       },
                       expiresAt: proxy.expiresAt,
                       purchasedAt: new Date(),
+                      uniqueCode,
                     }
 
                     await db.collection<ProxyPurchase>("purchases").insertOne(purchase)

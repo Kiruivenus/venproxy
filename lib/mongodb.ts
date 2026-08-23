@@ -38,4 +38,17 @@ export async function getDb(): Promise<Db> {
   return client.db("venproxy")
 }
 
+export async function generateUnique4DigitCode(db: Db): Promise<string> {
+  let attempts = 0
+  while (attempts < 10000) {
+    const code = Math.floor(Math.random() * 10000).toString().padStart(4, "0")
+    const exists = await db.collection("purchases").findOne({ uniqueCode: code })
+    if (!exists) {
+      return code
+    }
+    attempts++
+  }
+  throw new Error("Unable to generate a unique 4-digit code")
+}
+
 export { getClientPromise }

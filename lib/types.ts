@@ -31,6 +31,7 @@ export interface ProxyPurchase {
   }
   expiresAt: Date
   purchasedAt: Date
+  uniqueCode?: string
 }
 
 export interface Order {

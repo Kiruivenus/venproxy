@@ -17,7 +17,9 @@ import {
   Calendar,
   AlertCircle,
   Database,
-  Loader2
+  Loader2,
+  Copy,
+  Check
 } from "lucide-react"
 
 interface Transaction {
@@ -58,9 +60,24 @@ interface Stats {
   revenueGenerated: number
 }
 
+interface ProxyPurchase {
+  id: string
+  userId: string
+  userEmail: string
+  orderId: string
+  phoneNumber: string
+  proxyString: string
+  country: string
+  countryCode: string
+  purchasedAt: string
+  expiresAt: string
+  uniqueCode: string
+}
+
 export function PaymentManagement() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [webhookLogs, setWebhookLogs] = useState<WebhookLog[]>([])
+  const [purchases, setPurchases] = useState<ProxyPurchase[]>([])
   const [stats, setStats] = useState<Stats>({
     totalDeposits: 0,
     todayDeposits: 0,
@@ -71,12 +88,29 @@ export function PaymentManagement() {
   })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [searchUniqueCode, setSearchUniqueCode] = useState("")
   const [statusFilter, setStatusFilter] = useState("ALL")
   const [typeFilter, setTypeFilter] = useState("ALL")
   const [dateFilter, setDateFilter] = useState("")
   const [selectedPayload, setSelectedPayload] = useState<any | null>(null)
   const [retryingLogId, setRetryingLogId] = useState<string | null>(null)
-  const [activeSubTab, setActiveSubTab] = useState<"history" | "webhooks">("history")
+  const [activeSubTab, setActiveSubTab] = useState<"history" | "webhooks" | "verify">("history")
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  const handleCopy = async (id: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedId(id)
+      setTimeout(() => setCopiedId(null), 2000)
+    } catch (err) {
+      console.error("Failed to copy proxy string:", err)
+    }
+  }
+
+  const filteredPurchases = purchases.filter((p) => {
+    if (!searchUniqueCode) return true
+    return p.uniqueCode.toLowerCase().includes(searchUniqueCode.toLowerCase())
+  })
 
   useEffect(() => {
     fetchPaymentsData()
@@ -90,6 +124,7 @@ export function PaymentManagement() {
       if (data.success) {
         setTransactions(data.transactions || [])
         setWebhookLogs(data.webhookLogs || [])
+        setPurchases(data.purchases || [])
         setStats(data.stats)
       }
     } catch (error) {
@@ -292,6 +327,16 @@ export function PaymentManagement() {
           }`}
         >
           Webhook Callback Logs
+        </button>
+        <button
+          onClick={() => setActiveSubTab("verify")}
+          className={`pb-2.5 text-xs font-bold transition-all border-b-2 cursor-pointer ${
+            activeSubTab === "verify"
+              ? "border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400"
+              : "border-transparent text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+          }`}
+        >
+          Proxy Identifier Search
         </button>
       </div>
 
@@ -565,6 +610,110 @@ export function PaymentManagement() {
         </div>
       )}
 
+      {/* Tab CONTENT 3: Proxy Identifier Search */}
+      {activeSubTab === "verify" && (
+        <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800/80 rounded-2xl p-6 space-y-4 shadow-3xs">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Proxy Identifier Search</h3>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium">Search purchased proxies by their unique 4-digit ID</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Search Bar */}
+              <div className="relative w-64">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Enter 4-digit unique identifier..."
+                  value={searchUniqueCode}
+                  onChange={(e) => setSearchUniqueCode(e.target.value)}
+                  className="w-full h-8 pl-8 pr-3 rounded-lg border border-slate-200 dark:border-zinc-850 bg-slate-50/50 dark:bg-zinc-950 text-[11px] text-slate-800 dark:text-zinc-200 placeholder:text-slate-450 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-all font-semibold"
+                />
+              </div>
+              <Button variant="outline" size="sm" onClick={fetchPaymentsData} className="h-8 gap-1.5 text-xs font-bold">
+                <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+                Sync List
+              </Button>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-6 w-6 animate-spin text-blue-600 dark:text-blue-400" />
+            </div>
+          ) : filteredPurchases.length === 0 ? (
+            <div className="text-center py-16 border border-dashed border-slate-200 dark:border-zinc-800 rounded-xl">
+              <Search className="h-8 w-8 mx-auto text-slate-350 mb-2" />
+              <p className="text-xs font-bold text-slate-800 dark:text-zinc-200">No proxy purchase matches this unique 4-digit ID</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b border-slate-100 dark:border-border hover:bg-transparent">
+                    <TableHead className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase py-3 pl-3">IDENTIFIER</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase py-3">USER EMAIL</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase py-3">PROXY STRING</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase py-3">PHONE USED</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase py-3">COUNTRY</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase py-3 pr-3 text-right">PURCHASED TIME / HOW LONG AGO</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredPurchases.map((p) => (
+                    <TableRow 
+                      key={p.id}
+                      className="hover:bg-slate-55/35 dark:hover:bg-zinc-800/25 border-b border-slate-100 dark:border-zinc-800/80 last:border-0"
+                    >
+                      <TableCell className="py-3 pl-3 text-xs">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border border-blue-250/20">
+                          #{p.uniqueCode}
+                        </span>
+                      </TableCell>
+                      <TableCell className="py-3 text-xs font-semibold text-slate-800 dark:text-zinc-200">
+                        {p.userEmail}
+                      </TableCell>
+                      <TableCell className="py-3 text-xs">
+                        <div className="flex items-center gap-1.5">
+                          <code className="font-mono text-xs text-slate-800 dark:text-zinc-200 bg-slate-50/50 dark:bg-zinc-950 px-1.5 py-0.5 rounded border border-slate-150 dark:border-zinc-850">
+                            {p.proxyString}
+                          </code>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400"
+                            onClick={() => handleCopy(p.id, p.proxyString)}
+                            title="Copy proxy credentials"
+                          >
+                            {copiedId === p.id ? (
+                              <Check className="h-3.5 w-3.5 text-emerald-500" />
+                            ) : (
+                              <Copy className="h-3.5 w-3.5" />
+                            )}
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-3 text-xs font-semibold text-slate-800 dark:text-zinc-200">
+                        {p.phoneNumber}
+                      </TableCell>
+                      <TableCell className="py-3 text-xs font-semibold text-slate-800 dark:text-zinc-200">
+                        {p.country}
+                      </TableCell>
+                      <TableCell className="py-3 pr-3 text-right text-[11px] font-semibold text-slate-650 dark:text-zinc-400">
+                        <p>{new Date(p.purchasedAt).toLocaleString()}</p>
+                        <span className="text-[9px] text-blue-600 dark:text-blue-400 font-bold block mt-0.5">
+                          {timeAgo(p.purchasedAt)}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* JSON Payload Inspection Modal Overlay */}
       {selectedPayload && (
         <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
@@ -586,4 +735,18 @@ export function PaymentManagement() {
       )}
     </div>
   )
+}
+
+function timeAgo(dateString: string) {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMins / 60)
+  const diffDays = Math.floor(diffHours / 24)
+
+  if (diffMins < 1) return "purchased just now"
+  if (diffMins < 60) return `purchased ${diffMins} minutes ago`
+  if (diffHours < 24) return `purchased ${diffHours} hour${diffHours > 1 ? "s" : ""} ago`
+  return `purchased ${diffDays} day${diffDays > 1 ? "s" : ""} ago`
 }

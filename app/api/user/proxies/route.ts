@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
         purchasedAt: p.purchasedAt,
         isExpired: p.expiresAt <= now,
         status: statusMap.get(p._id.toString()) || "available",
+        uniqueCode: p.uniqueCode,
       })),
     })
   } catch (error) {

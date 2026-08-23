@@ -19,6 +19,7 @@ interface Proxy {
   expiresAt: string
   purchasedAt: string
   isExpired: boolean
+  uniqueCode?: string
 }
 
 interface PurchasedEmail {
