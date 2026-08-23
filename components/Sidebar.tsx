@@ -16,6 +16,7 @@ import {
   LogOut,
   BookOpen,
   LifeBuoy,
+  Wallet,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -156,8 +157,8 @@ export function Sidebar({ user, onCloseMobile }: SidebarProps) {
                   <p className="text-[9px] text-slate-400 truncate leading-none mt-0.5">{user.email}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100/50 dark:border-emerald-900/30 px-2 py-0.5 rounded-full text-[10px] text-emerald-700 dark:text-emerald-450 font-bold flex-shrink-0">
-                <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-600 text-white font-black text-[8px]">M</span>
+              <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800/80 px-2.5 py-1 rounded-full text-[10px] text-slate-700 dark:text-zinc-300 font-extrabold flex-shrink-0">
+                <Wallet className="h-3 w-3 text-blue-600 dark:text-blue-450" />
                 <span>KES {balance}</span>
               </div>
             </div>

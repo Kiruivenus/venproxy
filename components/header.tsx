@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
-import { Sun, Moon, Menu } from "lucide-react"
+import { Sun, Moon, Menu, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { NotificationsDropdown } from "@/components/notifications-dropdown"
@@ -88,15 +88,13 @@ export function Header({ user, onOpenMobile }: HeaderProps) {
 
       {/* Right Side: Flex row utility pills */}
       <div className="flex items-center gap-3.5">
-        {/* Dynamic M-Pesa balance pill — only shown when logged in */}
+        {/* Dynamic wallet balance pill — only shown when logged in */}
         {user && (
           <Link
             href="/topup"
-            className="flex items-center gap-1.5 rounded-full border border-blue-100 dark:border-blue-900/35 px-3 py-1 text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50/35 dark:bg-blue-950/15 hover:bg-blue-50/60 dark:hover:bg-blue-950/25 transition-colors"
+            className="flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-[11px] font-bold text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-850 hover:border-slate-300 dark:hover:border-zinc-700 transition-all shadow-3xs"
           >
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-white font-black text-[9px] leading-none">
-              M
-            </span>
+            <Wallet className="h-3.5 w-3.5 text-blue-600 dark:text-blue-450" />
             <span>KES {balance.toLocaleString()}</span>
           </Link>
         )}
