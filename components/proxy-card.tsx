@@ -4,7 +4,8 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Copy, Check, Globe, Clock, Eye, EyeOff } from "lucide-react"
+import { Copy, Check, Globe, Clock, RefreshCw, Loader2 } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
 
 interface ProxyCardProps {
   proxy: {
@@ -21,10 +22,13 @@ interface ProxyCardProps {
     uniqueCode?: string
   }
   isExpired?: boolean
+  onReplaced?: () => void
 }
 
-export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
+export function ProxyCard({ proxy, isExpired = false, onReplaced }: ProxyCardProps) {
   const [copied, setCopied] = useState(false)
+  const [replacing, setReplacing] = useState(false)
+  const { toast } = useToast()
 
   const expiresAt = new Date(proxy.expiresAt)
 
@@ -37,6 +41,43 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
     await navigator.clipboard.writeText(proxyString)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleReplace = async () => {
+    setReplacing(true)
+    try {
+      const res = await fetch("/api/user/proxies/replace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ purchaseId: proxy.id }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        toast({
+          title: "Proxy Replaced Successfully!",
+          description: data.message || "Your dead proxy has been replaced with a working proxy.",
+        })
+        if (onReplaced) {
+          onReplaced()
+        }
+      } else {
+        toast({
+          variant: "destructive",
+          title: data.error?.includes("active") ? "Proxy Is Still Active" : "Replacement Notice",
+          description: data.error || "Failed to replace proxy.",
+        })
+      }
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Connection Error",
+        description: "Failed to communicate with replacement service. Please try again.",
+      })
+    } finally {
+      setReplacing(false)
+    }
   }
 
   const getFlagEmoji = (countryCode: string) => {
@@ -73,16 +114,29 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
       .map(char => 127397 + char.charCodeAt(0))
     try {
       return String.fromCodePoint(...codePoints)
-    } catch (e) {
+    } catch {
       return "🌐"
     }
   }
 
-  const statusColor = proxy.status === "dead" ? "bg-red-500/20 text-red-500" : isExpired ? "destructive" : "default"
-  const statusLabel = proxy.status === "dead" ? "Dead" : isExpired ? "Expired" : "Active"
+  const isDead = proxy.status === "dead"
+  const statusColor = isDead
+    ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40"
+    : isExpired
+    ? "destructive"
+    : "default"
+  const statusLabel = isDead ? "Dead" : isExpired ? "Expired" : "Active"
 
   return (
-    <Card className={`overflow-hidden bg-white dark:bg-card border border-slate-100 dark:border-border rounded-2xl shadow-xs transition-all duration-300 hover:shadow-md hover:border-blue-500/20 dark:hover:border-blue-500/35 ${isExpired || proxy.status === "dead" ? "opacity-60" : ""}`}>
+    <Card
+      className={`overflow-hidden bg-white dark:bg-card border rounded-2xl shadow-xs transition-all duration-300 hover:shadow-md hover:border-blue-500/20 dark:hover:border-blue-500/35 ${
+        isExpired
+          ? "opacity-60 border-slate-100 dark:border-border"
+          : isDead
+          ? "border-rose-300 dark:border-rose-900/60 bg-rose-50/20 dark:bg-rose-950/15"
+          : "border-slate-100 dark:border-border"
+      }`}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="flex items-center gap-2 text-base font-extrabold text-slate-800 dark:text-zinc-200">
           <span className="text-xl flex-shrink-0" role="img" aria-label={proxy.country}>
@@ -144,7 +198,37 @@ export function ProxyCard({ proxy, isExpired = false }: ProxyCardProps) {
             })()}
           </span>
         </div>
+
+        {/* Replace Proxy Action */}
+        {!isExpired && (
+          <div className="pt-2 border-t border-slate-100/50 dark:border-zinc-800/30">
+            <Button
+              variant={isDead ? "destructive" : "outline"}
+              size="sm"
+              onClick={handleReplace}
+              disabled={replacing}
+              className={`w-full h-9 rounded-xl font-bold gap-2 text-xs transition-all cursor-pointer ${
+                isDead
+                  ? "bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
+                  : "border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-850 hover:text-slate-900 dark:hover:text-white"
+              }`}
+            >
+              {replacing ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>{isDead ? "Replacing Proxy..." : "Checking Status..."}</span>
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  <span>{isDead ? "Replace Dead Proxy" : "Replace Proxy"}</span>
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
 }
+

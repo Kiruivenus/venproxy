@@ -19,6 +19,7 @@ interface Proxy {
   expiresAt: string
   purchasedAt: string
   isExpired: boolean
+  status?: "available" | "expired" | "dead"
   uniqueCode?: string
 }
 
@@ -245,7 +246,7 @@ export function DashboardTabs() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {activeProxies.map((proxy) => (
-              <ProxyCard key={proxy.id} proxy={proxy} />
+              <ProxyCard key={proxy.id} proxy={proxy} onReplaced={fetchData} />
             ))}
           </div>
         )}
@@ -263,7 +264,7 @@ export function DashboardTabs() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {expiredProxies.map((proxy) => (
-              <ProxyCard key={proxy.id} proxy={proxy} isExpired />
+              <ProxyCard key={proxy.id} proxy={proxy} isExpired onReplaced={fetchData} />
             ))}
           </div>
         )}

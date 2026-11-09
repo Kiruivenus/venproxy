@@ -37,17 +37,18 @@ export async function GET(request: NextRequest) {
 
     const purchases = await db.collection<ProxyPurchase>("purchases").find(query).sort({ purchasedAt: -1 }).toArray()
 
-    // Get proxy statuses
-    const proxyIds = purchases.map((p) => p._id)
+    // Get proxy statuses using actual proxyIds
+    const proxyIds = purchases.map((p) => p.proxyId).filter(Boolean)
     const proxyStatuses = await db
       .collection("proxies")
-      .find({ _id: { $in: purchases.map((p: any) => p._id) } })
+      .find({ _id: { $in: proxyIds } })
       .toArray()
     const statusMap = new Map(proxyStatuses.map((p: any) => [p._id.toString(), p.status || "available"]))
 
     return NextResponse.json({
       proxies: purchases.map((p) => ({
         id: p._id.toString(),
+        proxyId: p.proxyId ? p.proxyId.toString() : "",
         ip: p.proxy.ip,
         port: p.proxy.port,
         username: p.proxy.username,
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
         expiresAt: p.expiresAt,
         purchasedAt: p.purchasedAt,
         isExpired: p.expiresAt <= now,
-        status: statusMap.get(p._id.toString()) || "available",
+        status: (p.proxyId && statusMap.get(p.proxyId.toString())) || "available",
         uniqueCode: p.uniqueCode,
       })),
     })
