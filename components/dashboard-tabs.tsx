@@ -104,26 +104,42 @@ export function DashboardTabs() {
 
   useEffect(() => {
     fetchData()
-    const interval = setInterval(fetchData, 30000)
-    return () => clearInterval(interval)
+
+    // Poll only when page is actively visible (every 2 minutes instead of 30 seconds)
+    const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        fetchData()
+      }
+    }, 120000)
+
+    // Automatically refresh fresh data whenever user switches back to this tab
+    const handleFocus = () => {
+      fetchData()
+    }
+    window.addEventListener("focus", handleFocus)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener("focus", handleFocus)
+    }
   }, [])
 
   const fetchData = async () => {
     try {
-      const [activeRes, expiredRes, emailsRes, balanceRes] = await Promise.all([
-        fetch("/api/user/proxies?type=active"),
-        fetch("/api/user/proxies?type=expired"),
+      // Consolidate: fetch all proxies in a single call instead of 2 separate requests
+      const [proxiesRes, emailsRes, balanceRes] = await Promise.all([
+        fetch("/api/user/proxies?type=all"),
         fetch("/api/user/emails"),
         fetch("/api/user/balance"),
       ])
 
-      const activeData = await activeRes.json()
-      const expiredData = await expiredRes.json()
+      const proxiesData = await proxiesRes.json()
       const emailsData = await emailsRes.json()
       const balanceData = await balanceRes.json()
 
-      setActiveProxies(activeData.proxies || [])
-      setExpiredProxies(expiredData.proxies || [])
+      const allProxies: Proxy[] = proxiesData.proxies || []
+      setActiveProxies(allProxies.filter((p) => !p.isExpired))
+      setExpiredProxies(allProxies.filter((p) => p.isExpired))
       setPurchasedEmails(emailsData.emails || [])
       if (balanceData.balance !== undefined) {
         setBalance(balanceData.balance)

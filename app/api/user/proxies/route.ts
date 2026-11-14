@@ -16,17 +16,6 @@ export async function GET(request: NextRequest) {
     const db = await getDb()
     const now = new Date()
 
-    // Auto-update proxy statuses that have expired
-    await db.collection("proxies").updateMany(
-      {
-        status: "available",
-        expiresAt: { $lte: now },
-      },
-      {
-        $set: { status: "expired" },
-      }
-    )
-
     const query: any = { userId: session.user._id }
 
     if (type === "active") {
@@ -34,6 +23,7 @@ export async function GET(request: NextRequest) {
     } else if (type === "expired") {
       query.expiresAt = { $lte: now }
     }
+    // If type === "all", query.expiresAt is not constrained, returning all proxies in one call
 
     const purchases = await db.collection<ProxyPurchase>("purchases").find(query).sort({ purchasedAt: -1 }).toArray()
 

@@ -25,12 +25,44 @@ interface ProxyCardProps {
   onReplaced?: () => void
 }
 
+function formatPurchasedTime(purchasedAtStr?: string, id?: string) {
+  let date: Date | null = null
+  if (purchasedAtStr) {
+    const parsed = new Date(purchasedAtStr)
+    if (!isNaN(parsed.getTime())) {
+      date = parsed
+    }
+  }
+  if (!date && id && id.length === 24) {
+    const sec = parseInt(id.substring(0, 8), 16)
+    if (!isNaN(sec)) {
+      date = new Date(sec * 1000)
+    }
+  }
+  if (!date) return null
+
+  const now = new Date()
+  const diffMs = Math.max(0, now.getTime() - date.getTime())
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMins / 60)
+  const diffDays = Math.floor(diffHours / 24)
+
+  if (diffMins < 1) return "just now"
+  if (diffMins === 1) return "1 min ago"
+  if (diffMins < 60) return `${diffMins} mins ago`
+  if (diffHours === 1) return "1 hr ago"
+  if (diffHours < 24) return `${diffHours} hrs ago`
+  if (diffDays === 1) return "1 day ago"
+  return `${diffDays} days ago`
+}
+
 export function ProxyCard({ proxy, isExpired = false, onReplaced }: ProxyCardProps) {
   const [copied, setCopied] = useState(false)
   const [replacing, setReplacing] = useState(false)
   const { toast } = useToast()
 
   const expiresAt = new Date(proxy.expiresAt)
+  const purchasedTimeText = formatPurchasedTime(proxy.purchasedAt, proxy.id)
 
   const proxyString =
     proxy.username && proxy.password
@@ -179,6 +211,20 @@ export function ProxyCard({ proxy, isExpired = false, onReplaced }: ProxyCardPro
             <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">ID Code</span>
             <span className="text-xs font-bold text-blue-600 dark:text-blue-450 bg-blue-50/50 dark:bg-blue-950/20 px-2 py-0.5 rounded">
               #{proxy.uniqueCode}
+            </span>
+          </div>
+        )}
+
+        {/* Purchased Time (Original Purchase Time) */}
+        {purchasedTimeText && (
+          <div className="flex items-center justify-between pt-1 border-t border-slate-100/50 dark:border-zinc-800/30">
+            <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">Purchased</span>
+            <span
+              className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-zinc-300"
+              title={proxy.purchasedAt ? `Original purchase: ${new Date(proxy.purchasedAt).toLocaleString()}` : undefined}
+            >
+              <Clock className="h-3.5 w-3.5 text-slate-400" />
+              <span>{purchasedTimeText}</span>
             </span>
           </div>
         )}

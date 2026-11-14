@@ -1,5 +1,3 @@
-import { getSession } from "@/lib/auth"
-import { redirect } from "next/navigation"
 import { PublicNavBar } from "@/components/public-navbar"
 import { BrandLogo } from "@/components/brand-logo"
 import { Button } from "@/components/ui/button"
@@ -53,14 +51,7 @@ const customerReviews = [
   },
 ]
 
-export default async function HomePage() {
-  const session = await getSession()
-
-  // Auto-redirect logged-in users straight to their dashboard
-  if (session?.user) {
-    redirect("/dashboard")
-  }
-
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/20 text-foreground transition-colors duration-300">
       <PublicNavBar mode="landing" />

@@ -23,11 +23,17 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/dashboard", request.url))
     }
 
+    // If logged-in user hits landing page '/', redirect to dashboard
+    if (pathname === "/" && sessionToken) {
+        return NextResponse.redirect(new URL("/dashboard", request.url))
+    }
+
     return NextResponse.next()
 }
 
 export const config = {
     matcher: [
+        "/",
         "/dashboard/:path*",
         "/buy/:path*",
         "/admin/:path*",

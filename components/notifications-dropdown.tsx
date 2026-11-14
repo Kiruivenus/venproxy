@@ -20,8 +20,19 @@ export function NotificationsDropdown() {
   useEffect(() => {
     fetchNotifications()
     
-    // Check periodically for updates (every 20s)
-    const interval = setInterval(fetchNotifications, 20000)
+    // Check periodically for updates only if tab is visible (every 2 mins)
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        fetchNotifications()
+      }
+    }, 120000)
+
+    const handleFocus = () => {
+      if (document.visibilityState === "visible") {
+        fetchNotifications()
+      }
+    }
+    window.addEventListener("focus", handleFocus)
 
     // Close dropdown on click outside
     const handleClickOutside = (event: MouseEvent) => {
@@ -33,6 +44,7 @@ export function NotificationsDropdown() {
 
     return () => {
       clearInterval(interval)
+      window.removeEventListener("focus", handleFocus)
       document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [])
@@ -99,7 +111,10 @@ export function NotificationsDropdown() {
     <div className="relative" ref={dropdownRef}>
       {/* Bell Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          if (!isOpen) fetchNotifications()
+          setIsOpen(!isOpen)
+        }}
         className="relative h-8.5 w-8.5 rounded-full border border-slate-100 dark:border-zinc-850 bg-white dark:bg-zinc-900/40 hover:bg-slate-50 dark:hover:bg-zinc-900 text-slate-500 dark:text-zinc-400 flex items-center justify-center transition-all cursor-pointer outline-none"
       >
         <Bell className="h-4 w-4" />
